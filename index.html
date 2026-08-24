@@ -5,6 +5,10 @@
 <meta name="color-scheme" content="only light">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Hitta uteserveringen – i solen</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" href="ikon-192.png">
+<link rel="apple-touch-icon" href="ikon-180.png">
+<meta name="theme-color" content="#f2a71b">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
@@ -79,6 +83,23 @@ input[type=range]{width:100%;margin-top:.5rem;accent-color:var(--sun-deep)}
 @keyframes sp{to{transform:rotate(360deg)}}
 .err{color:#b3402a;font-size:.82rem}
 /* ---- Uteserveringslista ---- */
+.ctl{display:flex;flex-direction:column;gap:.18rem}
+.lbl{font-size:.6rem;font-weight:600;color:#a08c66;text-transform:uppercase;letter-spacing:.06em}
+#listCard{position:relative}
+.popover{display:none;position:absolute;z-index:30;top:4.4rem;left:.5rem;
+  background:#fff;border:1.5px solid var(--sun-deep);border-radius:12px;
+  padding:.7rem;box-shadow:0 8px 24px rgba(51,40,26,.18);
+  align-items:center;gap:.5rem;flex-wrap:wrap}
+.popover.open{display:flex}
+.popover input,.popover select{font-family:var(--mono);font-size:.85rem;padding:.32rem .45rem;
+  border:1px solid var(--line);border-radius:9px;background:#fff;color:var(--ink)}
+.okbtn{font-size:.8rem;font-weight:700;border:none;background:var(--sun-deep);
+  color:#fff;border-radius:9px;padding:.4rem .8rem;cursor:pointer}
+.nummark{background:#f7b32b;border:2px solid #33281a;border-radius:50%;
+  width:22px;height:22px;display:flex;align-items:center;justify-content:center;
+  font-weight:700;font-size:.7rem;color:#33281a;font-family:'Bricolage Grotesque',sans-serif;
+  box-shadow:0 1px 4px rgba(0,0,0,.3)}
+#t3band{width:100%;height:16px;border-radius:5px;display:block;margin-bottom:.35rem}
 .ci{width:15px;height:15px;vertical-align:-3px;stroke:currentColor;fill:none;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
 .ci.lg{width:19px;height:19px;vertical-align:-4px}
 .bigchip{font-family:var(--mono);font-size:.88rem;font-weight:500;background:#fff;border:1.5px solid var(--sun-deep);
@@ -160,7 +181,8 @@ select.dur{font-family:var(--mono);font-size:.85rem;padding:.35rem .5rem;border:
 #t3wrap{position:relative;width:100%;aspect-ratio:1/1;background:#cfe0ee;touch-action:none}
 #t3wrap canvas{display:block;width:100%;height:100%}
 .t3hint{position:absolute;bottom:.4rem;left:.6rem;font-family:var(--mono);font-size:.58rem;color:rgba(51,40,26,.55);pointer-events:none}
-.t3foot{display:flex;align-items:center;gap:.6rem;padding:.5rem .8rem .65rem}
+.t3foot{display:flex;flex-direction:column;gap:.15rem;padding:.5rem .8rem .65rem}
+.t3row{display:flex;align-items:center;gap:.6rem;width:100%}
 .t3foot input[type=range]{flex:1;margin:0}
 .t3foot .tlbl{font-family:var(--mono);font-size:.8rem;min-width:3.2rem;text-align:right}
 .t3err{padding:2rem;text-align:center;color:#b3402a;font-size:.85rem}
@@ -194,11 +216,9 @@ select.dur{font-family:var(--mono);font-size:.85rem;padding:.35rem .5rem;border:
       </g>
       <path d="M25 39.5 Q28.5 42.5 33 40.6" fill="none" stroke="#33281a" stroke-width="2.2" stroke-linecap="round"/>
       <g stroke="#33281a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <rect x="41.5" y="45.5" width="10.5" height="12.5" rx="1.8" fill="#f7b32b"/>
-        <path d="M52 48.5h2.6a2.6 2.6 0 0 1 0 5.6H52" fill="none"/>
-        <path d="M41 46c-.9-1.7.5-3.3 2.1-3 .4-1.8 2.5-2.5 3.9-1.4 1-1.2 3.1-.9 3.7.6 1.7-.2 2.6 1.8 1.5 3z" fill="#fffdf7"/>
-        <line x1="45" y1="49.5" x2="45" y2="55.5" stroke-width="1.4"/>
-        <line x1="48.5" y1="49.5" x2="48.5" y2="55.5" stroke-width="1.4"/>
+        <rect x="41.5" y="47" width="10.5" height="9.5" rx="1.8" fill="#fffdf7"/>
+        <path d="M52 49.5h2.4a2.4 2.4 0 0 1 0 4.8H52" fill="none"/>
+        <path d="M44.5 44.5c0-1.6 1.3-1.9 1.3-3.4M48.2 44.5c0-1.6 1.3-1.9 1.3-3.4" fill="none" stroke-width="1.5"/>
       </g>
     </symbol>
     <symbol id="i-coffee" viewBox="0 0 24 24">
@@ -217,8 +237,16 @@ select.dur{font-family:var(--mono);font-size:.85rem;padding:.35rem .5rem;border:
       <path d="M16 3c-1.5 1-2 3-2 5.5 0 2 .8 3 2 3v9.5M16 3v18"/>
     </symbol>
     <symbol id="i-walk" viewBox="0 0 24 24">
-      <circle cx="13" cy="4.5" r="1.8"/>
-      <path d="M12.5 8l-2 5 2.5 3 .5 5M10.5 13l-2.5 2-1 4M12.8 9.5l2.7 1.5 2.5.5"/>
+      <path fill="currentColor" stroke="none" d="M13.5 5.5c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zM9.8 8.9 7 23h2.1l1.8-8 2.1 2v6h2v-7.5l-2.1-2 .6-3C14.8 12 16.8 13 19 13v-2c-1.9 0-3.5-1-4.3-2.4l-1-1.6c-.4-.6-1-1-1.7-1-.3 0-.5.1-.8.1L6 8.3V13h2V9.6l1.8-.7"/>
+    </symbol>
+    <symbol id="i-wine" viewBox="0 0 24 24">
+      <path d="M8 3h8l-.7 6.5a3.3 3.3 0 0 1-6.6 0z"/>
+      <line x1="12" y1="13" x2="12" y2="20"/><line x1="8.5" y1="21" x2="15.5" y2="21"/>
+    </symbol>
+    <symbol id="i-drink" viewBox="0 0 24 24">
+      <path d="M4 4h16l-8 9z"/>
+      <line x1="12" y1="13" x2="12" y2="20"/><line x1="8.5" y1="21" x2="15.5" y2="21"/>
+      <circle cx="14.5" cy="7" r="1.4"/>
     </symbol>
     <symbol id="i-bike" viewBox="0 0 24 24">
       <circle cx="6" cy="16.5" r="3.6"/><circle cx="18" cy="16.5" r="3.6"/>
@@ -238,7 +266,7 @@ select.dur{font-family:var(--mono);font-size:.85rem;padding:.35rem .5rem;border:
 
 <header>
   <svg class="logo-sun"><use href="#i-logosun"/></svg>
-  <h1>Hitta uteserveringen</h1><span class="ver">v0.14</span>
+  <h1>Hitta uteserveringen</h1><span class="ver">v0.15</span>
   <span class="mode" id="modeBadge">letar höjddata …</span>
 </header>
 
@@ -253,9 +281,12 @@ select.dur{font-family:var(--mono);font-size:.85rem;padding:.35rem .5rem;border:
   <div class="card" id="listCard">
     <h2>Uteserveringar nära kartans mitt</h2>
     <div class="controls">
-      <span class="bigchip" id="whenChip"><span id="whenLabel">Nu</span><span class="car">▼</span></span>
-      <select class="dur" id="listDur"></select>
-      <select class="dur" id="maxTravel">
+      <span class="ctl"><span class="lbl">När?</span>
+        <span class="bigchip" id="whenChip"><span id="whenLabel">Nu</span><span class="car">▼</span></span></span>
+      <span class="ctl"><span class="lbl">Hur länge?</span>
+        <select class="dur" id="listDur"></select></span>
+      <span class="ctl"><span class="lbl" id="travelLbl">Gångtid</span>
+        <select class="dur" id="maxTravel">
         <option value="5">≤ 5 min</option>
         <option value="10" selected>≤ 10 min</option>
         <option value="15">≤ 15 min</option>
@@ -263,16 +294,17 @@ select.dur{font-family:var(--mono);font-size:.85rem;padding:.35rem .5rem;border:
         <option value="30">≤ 30 min</option>
         <option value="45">≤ 45 min</option>
         <option value="60">≤ 60 min</option>
-      </select>
-      <span class="setbtn" id="setBtn" title="Inställningar"><svg class="ci lg"><use href="#i-gear"/></svg></span>
-      <button id="listBtn">Sök</button>
+      </select></span>
+      <span class="ctl"><span class="lbl">&nbsp;</span>
+        <span class="setbtn" id="setBtn" title="Inställningar"><svg class="ci lg"><use href="#i-gear"/></svg></span></span>
+      <span class="ctl"><span class="lbl">&nbsp;</span>
+        <button id="listBtn">Sök</button></span>
     </div>
-    <div class="expander" id="whenExp">
-      <div class="exinner">
-        <input type="date" id="listDate">
-        <select id="listFrom" class="dur"></select>
-        <button class="nowbtn" id="nowBtn">↺ Nu</button>
-      </div>
+    <div class="popover" id="whenExp">
+      <input type="date" id="listDate">
+      <select id="listFrom" class="dur"></select>
+      <button class="nowbtn" id="nowBtn">↺ Nu</button>
+      <button class="okbtn" id="whenOk">OK</button>
     </div>
     <div class="expander" id="setExp">
       <div class="exinner">
@@ -295,6 +327,8 @@ select.dur{font-family:var(--mono);font-size:.85rem;padding:.35rem .5rem;border:
     <div class="controls" style="margin-top:.4rem">
       <span class="chip on" data-cat="coffee"><svg class="ci"><use href="#i-coffee"/></svg>Kaffe</span>
       <span class="chip on" data-cat="beer"><svg class="ci"><use href="#i-beer"/></svg>Öl</span>
+      <span class="chip on" data-cat="wine"><svg class="ci"><use href="#i-wine"/></svg>Vin</span>
+      <span class="chip on" data-cat="drinks"><svg class="ci"><use href="#i-drink"/></svg>Drinkar</span>
       <span class="favsw" id="favSw">Bara favoriter <span class="toggle" id="favTgl"></span></span>
     </div>
     <div class="datainfo" id="listInfo">Panorera kartan dit du är och tryck Sök. Kräver laserraster-läge.</div>
@@ -354,15 +388,18 @@ select.dur{font-family:var(--mono);font-size:.85rem;padding:.35rem .5rem;border:
     </div>
     <div id="t3wrap"><span class="t3hint" id="t3hint">dra = snurra · hjul/nyp = zooma · klick på marken = flytta parasollet</span></div>
     <div class="t3foot">
-      <input type="range" id="t3time" min="6" max="22" step="0.25">
-      <span class="tlbl" id="t3tlbl"></span>
+      <canvas id="t3band" height="16"></canvas>
+      <div class="t3row">
+        <input type="range" id="t3time" min="6" max="22" step="0.25">
+        <span class="tlbl" id="t3tlbl"></span>
+      </div>
     </div>
   </div>
 </div>
 
 <script>
 "use strict";
-/* ================ HITTA UTESERVERINGEN v0.14 ================
+/* ================ HITTA UTESERVERINGEN v0.15 ================
    Läge A (laser): ray marching mot höjdtiles (tiles/, från
    preprocess.py) + 3D-vy som bygger mesh ur samma tiles.
    Läge B (fallback): OSM via Overpass.
@@ -521,7 +558,7 @@ function horizonAt(E,N,R){
 let vegIvG=null;
 function buildHorizonDem(E,N,R){
   const h=horizonAt(E,N,R);
-  if(!h) throw new Error('Punkten ligger utanför höjddatan');
+  if(!h) throw new Error('Här finns ingen höjddata ännu – appen täcker just nu Aspudden, Örnsberg, Mälarhöjden och Vinterviken. Fler områden kommer!');
   horB=h.hB;vegIvG=h.vegIv;
 }
 
@@ -759,7 +796,7 @@ async function startAnalysis(refetch){
       hint.innerHTML='<span class="spin"></span>Laddar höjdtiles …';
       const {E,N}=toSweref(P.lat,P.lng);
       const nt=await ensureTiles(E,N,R);
-      if(!nt) throw new Error('inga höjdtiles täcker punkten');
+      if(!nt) throw new Error('Här finns ingen höjddata ännu – appen täcker just nu Aspudden, Örnsberg, Mälarhöjden och Vinterviken. Fler områden kommer!');
       hint.innerHTML='<span class="spin"></span>Ray marching, 360 riktningar …';
       await new Promise(r=>setTimeout(r,20));
       buildHorizonDem(E,N,R);
@@ -804,9 +841,56 @@ function recomputeDay(){
 /* ================ 3D-vy ur höjdtiles ================ */
 const T3SZ=240;  // sidlängd i meter/vertexar
 let T3=null, t3pos=null, T3marker=null;
+let t3anim=null;
+function bandFor3d(){
+  if(t3pos.venue) return t3pos.venue.band;
+  const band=new Uint8Array(64);
+  const base=new Date(t3pos.dateStr+'T00:00:00');
+  for(let q2=0;q2<64;q2++){
+    const d=new Date(base); d.setMinutes(6*60+q2*15);
+    const r=classify(d);
+    band[q2]=r.c==='night'?3:r.c==='shadow'?0:r.c==='tree'?1:2;
+  }
+  return band;
+}
+function drawT3band(){
+  const cv=document.getElementById('t3band');
+  if(!cv||!t3pos||!t3pos.band) return;
+  const w=cv.clientWidth||300;
+  cv.width=w*devicePixelRatio; cv.height=16*devicePixelRatio;
+  const cx=cv.getContext('2d'); cx.scale(devicePixelRatio,devicePixelRatio);
+  const cols={0:'#93a0b4',1:'#7db36a',2:'#f7b32b',3:'#2c3a5c'};
+  const pw=w/64;
+  for(let q2=0;q2<64;q2++){cx.fillStyle=cols[t3pos.band[q2]];cx.fillRect(q2*pw,0,pw+.5,16);}
+  if(t3pos.animF!=null){
+    cx.fillStyle='rgba(253,246,232,.65)';
+    cx.fillRect(0,0,(t3pos.animF-6)*4*pw,16);
+    cx.fillRect((t3pos.animT-6)*4*pw,0,w-(t3pos.animT-6)*4*pw,16);
+  }
+  const h=+document.getElementById('t3time').value;
+  const x=(h-6)*4*pw;
+  cx.strokeStyle='#33281a';cx.lineWidth=2;
+  cx.beginPath();cx.moveTo(x,0);cx.lineTo(x,16);cx.stroke();
+}
+function startT3Anim(f,t){
+  stopT3Anim();
+  const span=Math.max(0.5,t-f), LOOP=6000;   // 6 s per varv
+  const t0=performance.now();
+  function tick(now){
+    const frac=((now-t0)%LOOP)/LOOP;
+    document.getElementById('t3time').value=(f+frac*span).toFixed(2);
+    updSun3();
+    t3anim=requestAnimationFrame(tick);
+  }
+  t3anim=requestAnimationFrame(tick);
+}
+function stopT3Anim(){
+  if(t3anim){cancelAnimationFrame(t3anim);t3anim=null;}
+}
 function open3dAt(E,N,lat,lng,title,venue){
   if(!grid) return;
-  t3pos={E,N,lat,lng,venue:venue||null};
+  t3pos={E,N,lat,lng,venue:venue||null,
+         dateStr: venue? listDateStr : document.getElementById('dateInput').value};
   document.querySelector('#t3overlay .nm').textContent=title||'3D-vy';
   document.getElementById('t3overlay').style.display='flex';
   if(!window.THREE){
@@ -816,10 +900,16 @@ function open3dAt(E,N,lat,lng,title,venue){
   const mins=+document.getElementById('timeSlider').value;
   const sl=document.getElementById('t3time');
   sl.value=Math.min(22,Math.max(6,Math.round(mins/15)/4));
+  t3pos.band=bandFor3d();
+  let f=6,t=22;
+  if(t3pos.venue){ const p=listPeriod(); f=Math.max(6,p[0]); t=Math.min(22,p[1]); }
+  t3pos.animF=f; t3pos.animT=t;
   build3d();
   updSun3();
+  startT3Anim(f,t);      // loopar solståndet; stoppas när man drar i listen
 }
 function close3d(){
+  stopT3Anim();
   document.getElementById('t3overlay').style.display='none';
   if(T3){cancelAnimationFrame(T3.raf);T3.renderer.dispose();
     T3.renderer.domElement.remove();T3=null;}
@@ -1019,9 +1109,10 @@ function updSun3(){
   if(!T3||!t3pos)return;
   const h=+document.getElementById('t3time').value;
   document.getElementById('t3tlbl').textContent=fmtH(h);
-  const d=new Date(document.getElementById('dateInput').value+'T00:00:00');
+  const d=new Date(t3pos.dateStr+'T00:00:00');
   d.setMinutes(Math.round(h*60));
   const p=sunPos(d,t3pos.lat,t3pos.lng);
+  drawT3band();
   const alt=p.altDeg*rad, az=p.azDeg*rad, R=450;
   T3.sun.position.set(Math.sin(az)*Math.cos(alt)*R,Math.max(4,Math.sin(alt)*R),-Math.cos(az)*Math.cos(alt)*R);
   const day=Math.max(0,Math.min(1,(p.altDeg+6)/18));
@@ -1118,6 +1209,8 @@ const CAT_OF=t=>{
   const c={};
   if(a==='cafe') c.coffee=1;
   if(a==='bar'||a==='pub'||a==='biergarten'||a==='restaurant') c.beer=1;
+  if(a==='bar'||a==='restaurant') c.wine=1;
+  if(a==='bar') c.drinks=1;
   if(a==='restaurant'||t.cuisine) c.food=1;
   return c;
 };
@@ -1293,6 +1386,16 @@ function renderVenues(skipped){
     return (B.sun+0.5*B.tree)-(A.sun+0.5*A.tree) || travel(a).mins-travel(b).mins;
   });
   renderFavList();
+  venueLayer.clearLayers();
+  vs.forEach((v,i)=>{
+    L.marker([v.lat,v.lng],{icon:L.divIcon({className:'',
+        html:`<div class="nummark">${i+1}</div>`,iconSize:[22,22],iconAnchor:[11,11]})})
+      .addTo(venueLayer)
+      .on('click',()=>{
+        const el=document.getElementById('vcard-'+i);
+        if(el){el.scrollIntoView({behavior:'smooth',block:'center'});}
+      });
+  });
   info.textContent=`Sol ${fmtHH(f)}–${fmtHH(t)} ${listDateStr} · ${vs.length} ställen`
     +(skipped?` (${skipped} utanför höjddatan)`:'')
     +' · mest sol, sen kortast restid · kända stängda dolda';
@@ -1304,6 +1407,7 @@ function renderVenues(skipped){
     const gurl=`https://www.google.com/maps/dir/?api=1&destination=${v.lat},${v.lng}&travelmode=${M.gm}`;
     const el=document.createElement('div');
     el.className='venue';
+    el.id='vcard-'+i;
     el.innerHTML=`
       <div class="vtop"><span class="rank">${i+1}</span><span class="vname">${v.name}</span>
         <span class="v3d">3D</span>
@@ -1368,11 +1472,21 @@ function matchVenueName(line){
 }
 
 /* ---------- Init ---------- */
-map=L.map('map').setView([59.317,18.06],14);
+map=L.map('map').setView([59.306,18.001],15);   // Aspudden tills position fås
+let posDot=null;
+if(navigator.geolocation){
+  navigator.geolocation.getCurrentPosition(p=>{
+    const ll=[p.coords.latitude,p.coords.longitude];
+    map.setView(ll,16);
+    posDot=L.circleMarker(ll,{radius:7,color:'#fff',weight:2.5,
+      fillColor:'#2a6fbb',fillOpacity:1}).addTo(map).bindTooltip('Du är här');
+  },()=>{},{enableHighAccuracy:true,timeout:8000});
+}
 L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',
   {maxZoom:19,attribution:'© OpenStreetMap'}).addTo(map);
 bldLayer=L.layerGroup().addTo(map);
 treeLayer=L.layerGroup().addTo(map);
+const venueLayer=L.layerGroup().addTo(map);
 map.on('click',ev=>{P=ev.latlng;startAnalysis(true);});
 
 (function init(){
@@ -1391,7 +1505,8 @@ map.on('click',ev=>{P=ev.latlng;startAnalysis(true);});
   document.getElementById('btn3d').addEventListener('click',()=>{ if(lastEN&&P) open3dAt(lastEN.E,lastEN.N,P.lat,P.lng,'3D-vy'); });
   document.getElementById('t3close').addEventListener('click',close3d);
   document.getElementById('t3overlay').addEventListener('click',e=>{if(e.target.id==='t3overlay')close3d();});
-  document.getElementById('t3time').addEventListener('input',updSun3);
+  document.getElementById('t3time').addEventListener('input',()=>{stopT3Anim();updSun3();});
+  document.getElementById('t3time').addEventListener('pointerdown',stopT3Anim);
   window.addEventListener('resize',()=>{if(dayData){drawBand();drawYear();}});
   for(let d=0.5;d<=18;d+=0.5)
     document.getElementById('listDur').add(new Option((d%1?d.toFixed(1).replace('.',','):d)+' h',d));
@@ -1407,6 +1522,10 @@ map.on('click',ev=>{P=ev.latlng;startAnalysis(true);});
     document.getElementById('whenChip').classList.toggle('openp');
     document.getElementById('setExp').classList.remove('open');
     document.getElementById('setBtn').classList.remove('on');
+  });
+  document.getElementById('whenOk').addEventListener('click',()=>{
+    document.getElementById('whenExp').classList.remove('open');
+    document.getElementById('whenChip').classList.remove('openp');
   });
   document.getElementById('setBtn').addEventListener('click',()=>{
     document.getElementById('setExp').classList.toggle('open');
@@ -1429,7 +1548,10 @@ map.on('click',ev=>{P=ev.latlng;startAnalysis(true);});
   });
   document.querySelectorAll('.modebtn').forEach(b=>b.addEventListener('click',()=>{
     document.querySelectorAll('.modebtn').forEach(x=>x.classList.remove('on'));
-    b.classList.add('on'); tmode=b.dataset.tmode; renderVenues();
+    b.classList.add('on'); tmode=b.dataset.tmode;
+    document.getElementById('travelLbl').textContent=
+      {walk:'Gångtid',bike:'Cykeltid',transit:'Kollektivtrafik'}[tmode];
+    renderVenues();
   }));
   document.getElementById('favAdd').addEventListener('click',()=>{
     const lines=document.getElementById('favInput').value.split('\n').map(l=>l.trim()).filter(Boolean);
