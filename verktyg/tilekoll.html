@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+<meta charset="UTF-8">
+<meta name="color-scheme" content="only light">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tilekoll – dataspion för Hitta uteserveringen</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<style>
+html{background:#fdf6e8}
+body{font-family:system-ui;margin:0;color:#33281a;background:#fdf6e8}
+#map{height:55vh}
+#out{padding:1rem;font-family:ui-monospace,monospace;font-size:.85rem;line-height:1.8;white-space:pre}
+b{color:#e09112}
+.flag{font-weight:700}
+.flag.yes{color:#3f8a4f}.flag.no{color:#b3402a}
+</style>
+</head>
+<body>
+<div id="map"></div>
+<div id="out">Klicka på kartan (t.ex. mitt på Libertins tak) så visas exakt vad appen läser ur tilesen där.</div>
+<script>
+"use strict";
+const rad=Math.PI/180;
+function toSweref(lat,lon){
+  const a=6378137,f=1/298.257222101,e2=f*(2-f),n=f/(2-f);
+  const ah=a/(1+n)*(1+n*n/4+n**4/64),k0=0.9996,FE=500000,lon0=15*rad;
+  const A=e2,B=(5*e2**2-e2**3)/6,C=(104*e2**3-45*e2**4)/120,D=1237*e2**4/1260;
+  const phi=lat*rad,si=Math.sin(phi);
+  const ps=phi-si*Math.cos(phi)*(A+B*si*si+C*si**4+D*si**6);
+  const dl=lon*rad-lon0;
+  const xi=Math.atan2(Math.tan(ps),Math.cos(dl));
+  const eta=Math.atanh(Math.cos(ps)*Math.sin(dl));
+  const b1=n/2-2*n*n/3+5*n**3/16+41*n**4/180,b2=13*n*n/48-3*n**3/5+557*n**4/1440;
+  const b3=61*n**3/240-103*n**4/140,b4=49561*n**4/161280;
+  const N=k0*ah*(xi+b1*Math.sin(2*xi)*Math.cosh(2*eta)+b2*Math.sin(4*xi)*Math.cosh(4*eta)+b3*Math.sin(6*xi)*Math.cosh(6*eta)+b4*Math.sin(8*xi)*Math.cosh(8*eta));
+  const E=k0*ah*(eta+b1*Math.cos(2*xi)*Math.sinh(2*eta)+b2*Math.cos(4*xi)*Math.sinh(4*eta)+b3*Math.cos(6*xi)*Math.sinh(6*eta)+b4*Math.cos(8*xi)*Math.sinh(8*eta))+FE;
+  return{E,N};
+}
+let FMT=1,SIZE=512;
+const cache=new Map();
+function loadImg(src){
+  return new Promise(res=>{
+    const img=new Image();
+    img.onload=()=>{
+      const c=document.createElement('canvas');
+      c.width=c.height=SIZE;
+      const cx=c.getContext('2d');
+      cx.drawImage(img,0,0);
+      res(cx.getImageData(0,0,SIZE,SIZE).data);
+    };
+    img.onerror=()=>res(null);
+    img.src=src;
+  });
+}
+async function tile(key){
+  if(!cache.has(key))
+    cache.set(key,Promise.all([loadImg('tiles/'+key+'.png'),loadImg('tiles/'+key+'_bas.png')]));
+  return cache.get(key);
+}
+const map=L.map('map').setView([59.3064,18.0009],17);
+L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19}).addTo(map);
+let mk=null;
+fetch('tiles/index.json').then(r=>r.json()).then(idx=>{
+  FMT=idx.fmt||1;SIZE=idx.tileSize;
+  document.getElementById('out').textContent=
+    `index.json: fmt=${FMT}, ${idx.tiles.length} tiles. Klicka på kartan!`;
+});
+map.on('click',async ev=>{
+  const {E,N}=toSweref(ev.latlng.lat,ev.latlng.lng);
+  const te=Math.floor(E/SIZE)*SIZE, tn=Math.floor(N/SIZE)*SIZE;
+  const key=te+'_'+tn;
+  const [d,b]=await tile(key);
+  if(mk)map.removeLayer(mk);
+  mk=L.circleMarker(ev.latlng,{radius:7,color:'#33281a',fillColor:'#f7b32b',fillOpacity:1}).addTo(map);
+  const o=document.getElementById('out');
+  if(!d){o.textContent=`tile ${key}: SAKNAS (utanför täckning?)`;return;}
+  const px=Math.floor(E)-te, py=(tn+SIZE-1)-Math.floor(N);
+  const i=(py*SIZE+px)*4;
+  const v=d[i]*256+d[i+1];
+  if(v===0){o.textContent=`tile ${key} px(${px},${py}): NODATA`;return;}
+  const hard=v/10-100;
+  const vegTop=d[i+2]*0.5;
+  const basR=b?b[i]:null, flagG=b?b[i+1]:null, bhB=b?b[i+2]:null;
+  const isB=FMT>=2&&b&&flagG>127;
+  o.innerHTML=
+`E ${E.toFixed(1)}  N ${N.toFixed(1)}   tile <b>${key}</b>  px(${px},${py})
+
+HUVUDTILE  R,G,B = ${d[i]},${d[i+1]},${d[i+2]}
+  hård yta (mark+hus):  <b>${hard.toFixed(1)} m</b> (RH2000)
+  krontopp över hård:   <b>${vegTop.toFixed(1)} m</b>
+
+BASFIL     ${b?`R,G,B = ${basR},${flagG},${bhB}`:'<span class="flag no">SAKNAS (_bas.png hittades inte!)</span>'}
+  kronbas över hård:    ${b?(basR*0.5).toFixed(1)+' m':'–'}
+  byggnadsflagga (G):   <span class="flag ${isB?'yes':'no'}">${b?(isB?'JA ('+flagG+')':'NEJ ('+flagG+')'):'–'}</span>
+  hushöjd över mark(B): ${b?(bhB*0.5).toFixed(1)+' m':'–'}
+  => marknivå:          ${b&&isB?(hard-bhB*0.5).toFixed(1)+' m':hard.toFixed(1)+' m (=hård yta)'}
+
+fmt i index.json: ${FMT} ${FMT>=2?'':'← PROBLEM: appen ignorerar basfilens flaggor vid fmt<2'}`;
+});
+</script>
+</body>
+</html>
