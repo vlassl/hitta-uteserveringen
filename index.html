@@ -70,6 +70,19 @@ button.ghost{background:transparent;border:1.5px solid var(--line);color:#8d7c5c
 #dayband{width:100%;height:64px;border-radius:10px;display:block;cursor:crosshair;background:#eee}
 #bandlabels{display:flex;justify-content:space-between;font-family:var(--mono);font-size:.6rem;color:#d7c69c;margin-top:.2rem;padding:0 2px}
 input[type=range]{width:100%;margin-top:.5rem;accent-color:var(--sun-deep)}
+.venue.hl{outline:2.5px solid var(--sun-deep);outline-offset:1px;
+  box-shadow:0 4px 14px rgba(224,145,18,.35);transition:.15s}
+.nummark.hl{filter:drop-shadow(0 0 7px #e09112) drop-shadow(0 1px 3px rgba(0,0,0,.35));
+  transform:scale(1.25);transform-origin:center}
+.locbtn{background:#fff;width:34px;height:34px;border-radius:9px;border:2px solid rgba(51,40,26,.25);
+  display:flex;align-items:center;justify-content:center;cursor:pointer;color:#2a6fbb;
+  box-shadow:0 1px 5px rgba(0,0,0,.3)}
+.locbtn:hover{color:#33281a}
+.locbtn.busy{opacity:.5}
+.chiprow{display:flex;flex-wrap:nowrap;gap:.3rem;overflow-x:auto;
+  scrollbar-width:none;-webkit-overflow-scrolling:touch}
+.chiprow::-webkit-scrollbar{display:none}
+.chiprow .ci{width:13px;height:13px}
 .legend{display:flex;gap:1rem;flex-wrap:wrap;font-size:.72rem;margin-top:.55rem;color:#8d7c5c}
 .legend span{display:inline-flex;align-items:center;gap:.35rem}
 .legend i{width:12px;height:12px;border-radius:3px;display:inline-block}
@@ -78,7 +91,7 @@ input[type=range]{width:100%;margin-top:.5rem;accent-color:var(--sun-deep)}
 .intervals .treerow{color:#4e8a3d}
 .intervals .none{color:#a08c66}
 #yearchart{width:100%;height:120px;display:block}
-.datainfo{font-family:var(--mono);font-size:.68rem;color:#b3a17c;line-height:1.6}
+.datainfo{font-family:var(--mono);font-size:.7rem;color:#7a6a4d;line-height:1.6}
 .spin{display:inline-block;width:14px;height:14px;border:2px solid var(--line);border-top-color:var(--sun-deep);border-radius:50%;animation:sp .8s linear infinite;vertical-align:-2px;margin-right:.4rem}
 @keyframes sp{to{transform:rotate(360deg)}}
 .err{color:#b3402a;font-size:.82rem}
@@ -86,6 +99,24 @@ input[type=range]{width:100%;margin-top:.5rem;accent-color:var(--sun-deep)}
 .ctl{display:flex;flex-direction:column;gap:.18rem}
 .lbl{font-size:.6rem;font-weight:600;color:#a08c66;text-transform:uppercase;letter-spacing:.06em}
 #listCard{position:relative}
+.venue.hl{outline:2.5px solid var(--sun-deep);outline-offset:1px;
+  box-shadow:0 4px 14px rgba(224,145,18,.35);transition:.15s}
+.nummark.hl{filter:drop-shadow(0 0 7px #e09112) drop-shadow(0 1px 3px rgba(0,0,0,.35));
+  transform:scale(1.25);transform-origin:center}
+.locbtn{background:#fff;width:34px;height:34px;border-radius:9px;border:2px solid rgba(51,40,26,.25);
+  display:flex;align-items:center;justify-content:center;cursor:pointer;color:#2a6fbb;
+  box-shadow:0 1px 5px rgba(0,0,0,.3)}
+.locbtn:hover{color:#33281a}
+.locbtn.busy{opacity:.5}
+.chiprow{display:flex;flex-wrap:nowrap;gap:.3rem;overflow-x:auto;
+  scrollbar-width:none;-webkit-overflow-scrolling:touch}
+.chiprow::-webkit-scrollbar{display:none}
+.chiprow .ci{width:13px;height:13px}
+.legend{display:flex;gap:.75rem;flex-wrap:wrap;font-size:.66rem;font-weight:600;color:#7a6a4d;margin:.5rem 0 .1rem}
+.legend i{display:inline-block;width:11px;height:11px;border-radius:3px;margin-right:.25rem;
+  vertical-align:-1px;border:1px solid rgba(51,40,26,.25)}
+#listCard h2{display:flex;align-items:center;gap:.5rem}
+#listCard h2 .setbtn{margin-left:auto;width:30px;height:30px}
 .popover{display:none;position:absolute;z-index:30;top:4.4rem;left:.5rem;
   background:#fff;border:1.5px solid var(--sun-deep);border-radius:12px;
   padding:.7rem;box-shadow:0 8px 24px rgba(51,40,26,.18);
@@ -99,7 +130,7 @@ input[type=range]{width:100%;margin-top:.5rem;accent-color:var(--sun-deep)}
   width:22px;height:22px;display:flex;align-items:center;justify-content:center;
   font-weight:700;font-size:.7rem;color:#33281a;font-family:'Bricolage Grotesque',sans-serif;
   box-shadow:0 1px 4px rgba(0,0,0,.3)}
-#t3band{width:100%;height:16px;border-radius:5px;display:block;margin-bottom:.35rem}
+#t3band{flex:1;height:16px;border-radius:5px;display:block;margin-bottom:.25rem}
 .ci{width:15px;height:15px;vertical-align:-3px;stroke:currentColor;fill:none;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
 .ci.lg{width:19px;height:19px;vertical-align:-4px}
 .bigchip{font-family:var(--mono);font-size:.88rem;font-weight:500;background:#fff;border:1.5px solid var(--sun-deep);
@@ -136,9 +167,9 @@ input[type=range]{width:100%;margin-top:.5rem;accent-color:var(--sun-deep)}
 .favbox .ghostbtn{background:transparent;border:1.5px solid var(--line);color:#8d7c5c}
 .favmsg{font-family:var(--mono);font-size:.66rem;margin-top:.3rem;line-height:1.6}
 .favmsg .hit{color:#3f8a4f}.favmsg .miss{color:#b3402a}
-.chip{display:inline-flex;align-items:center;gap:.3rem;font-size:.8rem;font-weight:600;
-  padding:.32rem .7rem;border-radius:20px;border:1.5px solid var(--line);background:var(--card);
-  cursor:pointer;user-select:none;color:#8d7c5c}
+.chip{display:inline-flex;align-items:center;gap:.22rem;font-size:.74rem;font-weight:600;
+  padding:.3rem .5rem;border-radius:18px;border:1.5px solid var(--line);background:var(--card);
+  cursor:pointer;user-select:none;color:#8d7c5c;white-space:nowrap;flex:0 0 auto}
 .chip.on{background:var(--sun-soft);color:var(--ink);border-color:var(--sun)}
 select.dur{font-family:var(--mono);font-size:.85rem;padding:.35rem .5rem;border:1.5px solid var(--line);
   border-radius:10px;background:#fff;color:var(--ink)}
@@ -163,14 +194,14 @@ select.dur{font-family:var(--mono);font-size:.85rem;padding:.35rem .5rem;border:
 .vmeta a{color:#2a6fbb;text-decoration:none;font-weight:600;border-bottom:1px dashed #a8c6e6}
 .vmeta .ute{background:#e8f2e4;color:#3f8a4f;border-radius:5px;padding:.05rem .35rem;font-size:.66rem}
 .vmeta .uteq{background:#f3ede0;color:#a08c66;border-radius:5px;padding:.05rem .35rem;font-size:.66rem}
-.vmeta .oh{font-family:var(--mono);font-size:.62rem;color:#b3a17c}
+.vmeta .oh{font-family:var(--mono);font-size:.66rem;font-weight:600;color:#7a6a4d}
 .bandrow{display:flex;align-items:center;gap:.55rem;padding-left:1.45rem}
 .miniband{flex:1;height:24px;border-radius:6px;display:block}
-.sunscore{font-family:var(--mono);font-size:.76rem;font-weight:500;color:var(--sun-deep);
+.sunscore{font-family:var(--mono);font-size:.82rem;font-weight:700;color:#8a5a00;
   white-space:nowrap;min-width:4rem;text-align:right}
-.sunscore small{display:block;font-size:.58rem;color:#b3a17c;font-weight:400}
-.bandhours{display:flex;justify-content:space-between;font-family:var(--mono);font-size:.52rem;
-  color:#d7c69c;padding-left:1.45rem;margin-top:.1rem;padding-right:4.6rem}
+.sunscore small{display:block;font-size:.6rem;color:#7a6a4d;font-weight:600}
+.bandhours{display:flex;justify-content:space-between;font-family:var(--mono);font-size:.58rem;
+  font-weight:600;color:#8d7c5c;padding-left:1.45rem;margin-top:.1rem;padding-right:4.6rem}
 /* ---- 3D-vy ---- */
 #t3overlay{display:none;position:fixed;inset:0;z-index:50;background:rgba(51,40,26,.55);align-items:center;justify-content:center;padding:.8rem}
 .t3box{background:var(--card);border-radius:16px;width:100%;max-width:480px;overflow:hidden;box-shadow:0 10px 40px rgba(0,0,0,.35)}
@@ -183,6 +214,8 @@ select.dur{font-family:var(--mono);font-size:.85rem;padding:.35rem .5rem;border:
 .t3hint{position:absolute;bottom:.4rem;left:.6rem;font-family:var(--mono);font-size:.58rem;color:rgba(51,40,26,.55);pointer-events:none}
 .t3foot{display:flex;flex-direction:column;gap:.15rem;padding:.5rem .8rem .65rem}
 .t3row{display:flex;align-items:center;gap:.6rem;width:100%}
+.t3bandrow{display:flex;align-items:center;gap:.6rem;width:100%}
+.t3bandrow .spacer{visibility:hidden;font-family:var(--mono);font-size:.85rem}
 .t3foot input[type=range]{flex:1;margin:0}
 .t3foot .tlbl{font-family:var(--mono);font-size:.8rem;min-width:3.2rem;text-align:right}
 .t3err{padding:2rem;text-align:center;color:#b3402a;font-size:.85rem}
@@ -266,7 +299,7 @@ select.dur{font-family:var(--mono);font-size:.85rem;padding:.35rem .5rem;border:
 
 <header>
   <svg class="logo-sun"><use href="#i-logosun"/></svg>
-  <h1>Hitta uteserveringen</h1><span class="ver">v0.19</span>
+  <h1>Hitta uteserveringen</h1><span class="ver">v0.22</span>
   <span class="mode" id="modeBadge">letar höjddata …</span>
 </header>
 
@@ -279,24 +312,14 @@ select.dur{font-family:var(--mono);font-size:.85rem;padding:.35rem .5rem;border:
   </div>
 
   <div class="card" id="listCard">
-    <h2>Uteserveringar nära kartans mitt</h2>
+    <h2>Soliga uteserveringar nära kartans mitt<span class="setbtn" id="setBtn" title="Inställningar"><svg class="ci lg"><use href="#i-gear"/></svg></span></h2>
     <div class="controls">
       <span class="ctl"><span class="lbl">När?</span>
         <span class="bigchip" id="whenChip"><span id="whenLabel">Nu</span><span class="car">▼</span></span></span>
       <span class="ctl"><span class="lbl">Hur länge?</span>
         <select class="dur" id="listDur"></select></span>
       <span class="ctl"><span class="lbl" id="travelLbl">Gångtid</span>
-        <select class="dur" id="maxTravel">
-        <option value="5">≤ 5 min</option>
-        <option value="10" selected>≤ 10 min</option>
-        <option value="15">≤ 15 min</option>
-        <option value="20">≤ 20 min</option>
-        <option value="30">≤ 30 min</option>
-        <option value="45">≤ 45 min</option>
-        <option value="60">≤ 60 min</option>
-      </select></span>
-      <span class="ctl"><span class="lbl">&nbsp;</span>
-        <span class="setbtn" id="setBtn" title="Inställningar"><svg class="ci lg"><use href="#i-gear"/></svg></span></span>
+        <select class="dur" id="maxTravel"></select></span>
       <span class="ctl"><span class="lbl">&nbsp;</span>
         <button id="listBtn">Sök</button></span>
     </div>
@@ -324,13 +347,21 @@ select.dur{font-family:var(--mono);font-size:.85rem;padding:.35rem .5rem;border:
         </div>
       </div>
     </div>
-    <div class="controls" style="margin-top:.4rem">
+    <div class="controls chiprow" style="margin-top:.4rem">
       <span class="chip on" data-cat="coffee"><svg class="ci"><use href="#i-coffee"/></svg>Kaffe</span>
       <span class="chip on" data-cat="beer"><svg class="ci"><use href="#i-beer"/></svg>Öl</span>
       <span class="chip on" data-cat="wine"><svg class="ci"><use href="#i-wine"/></svg>Vin</span>
-      <span class="chip on" data-cat="drinks"><svg class="ci"><use href="#i-drink"/></svg>Drinkar</span>
+      <span class="chip on" data-cat="drinks"><svg class="ci"><use href="#i-drink"/></svg>Drink</span>
       <span class="chip on" data-cat="food"><svg class="ci"><use href="#i-food"/></svg>Mat</span>
+    </div>
+    <div class="controls" style="margin-top:.3rem">
       <span class="favsw" id="favSw">Bara favoriter <span class="toggle" id="favTgl"></span></span>
+    </div>
+    <div class="legend">
+      <span><i style="background:#f7b32b"></i>sol</span>
+      <span><i style="background:#7db36a"></i>silad sol (träd)</span>
+      <span><i style="background:#93a0b4"></i>skugga</span>
+      <span><i style="background:#2c3a5c"></i>natt</span>
     </div>
     <div class="datainfo" id="listInfo">Panorera kartan dit du är och tryck Sök. Kräver laserraster-läge.</div>
     <div id="venueList"></div>
@@ -384,12 +415,14 @@ select.dur{font-family:var(--mono);font-size:.85rem;padding:.35rem .5rem;border:
   <div class="t3box">
     <div class="t3head">
       <span class="nm">3D-vy</span>
-      <span class="b3">LASERDATA</span>
       <span class="x" id="t3close">×</span>
     </div>
     <div id="t3wrap"><span class="t3hint" id="t3hint">dra = snurra · hjul/nyp = zooma · klick på marken = flytta parasollet</span></div>
     <div class="t3foot">
-      <canvas id="t3band" height="16"></canvas>
+      <div class="t3bandrow">
+        <canvas id="t3band" height="16"></canvas>
+        <span class="spacer tlbl" id="t3spacer">00:00</span>
+      </div>
       <div class="t3row">
         <input type="range" id="t3time" min="6" max="22" step="0.25">
         <span class="tlbl" id="t3tlbl"></span>
@@ -400,7 +433,7 @@ select.dur{font-family:var(--mono);font-size:.85rem;padding:.35rem .5rem;border:
 
 <script>
 "use strict";
-/* ================ HITTA UTESERVERINGEN v0.19 ================
+/* ================ HITTA UTESERVERINGEN v0.22 ================
    Läge A (laser): ray marching mot höjdtiles (tiles/, från
    preprocess.py) + 3D-vy som bygger mesh ur samma tiles.
    Läge B (fallback): OSM via Overpass.
@@ -514,8 +547,9 @@ async function loadIndex(){
   }catch(_){DEM.ok=false;}
   mode=DEM.ok?'laser':'osm';
   const b=document.getElementById('modeBadge');
-  b.textContent=DEM.ok?`laserraster · ${DEM.keys.size} tiles`:'OSM-läge (inga tiles)';
-  b.className='mode'+(DEM.ok?' laser':'');
+  b.style.display=DEM.ok?'none':'';           // dölj när allt är laserdata
+  b.textContent=DEM.ok?'':'OSM-läge (inga tiles)';
+  b.className='mode';
   document.getElementById('defHLabel').style.display=DEM.ok?'none':'';
 }
 function loadImg(src){
@@ -920,17 +954,29 @@ function drawT3band(){
   cv.width=w*devicePixelRatio; cv.height=16*devicePixelRatio;
   const cx=cv.getContext('2d'); cx.scale(devicePixelRatio,devicePixelRatio);
   const cols={0:'#93a0b4',1:'#7db36a',2:'#f7b32b',3:'#2c3a5c'};
-  const pw=w/64;
-  for(let q2=0;q2<64;q2++){cx.fillStyle=cols[t3pos.band[q2]];cx.fillRect(q2*pw,0,pw+.5,16);}
-  if(t3pos.animF!=null){
-    cx.fillStyle='rgba(253,246,232,.65)';
-    cx.fillRect(0,0,(t3pos.animF-6)*4*pw,16);
-    cx.fillRect((t3pos.animT-6)*4*pw,0,w-(t3pos.animT-6)*4*pw,16);
+  const pw=w/64, Hb=16;
+  for(let q2=0;q2<64;q2++){cx.fillStyle=cols[t3pos.band[q2]];cx.fillRect(q2*pw,0,pw+.5,Hb);}
+  // Trim-ram runt valt intervall (samma stil som listans kort)
+  if(t3pos.animF!=null && (t3pos.animT-t3pos.animF)<15.9){
+    const xa=(t3pos.animF-6)*4*pw, xb=(t3pos.animT-6)*4*pw, LW=2.5;
+    cx.strokeStyle='#33281a'; cx.lineWidth=LW;
+    cx.strokeRect(xa+LW/2, LW/2, Math.max(LW,xb-xa-LW), Hb-LW);
+    cx.fillStyle='#33281a';
+    const ar=4;
+    cx.beginPath();
+    cx.moveTo(xa+LW, Hb/2-ar); cx.lineTo(xa+LW+ar*0.75, Hb/2); cx.lineTo(xa+LW, Hb/2+ar);
+    cx.closePath(); cx.fill();
+    cx.beginPath();
+    cx.moveTo(xb-LW, Hb/2-ar); cx.lineTo(xb-LW-ar*0.75, Hb/2); cx.lineTo(xb-LW, Hb/2+ar);
+    cx.closePath(); cx.fill();
   }
+  // Solmarkör: vit kärna med mörk kant så den syns mot alla bandfärger
   const h=+document.getElementById('t3time').value;
   const x=(h-6)*4*pw;
-  cx.strokeStyle='#33281a';cx.lineWidth=2;
-  cx.beginPath();cx.moveTo(x,0);cx.lineTo(x,16);cx.stroke();
+  cx.strokeStyle='#fdf6e8';cx.lineWidth=3.5;
+  cx.beginPath();cx.moveTo(x,0);cx.lineTo(x,Hb);cx.stroke();
+  cx.strokeStyle='#33281a';cx.lineWidth=1.6;
+  cx.beginPath();cx.moveTo(x,0);cx.lineTo(x,Hb);cx.stroke();
 }
 function startT3Anim(f,t){
   stopT3Anim();
@@ -1453,7 +1499,7 @@ function renderVenues(skipped){
   const [f,tRaw]=listPeriod(), t=Math.min(22,tRaw);
   document.getElementById('whenLabel').textContent =
     (listStartH==null && listDateStr===new Date().toISOString().slice(0,10))
-      ? 'Nu' : listDateStr.slice(5)+' '+fmtHH(f);
+      ? 'Nu' : (+listDateStr.slice(8,10))+'/'+(+listDateStr.slice(5,7))+', '+fmtHH(f);
   const wanted=[...document.querySelectorAll('#listCard .chip.on')].map(x=>x.dataset.cat);
   document.getElementById('favSw').classList.toggle('show',favs.size>0);
   const month=new Date().getMonth();
@@ -1500,7 +1546,7 @@ function renderVenues(skipped){
       const [x0,y0]=pt(a0),[x1,y1]=pt(a1);
       paths+=`<path d="M${C},${C} L${x0.toFixed(2)},${y0.toFixed(2)} A${R2},${R2} 0 ${(a1-a0)>Math.PI?1:0} 1 ${x1.toFixed(2)},${y1.toFixed(2)} Z" fill="${sg.col}"/>`;
     }
-    const html=`<svg width="28" height="28" viewBox="0 0 28 28" style="filter:drop-shadow(0 1px 3px rgba(0,0,0,.35))">
+    const html=`<svg class="nummark" width="28" height="28" viewBox="0 0 28 28" style="filter:drop-shadow(0 1px 3px rgba(0,0,0,.35))">
       <circle cx="${C}" cy="${C}" r="${R2+0.8}" fill="#33281a"/>
       ${paths}
       <circle cx="${C}" cy="${C}" r="7.2" fill="#fdf6e8" stroke="#33281a" stroke-width="1.2"/>
@@ -1509,15 +1555,14 @@ function renderVenues(skipped){
     </svg>`;
     return L.divIcon({className:'',html,iconSize:[28,28],iconAnchor:[14,14]});
   }
+  const marks=[];
   vs.forEach((v,i)=>{
-    L.marker([v.lat,v.lng],{icon:pieIcon(v,i)})
-      .addTo(venueLayer)
-      .on('click',()=>{
-        const el=document.getElementById('vcard-'+i);
-        if(el){el.scrollIntoView({behavior:'smooth',block:'center'});}
-      });
+    const mk=L.marker([v.lat,v.lng],{icon:pieIcon(v,i)}).addTo(venueLayer);
+    marks.push(mk);
+    mk.on('click',()=>highlightVenue(i,marks));
   });
-  info.textContent=`Sol ${fmtHH(f)}–${fmtHH(t)} ${listDateStr} · ${vs.length} ställen`
+  window._huMarks=marks;
+  info.textContent=`Sol ${fmtHH(f)}–${fmtHH(t)} den ${(+listDateStr.slice(8,10))}/${(+listDateStr.slice(5,7))} · ${vs.length} ställen`
     +(skipped?` (${skipped} utanför höjddatan)`:'')
     +' · mest sol, sen kortast restid · kända stängda dolda';
   listEl.innerHTML='';
@@ -1529,6 +1574,10 @@ function renderVenues(skipped){
     const el=document.createElement('div');
     el.className='venue';
     el.id='vcard-'+i;
+    el.addEventListener('click',ev=>{
+      if(ev.target.closest('.v3d,.vheart,a')) return;
+      highlightVenue(i);
+    });
     el.innerHTML=`
       <div class="vtop"><span class="rank">${i+1}</span><span class="vname">${v.name}</span>
         <span class="v3d">3D</span>
@@ -1551,13 +1600,21 @@ function renderVenues(skipped){
     const w=cv.clientWidth||300;
     cv.width=w*devicePixelRatio; cv.height=24*devicePixelRatio;
     const cx=cv.getContext('2d'); cx.scale(devicePixelRatio,devicePixelRatio);
-    const pw=w/64;
-    for(let q2=0;q2<64;q2++){cx.fillStyle=cols[v.band[q2]];cx.fillRect(q2*pw,0,pw+.5,24);}
-    cx.fillStyle='rgba(253,246,232,.78)';
-    cx.fillRect(0,0,(f-6)*4*pw,24);
-    cx.fillRect((t-6)*4*pw,0,w-(t-6)*4*pw,24);
-    cx.strokeStyle='#33281a';cx.lineWidth=1.5;
-    cx.strokeRect((f-6)*4*pw+.75,.75,(t-f)*4*pw-1.5,22.5);
+    const pw=w/64, Hb=24;
+    // Full färgstyrka i hela bandet (ingen nedtoning utanför perioden)
+    for(let q2=0;q2<64;q2++){cx.fillStyle=cols[v.band[q2]];cx.fillRect(q2*pw,0,pw+.5,Hb);}
+    // Trim-ram runt vald period, med pilspetsar inåt (Apple-klippstil)
+    const xa=(f-6)*4*pw, xb=(t-6)*4*pw, LW=3;
+    cx.strokeStyle='#33281a'; cx.lineWidth=LW;
+    cx.strokeRect(xa+LW/2, LW/2, Math.max(LW,xb-xa-LW), Hb-LW);
+    cx.fillStyle='#33281a';
+    const ar=5.5;                      // pilspetsarnas djup
+    cx.beginPath();                    // vänster pilspets, insida = insida ram
+    cx.moveTo(xa+LW, Hb/2-ar); cx.lineTo(xa+LW+ar*0.75, Hb/2); cx.lineTo(xa+LW, Hb/2+ar);
+    cx.closePath(); cx.fill();
+    cx.beginPath();                    // höger pilspets
+    cx.moveTo(xb-LW, Hb/2-ar); cx.lineTo(xb-LW-ar*0.75, Hb/2); cx.lineTo(xb-LW, Hb/2+ar);
+    cx.closePath(); cx.fill();
     // Trädskuggning: månadsvis transmission visas i tooltip
     cv.title=`Silad sol: krona skuggar ~${Math.round((1-TREE_TRANS[month])*100)}% denna månad`;
     el.querySelector('.v3d').addEventListener('click',()=>
@@ -1570,6 +1627,24 @@ function renderVenues(skipped){
   });
 }
 
+function highlightVenue(i,marks){
+  document.querySelectorAll('.venue.hl').forEach(e=>e.classList.remove('hl'));
+  document.querySelectorAll('.nummark.hl').forEach(e=>e.classList.remove('hl'));
+  const el=document.getElementById('vcard-'+i);
+  if(el){
+    el.classList.add('hl');
+    el.scrollIntoView({behavior:'smooth',block:'center'});
+  }
+  const mk=(marks||window._huMarks||[])[i];
+  if(mk&&mk._icon){
+    const d=mk._icon.querySelector('.nummark')||mk._icon.firstElementChild;
+    if(d) d.classList.add('hl');
+  }
+  clearTimeout(highlightVenue._t);
+  highlightVenue._t=setTimeout(()=>{
+    document.querySelectorAll('.venue.hl,.nummark.hl').forEach(e=>e.classList.remove('hl'));
+  },2600);
+}
 function renderFavList(){
   const el=document.getElementById('favList');
   if(!el) return;
@@ -1595,6 +1670,28 @@ function matchVenueName(line){
 /* ---------- Init ---------- */
 map=L.map('map').setView([59.306,18.001],15);   // Aspudden tills position fås
 let posDot=null;
+const LocBtn=L.Control.extend({
+  options:{position:'topleft'},
+  onAdd:function(){
+    const b=L.DomUtil.create('div','locbtn');
+    b.innerHTML='<svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="7"/><circle cx="12" cy="12" r="2.4" fill="currentColor" stroke="none"/><line x1="12" y1="1.5" x2="12" y2="4.5"/><line x1="12" y1="19.5" x2="12" y2="22.5"/><line x1="1.5" y1="12" x2="4.5" y2="12"/><line x1="19.5" y1="12" x2="22.5" y2="12"/></svg>';
+    b.title='Centrera på min plats';
+    L.DomEvent.disableClickPropagation(b);
+    b.addEventListener('click',()=>{
+      if(!navigator.geolocation) return;
+      b.classList.add('busy');
+      navigator.geolocation.getCurrentPosition(p=>{
+        b.classList.remove('busy');
+        const ll=[p.coords.latitude,p.coords.longitude];
+        map.setView(ll,16);
+        if(posDot) map.removeLayer(posDot);
+        posDot=L.circleMarker(ll,{radius:7,color:'#fff',weight:2.5,
+          fillColor:'#2a6fbb',fillOpacity:1}).addTo(map).bindTooltip('Du är här');
+      },()=>b.classList.remove('busy'),{enableHighAccuracy:true,timeout:8000});
+    });
+    return b;
+  }
+});
 if(navigator.geolocation){
   navigator.geolocation.getCurrentPosition(p=>{
     const ll=[p.coords.latitude,p.coords.longitude];
@@ -1632,6 +1729,9 @@ map.on('click',ev=>{P=ev.latlng;startAnalysis(true);});
   for(let d=0.5;d<=18;d+=0.5)
     document.getElementById('listDur').add(new Option((d%1?d.toFixed(1).replace('.',','):d)+' h',d));
   document.getElementById('listDur').value=2;
+  const mt=document.getElementById('maxTravel');
+  for(let m2=1;m2<=60;m2++) mt.add(new Option('≤ '+m2+' min',m2));
+  mt.value=10;
   document.getElementById('listDate').value=listDateStr;
   for(let h2=6;h2<=21.5;h2+=0.5)
     document.getElementById('listFrom').add(new Option(fmtHH(h2),h2));
@@ -1664,7 +1764,10 @@ map.on('click',ev=>{P=ev.latlng;startAnalysis(true);});
   document.getElementById('nowBtn').addEventListener('click',()=>{
     listStartH=null;
     listDateStr=new Date().toISOString().slice(0,10);
-    document.getElementById('listDate').value=listDateStr;
+    const mt=document.getElementById('maxTravel');
+  for(let m2=1;m2<=60;m2++) mt.add(new Option('≤ '+m2+' min',m2));
+  mt.value=10;
+  document.getElementById('listDate').value=listDateStr;
     rebuildBands();renderVenues();
   });
   document.querySelectorAll('.modebtn').forEach(b=>b.addEventListener('click',()=>{
