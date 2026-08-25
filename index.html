@@ -81,10 +81,22 @@ input[type=range]{width:100%;margin-top:.5rem;accent-color:var(--sun-deep)}
 .locbtn.busy{opacity:.5}
 .ctlrow{display:flex;flex-wrap:nowrap;align-items:flex-end;gap:.4rem}
 .ctlrow .ctl{min-width:0;flex:1 1 auto}
+.ctlrow .ctl:first-child{flex:0 0 auto}
+.ctlrow .ctl:nth-child(2){flex:0 1 auto;min-width:4.3rem}    /* "2 h" behöver inte mycket */
+.ctlrow .ctl:nth-child(3){flex:1 1 0;min-width:5.4rem}       /* "≤ 10 min" ska rymmas helt */
 .ctlrow .lbl{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.ctlrow .dur{width:100%;padding:.4rem .3rem;font-size:.8rem}
-.ctlrow .bigchip{width:100%;justify-content:space-between;padding:.42rem .5rem;font-size:.82rem}
-.sokbtn{flex:0 0 auto;align-self:flex-end}
+.ctlrow .dur{width:100%;padding:.4rem 1.1rem .4rem .4rem;font-size:.76rem;
+  -webkit-appearance:none;appearance:none;text-overflow:clip;
+  background-image:linear-gradient(45deg,transparent 50%,#8d7c5c 50%),
+                   linear-gradient(135deg,#8d7c5c 50%,transparent 50%);
+  background-position:calc(100% - 12px) 52%, calc(100% - 7px) 52%;
+  background-size:5px 5px,5px 5px;background-repeat:no-repeat}
+.ctlrow .bigchip{width:auto;justify-content:space-between;gap:.35rem;padding:.42rem .8ch;font-size:.78rem;
+  white-space:nowrap;overflow:hidden}
+.ctlrow .bigchip #whenLabel{white-space:nowrap;overflow:visible;text-overflow:clip;flex:0 0 auto}
+.ctlrow .bigchip .car{flex:0 0 auto;margin-left:.2rem}
+
+.sokbtn{flex:0 0 auto;align-self:flex-end;padding:.45rem .7rem}
 .chiprow{display:flex;flex-wrap:nowrap;gap:.3rem;overflow-x:auto;
   scrollbar-width:none;-webkit-overflow-scrolling:touch}
 .chiprow::-webkit-scrollbar{display:none}
@@ -130,7 +142,7 @@ input[type=range]{width:100%;margin-top:.5rem;accent-color:var(--sun-deep)}
 #t3band{flex:1;height:16px;border-radius:5px;display:block;margin:0 9px .25rem}
 .ci{width:15px;height:15px;vertical-align:-3px;stroke:currentColor;fill:none;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
 .ci.lg{width:19px;height:19px;vertical-align:-4px}
-.bigchip{font-family:var(--mono);font-size:.88rem;font-weight:500;background:#fff;border:1.5px solid var(--sun-deep);
+.bigchip{font-family:var(--mono);font-size:.88rem;font-weight:500;white-space:nowrap;background:#fff;border:1.5px solid var(--sun-deep);
   color:var(--ink);border-radius:11px;padding:.4rem .75rem;cursor:pointer;user-select:none;
   display:inline-flex;align-items:center;gap:.35rem}
 .bigchip .car{font-size:.55rem;color:var(--sun-deep);transition:.2s}
@@ -296,7 +308,7 @@ select.dur{font-family:var(--mono);font-size:.85rem;padding:.35rem .5rem;border:
 
 <header>
   <svg class="logo-sun"><use href="#i-logosun"/></svg>
-  <h1>Hitta uteserveringen</h1><span class="ver" id="verTag">v0.28</span>
+  <h1>Hitta uteserveringen</h1><span class="ver" id="verTag">v0.35</span>
   <span class="mode" id="modeBadge">letar höjddata …</span>
 </header>
 
@@ -429,7 +441,7 @@ select.dur{font-family:var(--mono);font-size:.85rem;padding:.35rem .5rem;border:
 
 <script>
 "use strict";
-/* ================ HITTA UTESERVERINGEN v0.28 ================
+/* ================ HITTA UTESERVERINGEN v0.35 ================
    Läge A (laser): ray marching mot höjdtiles (tiles/, från
    preprocess.py) + 3D-vy som bygger mesh ur samma tiles.
    Läge B (fallback): OSM via Overpass.
@@ -1498,7 +1510,7 @@ function updateWhenLabel(){
   const idag=new Date().toISOString().slice(0,10);
   if(listStartH==null && listDateStr===idag){ el.textContent='Nu'; return; }
   const [f]=listPeriod();
-  el.textContent=(+listDateStr.slice(8,10))+'/'+(+listDateStr.slice(5,7))+', '+fmtHH(f);
+  el.textContent=(+listDateStr.slice(8,10))+'/'+(+listDateStr.slice(5,7))+' '+fmtHH(f);
 }
 function rebuildBands(){
   if(!lastVenues) return;
