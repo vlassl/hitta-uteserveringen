@@ -316,7 +316,7 @@ select.dur{font-family:var(--mono);font-size:.85rem;padding:.35rem .5rem;border:
     <h1>Hitta uteserveringen</h1>
     <span class="sub">i solen</span>
   </div>
-  <span class="ver" id="verTag">v0.41</span>
+  <span class="ver" id="verTag">v0.42</span>
 </header>
 
 <div id="map"></div>
@@ -448,7 +448,7 @@ select.dur{font-family:var(--mono);font-size:.85rem;padding:.35rem .5rem;border:
 
 <script>
 "use strict";
-/* ================ HITTA UTESERVERINGEN v0.41 ================
+/* ================ HITTA UTESERVERINGEN v0.42 ================
    Läge A (laser): ray marching mot höjdtiles (tiles/, från
    preprocess.py) + 3D-vy som bygger mesh ur samma tiles.
    Läge B (fallback): OSM via Overpass.
@@ -1588,7 +1588,7 @@ function renderVenues(skipped){
     marks.push(mk);
     mk.on('click',()=>highlightVenue(i,marks));
   });
-  window._huMarks=marks;
+  window._huMarks=marks; window._huVenues=vs;
   info.textContent=`Sol ${fmtHH(f)}–${fmtHH(t)} den ${(+listDateStr.slice(8,10))}/${(+listDateStr.slice(5,7))} · ${vs.length} ställen`
     +(skipped?` (${skipped} utanför höjddatan)`:'')
     +' · mest sol, sen kortast restid · kända stängda dolda';
@@ -1603,7 +1603,7 @@ function renderVenues(skipped){
     el.id='vcard-'+i;
     el.addEventListener('click',ev=>{
       if(ev.target.closest('.v3d,.vheart,a')) return;
-      highlightVenue(i);
+      highlightVenue(i,null,true);
     });
     el.innerHTML=`
       <div class="vtop"><span class="rank">${i+1}</span><span class="vname">${v.name}</span>
@@ -1655,13 +1655,17 @@ function renderVenues(skipped){
   });
 }
 
-function highlightVenue(i,marks){
+function highlightVenue(i,marks,panTo){
   document.querySelectorAll('.venue.hl').forEach(e=>e.classList.remove('hl'));
   document.querySelectorAll('.piemark.hl').forEach(e=>e.classList.remove('hl'));
   const el=document.getElementById('vcard-'+i);
   if(el){
     el.classList.add('hl');
-    el.scrollIntoView({behavior:'smooth',block:'center'});
+    if(!panTo) el.scrollIntoView({behavior:'smooth',block:'center'});
+  }
+  if(panTo){
+    const v=(window._huVenues||[])[i];
+    if(v) map.setView([v.lat,v.lng],Math.max(map.getZoom(),17),{animate:true});
   }
   const mk=(marks||window._huMarks||[])[i];
   if(mk&&mk._icon){
