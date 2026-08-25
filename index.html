@@ -211,7 +211,7 @@ select.dur{font-family:var(--mono);font-size:.85rem;padding:.35rem .5rem;border:
 .miniband{flex:1 1 auto;min-width:0;height:24px;border-radius:6px;display:block}
 .sunscore{font-family:var(--mono);font-size:.82rem;font-weight:700;color:#c98a06;
   white-space:nowrap;flex:0 0 auto;text-align:right;line-height:1.1}
-.sunscore .tr{color:#4f8f3f;font-weight:700;margin-left:.18rem}
+.sunscore .tr{display:block;color:#4f8f3f;font-weight:700;font-size:.74rem;line-height:1.05}
 
 .bandhours{display:flex;justify-content:space-between;font-family:var(--mono);font-size:.58rem;
   font-weight:600;color:#8d7c5c;padding-left:1.45rem;margin-top:.1rem;padding-right:3.4rem}
@@ -316,7 +316,7 @@ select.dur{font-family:var(--mono);font-size:.85rem;padding:.35rem .5rem;border:
     <h1>Hitta uteserveringen</h1>
     <span class="sub">i solen</span>
   </div>
-  <span class="ver" id="verTag">v0.42</span>
+  <span class="ver" id="verTag">v0.44</span>
 </header>
 
 <div id="map"></div>
@@ -448,7 +448,7 @@ select.dur{font-family:var(--mono);font-size:.85rem;padding:.35rem .5rem;border:
 
 <script>
 "use strict";
-/* ================ HITTA UTESERVERINGEN v0.42 ================
+/* ================ HITTA UTESERVERINGEN v0.44 ================
    Läge A (laser): ray marching mot höjdtiles (tiles/, från
    preprocess.py) + 3D-vy som bygger mesh ur samma tiles.
    Läge B (fallback): OSM via Overpass.
@@ -1345,6 +1345,9 @@ function parseOH(str){
   }
   return rules.length? {ok:true, rules} : {ok:false};
 }
+function fmtTim(x){    // 2 -> "2h", 0.5 -> "0,5h"
+  return (x%1===0 ? String(x) : x.toFixed(1).replace('.',','))+'h';
+}
 function ohIdag(oh, weekday){
   if(oh.always) return 'dygnet runt';
   let ivs=null;
@@ -1621,7 +1624,7 @@ function renderVenues(skipped){
           v.snapped?'<span class="uteq" title="Punkten låg inne i huset; flyttad till 1,5 m utanför fasadliv. Öppna 3D och klicka på marken för att finjustera.">≈ läge</span>':''}
       </div>
       <div class="bandrow"><canvas class="miniband"></canvas>
-        <span class="sunscore">${sun.toFixed(1).replace('.',',')} h${tree>0?`<b class="tr">+${tree.toFixed(1).replace('.',',')}</b>`:''}</span></div>
+        <span class="sunscore">${fmtTim(sun)}${tree>0?`<b class="tr">+${fmtTim(tree)}</b>`:''}</span></div>
       <div class="bandhours"><span>06</span><span>10</span><span>14</span><span>18</span><span>22</span></div>`;
     listEl.appendChild(el);
     const cv=el.querySelector('canvas');
