@@ -266,7 +266,7 @@ select.dur{font-family:var(--mono);font-size:.85rem;padding:.35rem .5rem;border:
 
 <header>
   <svg class="logo-sun"><use href="#i-logosun"/></svg>
-  <h1>Hitta uteserveringen</h1><span class="ver">v0.15</span>
+  <h1>Hitta uteserveringen</h1><span class="ver">v0.18</span>
   <span class="mode" id="modeBadge">letar höjddata …</span>
 </header>
 
@@ -329,6 +329,7 @@ select.dur{font-family:var(--mono);font-size:.85rem;padding:.35rem .5rem;border:
       <span class="chip on" data-cat="beer"><svg class="ci"><use href="#i-beer"/></svg>Öl</span>
       <span class="chip on" data-cat="wine"><svg class="ci"><use href="#i-wine"/></svg>Vin</span>
       <span class="chip on" data-cat="drinks"><svg class="ci"><use href="#i-drink"/></svg>Drinkar</span>
+      <span class="chip on" data-cat="food"><svg class="ci"><use href="#i-food"/></svg>Mat</span>
       <span class="favsw" id="favSw">Bara favoriter <span class="toggle" id="favTgl"></span></span>
     </div>
     <div class="datainfo" id="listInfo">Panorera kartan dit du är och tryck Sök. Kräver laserraster-läge.</div>
@@ -399,7 +400,7 @@ select.dur{font-family:var(--mono);font-size:.85rem;padding:.35rem .5rem;border:
 
 <script>
 "use strict";
-/* ================ HITTA UTESERVERINGEN v0.15 ================
+/* ================ HITTA UTESERVERINGEN v0.18 ================
    Läge A (laser): ray marching mot höjdtiles (tiles/, från
    preprocess.py) + 3D-vy som bygger mesh ur samma tiles.
    Läge B (fallback): OSM via Overpass.
@@ -434,6 +435,24 @@ function sunPos(date,lat,lng){
 }
 
 /* ---------- WGS84 → SWEREF99 TM ---------- */
+function fromSweref(E,N){
+  const a=6378137,fl=1/298.257222101,e2=fl*(2-fl),n=fl/(2-fl);
+  const ah=a/(1+n)*(1+n*n/4+n**4/64),k0=0.9996,FE=500000,lon0=15*rad;
+  const xi=(N)/(k0*ah), eta=(E-FE)/(k0*ah);
+  const d1=n/2-2*n*n/3+37*n**3/96-n**4/360, d2=n*n/48+n**3/15-437*n**4/1440;
+  const d3=17*n**3/480-37*n**4/840, d4=4397*n**4/161280;
+  const xip=xi-d1*Math.sin(2*xi)*Math.cosh(2*eta)-d2*Math.sin(4*xi)*Math.cosh(4*eta)
+             -d3*Math.sin(6*xi)*Math.cosh(6*eta)-d4*Math.sin(8*xi)*Math.cosh(8*eta);
+  const etap=eta-d1*Math.cos(2*xi)*Math.sinh(2*eta)-d2*Math.cos(4*xi)*Math.sinh(4*eta)
+              -d3*Math.cos(6*xi)*Math.sinh(6*eta)-d4*Math.cos(8*xi)*Math.sinh(8*eta);
+  const phiS=Math.asin(Math.sin(xip)/Math.cosh(etap));
+  const dl=Math.atan2(Math.sinh(etap),Math.cos(xip));
+  const A2=e2+e2*e2+e2**3+e2**4, B2=-(7*e2*e2+17*e2**3+30*e2**4)/6;
+  const C2=(224*e2**3+889*e2**4)/120, D2=-(4279*e2**4)/1260;
+  const si=Math.sin(phiS);
+  const phi=phiS+si*Math.cos(phiS)*(A2+B2*si*si+C2*si**4+D2*si**6);
+  return {lat:phi/rad, lng:(lon0+dl)/rad};
+}
 function toSweref(lat,lon){
   const a=6378137, f=1/298.257222101, e2=f*(2-f), n=f/(2-f);
   const ah=a/(1+n)*(1+n*n/4+n**4/64), k0=0.9996, FE=500000, lon0=15*rad;
@@ -454,12 +473,42 @@ function toSweref(lat,lon){
 
 /* ---------- Höjdtiles ---------- */
 const DEM={ok:false,size:512,fmt:1,keys:new Set(),cache:new Map(),vegSource:''};
+const OV={ok:false};
+function sampleO(E,N){
+  if(!OV.ok) return null;
+  const c=Math.floor((E-OV.e0)/OV.res), r=Math.floor((OV.n1-N)/OV.res);
+  if(c<0||r<0||c>=OV.w||r>=OV.h) return null;
+  const i=(r*OV.w+c)*4, v=OV.data[i]*256+OV.data[i+1];
+  return v===0?null:v/10-100;
+}
 async function loadIndex(){
   try{
     const r=await fetch('tiles/index.json');
     if(!r.ok) throw 0;
     const idx=await r.json();
     DEM.size=idx.tileSize;DEM.vegSource=idx.vegSource||'';DEM.fmt=idx.fmt||1;
+    if(idx.oversikt){
+      const o=idx.oversikt;
+      const img=new Image();
+      img.onload=()=>{
+        const c=document.createElement('canvas');
+        c.width=o.w;c.height=o.h;
+        const cx=c.getContext('2d');cx.drawImage(img,0,0);
+        OV.data=cx.getImageData(0,0,o.w,o.h).data;
+        Object.assign(OV,{ok:true,e0:o.e0,n1:o.n1,res:o.res,w:o.w,h:o.h});
+      };
+      img.src='tiles/oversikt.png';
+    }
+    // täckningsrektanglar (grupperade per sammanhängande låda vore lyx - enkel hull räcker)
+    try{
+      let e0=1e12,e1=-1e12,n0=1e12,n1=-1e12;
+      for(const k of idx.tiles){const [e,n]=k.split('_').map(Number);
+        e0=Math.min(e0,e);e1=Math.max(e1,e+idx.tileSize);
+        n0=Math.min(n0,n);n1=Math.max(n1,n+idx.tileSize);}
+      const sw=fromSweref(e0,n0), ne=fromSweref(e1,n1);
+      L.rectangle([[sw.lat,sw.lng],[ne.lat,ne.lng]],
+        {color:'#e09112',weight:1.5,dashArray:'4 4',fill:false,interactive:false}).addTo(map);
+    }catch(_){}
     idx.tiles.forEach(k=>DEM.keys.add(k));
     DEM.ok=DEM.keys.size>0;
   }catch(_){DEM.ok=false;}
@@ -542,6 +591,17 @@ function horizonAt(E,N,R){
         if(et>eBas) raw.push([eBas,et]);
       }
     }
+    if(OV.ok){
+      let d2=R*1.06;
+      while(d2<30000){
+        const g=sampleO(E+dE*d2,N+dN*d2);
+        if(g!=null){
+          const eb=Math.atan2(g-eyeAbs,d2)/rad;
+          if(eb>mb) mb=eb;
+        }
+        d2*=1.06;
+      }
+    }
     hB[az]=mb;
     // slå ihop överlappande intervall, kapa småglipor < 0.7 grader
     raw.sort((a,b)=>a[0]-b[0]);
@@ -558,7 +618,7 @@ function horizonAt(E,N,R){
 let vegIvG=null;
 function buildHorizonDem(E,N,R){
   const h=horizonAt(E,N,R);
-  if(!h) throw new Error('Här finns ingen höjddata ännu – appen täcker just nu Aspudden, Örnsberg, Mälarhöjden och Vinterviken. Fler områden kommer!');
+  if(!h) throw new Error('Här finns ingen höjddata ännu – panorera mot ett täckt område (gula rutan i kartans hörn visar täckningen). Fler områden kommer!');
   horB=h.hB;vegIvG=h.vegIv;
 }
 
@@ -796,7 +856,7 @@ async function startAnalysis(refetch){
       hint.innerHTML='<span class="spin"></span>Laddar höjdtiles …';
       const {E,N}=toSweref(P.lat,P.lng);
       const nt=await ensureTiles(E,N,R);
-      if(!nt) throw new Error('Här finns ingen höjddata ännu – appen täcker just nu Aspudden, Örnsberg, Mälarhöjden och Vinterviken. Fler områden kommer!');
+      if(!nt) throw new Error('Här finns ingen höjddata ännu – panorera mot ett täckt område (gula rutan i kartans hörn visar täckningen). Fler områden kommer!');
       hint.innerHTML='<span class="spin"></span>Ray marching, 360 riktningar …';
       await new Promise(r=>setTimeout(r,20));
       buildHorizonDem(E,N,R);
@@ -1025,7 +1085,13 @@ function build3d(){
   const para=new THREE.Mesh(new THREE.ConeGeometry(2.8,1.2,10),
     new THREE.MeshLambertMaterial({color:0xf7b32b}));
   para.position.set(0,3.7,0);para.castShadow=true;scene.add(para);
-  T3marker={pole,para,terr};
+  const sun3=new THREE.Mesh(new THREE.SphereGeometry(8,16,16),
+    new THREE.MeshBasicMaterial({color:0xffdE6a}));
+  const glow=new THREE.Mesh(new THREE.SphereGeometry(13,16,16),
+    new THREE.MeshBasicMaterial({color:0xffe9a3,transparent:true,opacity:0.35}));
+  sun3.add(glow);
+  scene.add(sun3);
+  T3marker={pole,para,terr,sun3};
 
   scene.add(new THREE.AmbientLight(0xffffff,0.35));
   const hemi=new THREE.HemisphereLight(0xcfe0ee,0xe8dcc0,0.35);scene.add(hemi);
@@ -1194,6 +1260,13 @@ function parseOH(str){
     rules.push({days,ivs});
   }
   return rules.length? {ok:true, rules} : {ok:false};
+}
+function ohIdag(oh, weekday){
+  if(oh.always) return 'dygnet runt';
+  let ivs=null;
+  for(const r of oh.rules) if(r.days.has(weekday)) ivs=r.ivs;
+  if(ivs===null||!ivs.length) return 'stängt idag';
+  return ivs.map(([a,b])=>fmtHH(a)+'–'+fmtHH(b>=24?b-24:b)).join(', ');
 }
 function ohOpen(oh, weekday, f, t){
   // weekday: 0=må ... 6=sö. Sant om [f,t] ryms i något intervall.
@@ -1387,9 +1460,38 @@ function renderVenues(skipped){
   });
   renderFavList();
   venueLayer.clearLayers();
+  const pieCols={0:'#93a0b4',1:'#7db36a',2:'#f7b32b',3:'#2c3a5c'};
+  function pieIcon(v,i){
+    // Tårtbitar = solbandet under vald period. Periodstart rakt upp, medurs.
+    const qf=Math.max(0,Math.round((f-6)*4)), qt=Math.min(64,Math.round((t-6)*4));
+    const nq=Math.max(1,qt-qf), R2=13, C=14;
+    // slå ihop intilliggande kvartar med samma färg
+    const segs=[];
+    for(let q2=qf;q2<qt;q2++){
+      const col=pieCols[v.band[q2]];
+      if(segs.length&&segs[segs.length-1].col===col) segs[segs.length-1].n++;
+      else segs.push({col,n:1});
+    }
+    let idx=0, paths='';
+    const pt=a=>[C+R2*Math.sin(a), C-R2*Math.cos(a)];
+    for(const sg of segs){
+      const a0=idx/nq*2*Math.PI, a1=(idx+sg.n)/nq*2*Math.PI;
+      idx+=sg.n;
+      if(sg.n===nq){ paths+=`<circle cx="${C}" cy="${C}" r="${R2}" fill="${sg.col}"/>`; continue; }
+      const [x0,y0]=pt(a0),[x1,y1]=pt(a1);
+      paths+=`<path d="M${C},${C} L${x0.toFixed(2)},${y0.toFixed(2)} A${R2},${R2} 0 ${(a1-a0)>Math.PI?1:0} 1 ${x1.toFixed(2)},${y1.toFixed(2)} Z" fill="${sg.col}"/>`;
+    }
+    const html=`<svg width="28" height="28" viewBox="0 0 28 28" style="filter:drop-shadow(0 1px 3px rgba(0,0,0,.35))">
+      <circle cx="${C}" cy="${C}" r="${R2+0.8}" fill="#33281a"/>
+      ${paths}
+      <circle cx="${C}" cy="${C}" r="7.2" fill="#fdf6e8" stroke="#33281a" stroke-width="1.2"/>
+      <text x="${C}" y="${C+3.4}" text-anchor="middle" font-family="'Bricolage Grotesque',sans-serif"
+            font-weight="700" font-size="9.5" fill="#33281a">${i+1}</text>
+    </svg>`;
+    return L.divIcon({className:'',html,iconSize:[28,28],iconAnchor:[14,14]});
+  }
   vs.forEach((v,i)=>{
-    L.marker([v.lat,v.lng],{icon:L.divIcon({className:'',
-        html:`<div class="nummark">${i+1}</div>`,iconSize:[22,22],iconAnchor:[11,11]})})
+    L.marker([v.lat,v.lng],{icon:pieIcon(v,i)})
       .addTo(venueLayer)
       .on('click',()=>{
         const el=document.getElementById('vcard-'+i);
@@ -1417,8 +1519,8 @@ function renderVenues(skipped){
         ${v.outdoor==='yes'?'<span class="ute">uteservering</span>':
           v.outdoor==='no'?'':'<span class="uteq">uteservering?</span>'}
         ${Object.keys(v.cats).map(cc=>`<svg class="ci"><use href="#i-${cc==='food'?'food':cc==='beer'?'beer':'coffee'}"/></svg>`).join(' ')}
-        ${v.ohp.ok?'<span class="ute">öppet</span>':
-          v.oh?`<span class="uteq" title="${v.oh}">öppettid?</span>`:''}
+        ${v.ohp.ok?`<span class="ute">öppet</span><span class="oh">${ohIdag(v.ohp,wd)}</span>`:
+          v.oh?`<span class="uteq" title="${v.oh}">öppettid?</span><span class="oh">${v.oh.slice(0,32)}</span>`:''}
         ${v.manual?'<span class="ute" title="Manuellt placerad i 3D-vyn">✔ läge</span>':
           v.snapped?'<span class="uteq" title="Punkten låg inne i huset; flyttad till 1,5 m utanför fasadliv. Öppna 3D och klicka på marken för att finjustera.">≈ läge</span>':''}
       </div>
