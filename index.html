@@ -109,21 +109,6 @@ input[type=range]{width:100%;margin-top:.5rem;accent-color:var(--sun-deep)}
   box-shadow:0 4px 14px rgba(224,145,18,.35);transition:.15s}
 .piemark.hl{filter:drop-shadow(0 0 7px #e09112) drop-shadow(0 1px 3px rgba(0,0,0,.35));
   transform:scale(1.25);transform-origin:center}
-.locbtn{background:#fff;width:34px;height:34px;border-radius:9px;border:2px solid rgba(51,40,26,.25);
-  display:flex;align-items:center;justify-content:center;cursor:pointer;color:#2a6fbb;
-  box-shadow:0 1px 5px rgba(0,0,0,.3)}
-.locbtn:hover{color:#33281a}
-.locbtn.busy{opacity:.5}
-.ctlrow{display:flex;flex-wrap:nowrap;align-items:flex-end;gap:.4rem}
-.ctlrow .ctl{min-width:0;flex:1 1 auto}
-.ctlrow .lbl{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.ctlrow .dur{width:100%;padding:.4rem .3rem;font-size:.8rem}
-.ctlrow .bigchip{width:100%;justify-content:space-between;padding:.42rem .5rem;font-size:.82rem}
-.sokbtn{flex:0 0 auto;align-self:flex-end}
-.chiprow{display:flex;flex-wrap:nowrap;gap:.3rem;overflow-x:auto;
-  scrollbar-width:none;-webkit-overflow-scrolling:touch}
-.chiprow::-webkit-scrollbar{display:none}
-.chiprow .ci{width:13px;height:13px}
 .legend{display:flex;gap:.75rem;flex-wrap:wrap;font-size:.66rem;font-weight:600;color:#7a6a4d;margin:.5rem 0 .1rem}
 .legend i{display:inline-block;width:11px;height:11px;border-radius:3px;margin-right:.25rem;
   vertical-align:-1px;border:1px solid rgba(51,40,26,.25)}
@@ -142,7 +127,7 @@ input[type=range]{width:100%;margin-top:.5rem;accent-color:var(--sun-deep)}
   width:22px;height:22px;display:flex;align-items:center;justify-content:center;
   font-weight:700;font-size:.7rem;color:#33281a;font-family:'Bricolage Grotesque',sans-serif;
   box-shadow:0 1px 4px rgba(0,0,0,.3)}
-#t3band{flex:1;height:16px;border-radius:5px;display:block;margin-bottom:.25rem}
+#t3band{flex:1;height:16px;border-radius:5px;display:block;margin:0 9px .25rem}
 .ci{width:15px;height:15px;vertical-align:-3px;stroke:currentColor;fill:none;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
 .ci.lg{width:19px;height:19px;vertical-align:-4px}
 .bigchip{font-family:var(--mono);font-size:.88rem;font-weight:500;background:#fff;border:1.5px solid var(--sun-deep);
@@ -311,7 +296,7 @@ select.dur{font-family:var(--mono);font-size:.85rem;padding:.35rem .5rem;border:
 
 <header>
   <svg class="logo-sun"><use href="#i-logosun"/></svg>
-  <h1>Hitta uteserveringen</h1><span class="ver">v0.25</span>
+  <h1>Hitta uteserveringen</h1><span class="ver" id="verTag">v0.28</span>
   <span class="mode" id="modeBadge">letar höjddata …</span>
 </header>
 
@@ -368,13 +353,13 @@ select.dur{font-family:var(--mono);font-size:.85rem;padding:.35rem .5rem;border:
     <div class="controls" style="margin-top:.3rem">
       <span class="favsw" id="favSw">Bara favoriter <span class="toggle" id="favTgl"></span></span>
     </div>
-    <div class="legend">
+    <div class="legend" id="legend" style="display:none">
       <span><i style="background:#f7b32b"></i>sol</span>
-      <span><i style="background:#7db36a"></i>silad sol (träd)</span>
+      <span><i style="background:#7db36a"></i>halvskugga (träd)</span>
       <span><i style="background:#93a0b4"></i>skugga</span>
       <span><i style="background:#2c3a5c"></i>natt</span>
     </div>
-    <div class="datainfo" id="listInfo">Panorera kartan dit du är och tryck Sök. Kräver laserraster-läge.</div>
+    <div class="datainfo" id="listInfo"></div>
     <div id="venueList"></div>
   </div>
 
@@ -393,7 +378,7 @@ select.dur{font-family:var(--mono);font-size:.85rem;padding:.35rem .5rem;border:
       <div id="bandlabels"></div>
     </div>
     <input type="range" id="timeSlider" min="0" max="1439" value="720" step="5">
-    <div class="legend">
+    <div class="legend" id="legend" style="display:none">
       <span><i style="background:var(--sun)"></i> Full sol</span>
       <span><i style="background:var(--tree)"></i> Silad sol (träd)</span>
       <span><i style="background:var(--shadow)"></i> Skugga (hus/terräng)</span>
@@ -444,7 +429,7 @@ select.dur{font-family:var(--mono);font-size:.85rem;padding:.35rem .5rem;border:
 
 <script>
 "use strict";
-/* ================ HITTA UTESERVERINGEN v0.25 ================
+/* ================ HITTA UTESERVERINGEN v0.28 ================
    Läge A (laser): ray marching mot höjdtiles (tiles/, från
    preprocess.py) + 3D-vy som bygger mesh ur samma tiles.
    Läge B (fallback): OSM via Overpass.
@@ -929,6 +914,7 @@ async function startAnalysis(refetch){
     hint.style.display='none';
     for(const id of ['dayCard','intCard','yearCard','setCard'])
       document.getElementById(id).style.display='block';
+    document.getElementById('legend').style.display='flex';
     document.getElementById('datainfo').innerHTML=
       info+` · punkt ${P.lat.toFixed(5)}, ${P.lng.toFixed(5)} · ögonhöjd ${EYE} m · © OpenStreetMap, Lantmäteriet, Stockholms stad`;
   }catch(err){
@@ -1286,8 +1272,15 @@ function listPeriod(){
   f=Math.min(21.5,Math.max(6,f));
   return [f, Math.min(24, f + +document.getElementById('listDur').value)];
 }
-let manPos={};   // manuellt flyttade parasoll: namn -> [E,N]
+let manPos={};    // egna flyttade parasoll (localStorage): namn -> [E,N]
+let curPos={};    // kurerade lägen från repot (lagen.json)
 try{ manPos=JSON.parse(localStorage.getItem('hu_pos')||'{}'); }catch(_){}
+fetch('lagen.json').then(r=>r.ok?r.json():null).then(d=>{
+  if(d&&d.lagen){ curPos=d.lagen; }
+}).catch(()=>{});
+function posFor(namn){                 // eget läge > kurerat > inget
+  return manPos[namn] || curPos[namn] || null;
+}
 function savePos(){ try{localStorage.setItem('hu_pos',JSON.stringify(manPos));}catch(_){} }
 try{ favs=new Set(JSON.parse(localStorage.getItem('hu_favs')||'[]')); }catch(_){}
 function saveFavs(){ try{localStorage.setItem('hu_favs',JSON.stringify([...favs]));}catch(_){} }
@@ -1468,7 +1461,8 @@ async function searchVenues(){
       if(vlat==null) continue;
       const sw=toSweref(vlat,vlng);
       let E,N,manual=false,_snapped=false;
-      if(manPos[t.name]){ [E,N]=manPos[t.name]; manual=true; }
+      const pp=posFor(t.name);
+      if(pp){ [E,N]=pp; manual=true; }
       else {
         const fs=snapOutsideFacade(sw.E,sw.N,polys);   // 1) OSM-fasad + 1,5 m
         if(fs){ E=fs.E; N=fs.N; _snapped=true; }
@@ -1541,6 +1535,7 @@ function renderVenues(skipped){
     return (B.sun+0.5*B.tree)-(A.sun+0.5*A.tree) || travel(a).mins-travel(b).mins;
   });
   renderFavList();
+  document.getElementById('legend').style.display=vs.length?'flex':'none';
   venueLayer.clearLayers();
   const pieCols={0:'#93a0b4',1:'#7db36a',2:'#f7b32b',3:'#2c3a5c'};
   function pieIcon(v,i){
@@ -1603,14 +1598,15 @@ function renderVenues(skipped){
         <a href="${gurl}" target="_blank" rel="noopener"><svg class="ci"><use href="#${M.icon}"/></svg> ${mins} min</a>
         ${v.outdoor==='yes'?'<span class="ute">uteservering</span>':
           v.outdoor==='no'?'':'<span class="uteq">uteservering?</span>'}
-        ${Object.keys(v.cats).map(cc=>`<svg class="ci"><use href="#i-${cc==='food'?'food':cc==='beer'?'beer':'coffee'}"/></svg>`).join(' ')}
+        ${Object.keys(v.cats).map(cc=>({coffee:'i-coffee',beer:'i-beer',wine:'i-wine',drinks:'i-drink',food:'i-food'})[cc])
+          .filter(Boolean).map(ic=>`<svg class="ci"><use href="#${ic}"/></svg>`).join(' ')}
         ${v.ohp.ok?`<span class="ute">öppet</span><span class="oh">${ohIdag(v.ohp,wd)}</span>`:
           v.oh?`<span class="uteq" title="${v.oh}">öppettid?</span><span class="oh">${v.oh.slice(0,32)}</span>`:''}
-        ${v.manual?'<span class="ute" title="Manuellt placerad i 3D-vyn">✔ läge</span>':
+        ${v.manual?`<span class="ute" title="${manPos[v.name]?'Du har placerat parasollet här i 3D-vyn':'Läge kontrollerat och kurerat'}">✔ läge</span>`:
           v.snapped?'<span class="uteq" title="Punkten låg inne i huset; flyttad till 1,5 m utanför fasadliv. Öppna 3D och klicka på marken för att finjustera.">≈ läge</span>':''}
       </div>
       <div class="bandrow"><canvas class="miniband"></canvas>
-        <span class="sunscore">${sun.toFixed(1).replace('.',',')} h<small>${tree>0?('+'+tree.toFixed(1).replace('.',',')+' h träd'):'av '+(t-f).toFixed(1).replace('.',',')+' h'}</small></span></div>
+        <span class="sunscore">${sun.toFixed(1).replace('.',',')} h<small>${tree>0?('+'+tree.toFixed(1).replace('.',',')+' h halvskugga'):'av '+(t-f).toFixed(1).replace('.',',')+' h'}</small></span></div>
       <div class="bandhours"><span>06</span><span>10</span><span>14</span><span>18</span><span>22</span></div>`;
     listEl.appendChild(el);
     const cv=el.querySelector('canvas');
@@ -1662,6 +1658,40 @@ function highlightVenue(i,marks){
     document.querySelectorAll('.venue.hl,.piemark.hl').forEach(e=>e.classList.remove('hl'));
   },2600);
 }
+let verTaps=0, verTimer=null;
+function verTapped(){
+  clearTimeout(verTimer);
+  verTimer=setTimeout(()=>{verTaps=0;},1500);
+  if(++verTaps<5) return;
+  verTaps=0;
+  const n=Object.keys(manPos).length;
+  const txt=JSON.stringify({
+    kommentar:'Parasollägen (SWEREF99 TM). Skicka till utvecklaren för kurering.',
+    skapad:new Date().toISOString().slice(0,16).replace('T',' '),
+    lagen:manPos
+  },null,1);
+  const w=document.createElement('div');
+  w.className='card';
+  w.style.cssText='position:fixed;inset:8% 5%;z-index:9999;overflow:auto;box-shadow:0 12px 40px rgba(0,0,0,.35)';
+  w.innerHTML=`<h2>Egna parasollägen (${n} st)</h2>
+    <div class="datainfo">Kopiera texten och skicka in – dina lägen kan då bakas in i appen för alla.</div>
+    <textarea style="width:100%;min-height:38vh;font-family:var(--mono);font-size:.72rem;
+      border:1px solid var(--line);border-radius:9px;padding:.5rem;background:#fff;color:var(--ink)"></textarea>
+    <div class="controls" style="margin-top:.5rem">
+      <button class="okbtn" id="lgCopy">Kopiera</button>
+      <button class="addbtn ghostbtn" id="lgClose">Stäng</button>
+    </div>`;
+  document.body.appendChild(w);
+  const ta=w.querySelector('textarea');
+  ta.value=txt;
+  w.querySelector('#lgCopy').addEventListener('click',()=>{
+    ta.select();
+    (navigator.clipboard?navigator.clipboard.writeText(txt):Promise.reject())
+      .then(()=>{w.querySelector('#lgCopy').textContent='Kopierat ✓';})
+      .catch(()=>{document.execCommand('copy');w.querySelector('#lgCopy').textContent='Kopierat ✓';});
+  });
+  w.querySelector('#lgClose').addEventListener('click',()=>w.remove());
+}
 function renderFavList(){
   const el=document.getElementById('favList');
   if(!el) return;
@@ -1709,6 +1739,7 @@ const LocBtn=L.Control.extend({
     return b;
   }
 });
+map.addControl(new LocBtn());
 if(navigator.geolocation){
   navigator.geolocation.getCurrentPosition(p=>{
     const ll=[p.coords.latitude,p.coords.longitude];
@@ -1754,6 +1785,8 @@ map.on('click',ev=>{P=ev.latlng;startAnalysis(true);});
   for(let h2=6;h2<=21.5;h2+=0.5)
     document.getElementById('listFrom').add(new Option(fmtHH(h2),h2));
   document.getElementById('listBtn').addEventListener('click',searchVenues);
+  const vt=document.getElementById('verTag');
+  if(vt){ vt.style.cursor='pointer'; vt.addEventListener('click',verTapped); }
   document.getElementById('listDur').addEventListener('change',()=>renderVenues());
   document.getElementById('maxTravel').addEventListener('change',()=>renderVenues());
   document.getElementById('whenChip').addEventListener('click',()=>{
