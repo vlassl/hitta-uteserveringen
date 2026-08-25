@@ -208,12 +208,13 @@ select.dur{font-family:var(--mono);font-size:.85rem;padding:.35rem .5rem;border:
 .vmeta .uteq{background:#f3ede0;color:#a08c66;border-radius:5px;padding:.05rem .35rem;font-size:.66rem}
 .vmeta .oh{font-family:var(--mono);font-size:.66rem;font-weight:600;color:#7a6a4d}
 .bandrow{display:flex;align-items:center;gap:.55rem;padding-left:1.45rem}
-.miniband{flex:1;height:24px;border-radius:6px;display:block}
-.sunscore{font-family:var(--mono);font-size:.82rem;font-weight:700;color:#8a5a00;
-  white-space:nowrap;min-width:4rem;text-align:right}
-.sunscore small{display:block;font-size:.6rem;color:#7a6a4d;font-weight:600}
+.miniband{flex:1 1 auto;min-width:0;height:24px;border-radius:6px;display:block}
+.sunscore{font-family:var(--mono);font-size:.82rem;font-weight:700;color:#c98a06;
+  white-space:nowrap;flex:0 0 auto;text-align:right;line-height:1.1}
+.sunscore .tr{color:#4f8f3f;font-weight:700;margin-left:.18rem}
+
 .bandhours{display:flex;justify-content:space-between;font-family:var(--mono);font-size:.58rem;
-  font-weight:600;color:#8d7c5c;padding-left:1.45rem;margin-top:.1rem;padding-right:4.6rem}
+  font-weight:600;color:#8d7c5c;padding-left:1.45rem;margin-top:.1rem;padding-right:3.4rem}
 /* ---- 3D-vy ---- */
 #t3overlay{display:none;position:fixed;inset:0;z-index:50;background:rgba(51,40,26,.55);align-items:center;justify-content:center;padding:.8rem}
 .t3box{background:var(--card);border-radius:16px;width:100%;max-width:480px;overflow:hidden;box-shadow:0 10px 40px rgba(0,0,0,.35)}
@@ -315,7 +316,7 @@ select.dur{font-family:var(--mono);font-size:.85rem;padding:.35rem .5rem;border:
     <h1>Hitta uteserveringen</h1>
     <span class="sub">i solen</span>
   </div>
-  <span class="ver" id="verTag">v0.40</span>
+  <span class="ver" id="verTag">v0.41</span>
 </header>
 
 <div id="map"></div>
@@ -447,7 +448,7 @@ select.dur{font-family:var(--mono);font-size:.85rem;padding:.35rem .5rem;border:
 
 <script>
 "use strict";
-/* ================ HITTA UTESERVERINGEN v0.40 ================
+/* ================ HITTA UTESERVERINGEN v0.41 ================
    Läge A (laser): ray marching mot höjdtiles (tiles/, från
    preprocess.py) + 3D-vy som bygger mesh ur samma tiles.
    Läge B (fallback): OSM via Overpass.
@@ -1620,7 +1621,7 @@ function renderVenues(skipped){
           v.snapped?'<span class="uteq" title="Punkten låg inne i huset; flyttad till 1,5 m utanför fasadliv. Öppna 3D och klicka på marken för att finjustera.">≈ läge</span>':''}
       </div>
       <div class="bandrow"><canvas class="miniband"></canvas>
-        <span class="sunscore">${sun.toFixed(1).replace('.',',')} h<small>${tree>0?('+'+tree.toFixed(1).replace('.',',')+' h halvskugga'):'av '+(t-f).toFixed(1).replace('.',',')+' h'}</small></span></div>
+        <span class="sunscore">${sun.toFixed(1).replace('.',',')} h${tree>0?`<b class="tr">+${tree.toFixed(1).replace('.',',')}</b>`:''}</span></div>
       <div class="bandhours"><span>06</span><span>10</span><span>14</span><span>18</span><span>22</span></div>`;
     listEl.appendChild(el);
     const cv=el.querySelector('canvas');
