@@ -266,7 +266,7 @@ select.dur{font-family:var(--mono);font-size:.85rem;padding:.35rem .5rem;border:
 
 <header>
   <svg class="logo-sun"><use href="#i-logosun"/></svg>
-  <h1>Hitta uteserveringen</h1><span class="ver">v0.18</span>
+  <h1>Hitta uteserveringen</h1><span class="ver">v0.19</span>
   <span class="mode" id="modeBadge">letar höjddata …</span>
 </header>
 
@@ -400,7 +400,7 @@ select.dur{font-family:var(--mono);font-size:.85rem;padding:.35rem .5rem;border:
 
 <script>
 "use strict";
-/* ================ HITTA UTESERVERINGEN v0.18 ================
+/* ================ HITTA UTESERVERINGEN v0.19 ================
    Läge A (laser): ray marching mot höjdtiles (tiles/, från
    preprocess.py) + 3D-vy som bygger mesh ur samma tiles.
    Läge B (fallback): OSM via Overpass.
@@ -1014,7 +1014,7 @@ function build3d(){
   renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;
   wrap.appendChild(renderer.domElement);
   const scene=new THREE.Scene();
-  const cam=new THREE.PerspectiveCamera(50,W/H,1,1500);
+  const cam=new THREE.PerspectiveCamera(50,W/H,1,40000);
   const {E,N}=t3pos;
   const half=T3SZ/2;
 
@@ -1041,6 +1041,25 @@ function build3d(){
     }
   }
   geo.computeVertexNormals();
+  scene.fog=new THREE.Fog(0xd9e4f0, 3500, 30000);
+  // Fjärrterräng: grov mark ur översiktslagret (24x24 km), utan skuggor
+  if(OV.ok){
+    const FAR=24000, FN=160;
+    const fg=new THREE.PlaneGeometry(FAR,FAR,FN,FN);
+    fg.rotateX(-Math.PI/2);
+    const fp=fg.attributes.position;
+    for(let iy=0;iy<=FN;iy++){
+      for(let ix=0;ix<=FN;ix++){
+        const vx=-FAR/2+ix*(FAR/FN), vz=-FAR/2+iy*(FAR/FN);
+        const g=sampleO(E+vx, N-vz);
+        fp.setY(iy*(FN+1)+ix, (g==null?0:g)-z0-1.5);
+      }
+    }
+    fg.computeVertexNormals();
+    const far=new THREE.Mesh(fg,new THREE.MeshLambertMaterial({color:0xccc0a2}));
+    far.receiveShadow=false; far.castShadow=false;
+    scene.add(far);
+  }
   const tmat=new THREE.MeshLambertMaterial({color:0xd9cdb4});
   // Ortotextur om tex_<key>.jpg finns (draperas över terräng OCH tak saknar - taken förblir enfärgade boxar)
   loadOrtoTexture(E,N).then(tex=>{ if(tex&&T3){ tmat.map=tex; tmat.color.set(0xffffff); tmat.needsUpdate=true; } });
@@ -1085,10 +1104,10 @@ function build3d(){
   const para=new THREE.Mesh(new THREE.ConeGeometry(2.8,1.2,10),
     new THREE.MeshLambertMaterial({color:0xf7b32b}));
   para.position.set(0,3.7,0);para.castShadow=true;scene.add(para);
-  const sun3=new THREE.Mesh(new THREE.SphereGeometry(8,16,16),
-    new THREE.MeshBasicMaterial({color:0xffdE6a}));
-  const glow=new THREE.Mesh(new THREE.SphereGeometry(13,16,16),
-    new THREE.MeshBasicMaterial({color:0xffe9a3,transparent:true,opacity:0.35}));
+  const sun3=new THREE.Mesh(new THREE.SphereGeometry(170,20,20),
+    new THREE.MeshBasicMaterial({color:0xffde6a,fog:false}));
+  const glow=new THREE.Mesh(new THREE.SphereGeometry(300,20,20),
+    new THREE.MeshBasicMaterial({color:0xffe9a3,transparent:true,opacity:0.3,fog:false}));
   sun3.add(glow);
   scene.add(sun3);
   T3marker={pole,para,terr,sun3};
