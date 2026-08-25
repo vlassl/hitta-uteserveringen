@@ -72,13 +72,19 @@ button.ghost{background:transparent;border:1.5px solid var(--line);color:#8d7c5c
 input[type=range]{width:100%;margin-top:.5rem;accent-color:var(--sun-deep)}
 .venue.hl{outline:2.5px solid var(--sun-deep);outline-offset:1px;
   box-shadow:0 4px 14px rgba(224,145,18,.35);transition:.15s}
-.nummark.hl{filter:drop-shadow(0 0 7px #e09112) drop-shadow(0 1px 3px rgba(0,0,0,.35));
+.piemark.hl{filter:drop-shadow(0 0 7px #e09112) drop-shadow(0 1px 3px rgba(0,0,0,.35));
   transform:scale(1.25);transform-origin:center}
 .locbtn{background:#fff;width:34px;height:34px;border-radius:9px;border:2px solid rgba(51,40,26,.25);
   display:flex;align-items:center;justify-content:center;cursor:pointer;color:#2a6fbb;
   box-shadow:0 1px 5px rgba(0,0,0,.3)}
 .locbtn:hover{color:#33281a}
 .locbtn.busy{opacity:.5}
+.ctlrow{display:flex;flex-wrap:nowrap;align-items:flex-end;gap:.4rem}
+.ctlrow .ctl{min-width:0;flex:1 1 auto}
+.ctlrow .lbl{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ctlrow .dur{width:100%;padding:.4rem .3rem;font-size:.8rem}
+.ctlrow .bigchip{width:100%;justify-content:space-between;padding:.42rem .5rem;font-size:.82rem}
+.sokbtn{flex:0 0 auto;align-self:flex-end}
 .chiprow{display:flex;flex-wrap:nowrap;gap:.3rem;overflow-x:auto;
   scrollbar-width:none;-webkit-overflow-scrolling:touch}
 .chiprow::-webkit-scrollbar{display:none}
@@ -101,13 +107,19 @@ input[type=range]{width:100%;margin-top:.5rem;accent-color:var(--sun-deep)}
 #listCard{position:relative}
 .venue.hl{outline:2.5px solid var(--sun-deep);outline-offset:1px;
   box-shadow:0 4px 14px rgba(224,145,18,.35);transition:.15s}
-.nummark.hl{filter:drop-shadow(0 0 7px #e09112) drop-shadow(0 1px 3px rgba(0,0,0,.35));
+.piemark.hl{filter:drop-shadow(0 0 7px #e09112) drop-shadow(0 1px 3px rgba(0,0,0,.35));
   transform:scale(1.25);transform-origin:center}
 .locbtn{background:#fff;width:34px;height:34px;border-radius:9px;border:2px solid rgba(51,40,26,.25);
   display:flex;align-items:center;justify-content:center;cursor:pointer;color:#2a6fbb;
   box-shadow:0 1px 5px rgba(0,0,0,.3)}
 .locbtn:hover{color:#33281a}
 .locbtn.busy{opacity:.5}
+.ctlrow{display:flex;flex-wrap:nowrap;align-items:flex-end;gap:.4rem}
+.ctlrow .ctl{min-width:0;flex:1 1 auto}
+.ctlrow .lbl{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ctlrow .dur{width:100%;padding:.4rem .3rem;font-size:.8rem}
+.ctlrow .bigchip{width:100%;justify-content:space-between;padding:.42rem .5rem;font-size:.82rem}
+.sokbtn{flex:0 0 auto;align-self:flex-end}
 .chiprow{display:flex;flex-wrap:nowrap;gap:.3rem;overflow-x:auto;
   scrollbar-width:none;-webkit-overflow-scrolling:touch}
 .chiprow::-webkit-scrollbar{display:none}
@@ -299,7 +311,7 @@ select.dur{font-family:var(--mono);font-size:.85rem;padding:.35rem .5rem;border:
 
 <header>
   <svg class="logo-sun"><use href="#i-logosun"/></svg>
-  <h1>Hitta uteserveringen</h1><span class="ver">v0.22</span>
+  <h1>Hitta uteserveringen</h1><span class="ver">v0.25</span>
   <span class="mode" id="modeBadge">letar höjddata …</span>
 </header>
 
@@ -313,15 +325,14 @@ select.dur{font-family:var(--mono);font-size:.85rem;padding:.35rem .5rem;border:
 
   <div class="card" id="listCard">
     <h2>Soliga uteserveringar nära kartans mitt<span class="setbtn" id="setBtn" title="Inställningar"><svg class="ci lg"><use href="#i-gear"/></svg></span></h2>
-    <div class="controls">
+    <div class="controls ctlrow">
       <span class="ctl"><span class="lbl">När?</span>
         <span class="bigchip" id="whenChip"><span id="whenLabel">Nu</span><span class="car">▼</span></span></span>
       <span class="ctl"><span class="lbl">Hur länge?</span>
         <select class="dur" id="listDur"></select></span>
       <span class="ctl"><span class="lbl" id="travelLbl">Gångtid</span>
         <select class="dur" id="maxTravel"></select></span>
-      <span class="ctl"><span class="lbl">&nbsp;</span>
-        <button id="listBtn">Sök</button></span>
+      <button id="listBtn" class="sokbtn">Sök</button>
     </div>
     <div class="popover" id="whenExp">
       <input type="date" id="listDate">
@@ -433,7 +444,7 @@ select.dur{font-family:var(--mono);font-size:.85rem;padding:.35rem .5rem;border:
 
 <script>
 "use strict";
-/* ================ HITTA UTESERVERINGEN v0.22 ================
+/* ================ HITTA UTESERVERINGEN v0.25 ================
    Läge A (laser): ray marching mot höjdtiles (tiles/, från
    preprocess.py) + 3D-vy som bygger mesh ur samma tiles.
    Läge B (fallback): OSM via Overpass.
@@ -1487,6 +1498,14 @@ async function searchVenues(){
   }
 }
 
+function updateWhenLabel(){
+  const el=document.getElementById('whenLabel');
+  if(!el) return;
+  const idag=new Date().toISOString().slice(0,10);
+  if(listStartH==null && listDateStr===idag){ el.textContent='Nu'; return; }
+  const [f]=listPeriod();
+  el.textContent=(+listDateStr.slice(8,10))+'/'+(+listDateStr.slice(5,7))+', '+fmtHH(f);
+}
 function rebuildBands(){
   if(!lastVenues) return;
   for(const v of lastVenues) v.band=venueBand(v.lat,v.lng,v.h.hB,v.h.vegIv);
@@ -1497,9 +1516,7 @@ function renderVenues(skipped){
   if(!lastVenues){ return; }
   if(skipped==null) skipped=lastVenues.skipped||0;
   const [f,tRaw]=listPeriod(), t=Math.min(22,tRaw);
-  document.getElementById('whenLabel').textContent =
-    (listStartH==null && listDateStr===new Date().toISOString().slice(0,10))
-      ? 'Nu' : (+listDateStr.slice(8,10))+'/'+(+listDateStr.slice(5,7))+', '+fmtHH(f);
+  updateWhenLabel();
   const wanted=[...document.querySelectorAll('#listCard .chip.on')].map(x=>x.dataset.cat);
   document.getElementById('favSw').classList.toggle('show',favs.size>0);
   const month=new Date().getMonth();
@@ -1546,7 +1563,7 @@ function renderVenues(skipped){
       const [x0,y0]=pt(a0),[x1,y1]=pt(a1);
       paths+=`<path d="M${C},${C} L${x0.toFixed(2)},${y0.toFixed(2)} A${R2},${R2} 0 ${(a1-a0)>Math.PI?1:0} 1 ${x1.toFixed(2)},${y1.toFixed(2)} Z" fill="${sg.col}"/>`;
     }
-    const html=`<svg class="nummark" width="28" height="28" viewBox="0 0 28 28" style="filter:drop-shadow(0 1px 3px rgba(0,0,0,.35))">
+    const html=`<svg class="piemark" width="28" height="28" viewBox="0 0 28 28" style="filter:drop-shadow(0 1px 3px rgba(0,0,0,.35))">
       <circle cx="${C}" cy="${C}" r="${R2+0.8}" fill="#33281a"/>
       ${paths}
       <circle cx="${C}" cy="${C}" r="7.2" fill="#fdf6e8" stroke="#33281a" stroke-width="1.2"/>
@@ -1629,7 +1646,7 @@ function renderVenues(skipped){
 
 function highlightVenue(i,marks){
   document.querySelectorAll('.venue.hl').forEach(e=>e.classList.remove('hl'));
-  document.querySelectorAll('.nummark.hl').forEach(e=>e.classList.remove('hl'));
+  document.querySelectorAll('.piemark.hl').forEach(e=>e.classList.remove('hl'));
   const el=document.getElementById('vcard-'+i);
   if(el){
     el.classList.add('hl');
@@ -1637,12 +1654,12 @@ function highlightVenue(i,marks){
   }
   const mk=(marks||window._huMarks||[])[i];
   if(mk&&mk._icon){
-    const d=mk._icon.querySelector('.nummark')||mk._icon.firstElementChild;
+    const d=mk._icon.querySelector('.piemark')||mk._icon.firstElementChild;
     if(d) d.classList.add('hl');
   }
   clearTimeout(highlightVenue._t);
   highlightVenue._t=setTimeout(()=>{
-    document.querySelectorAll('.venue.hl,.nummark.hl').forEach(e=>e.classList.remove('hl'));
+    document.querySelectorAll('.venue.hl,.piemark.hl').forEach(e=>e.classList.remove('hl'));
   },2600);
 }
 function renderFavList(){
@@ -1733,18 +1750,28 @@ map.on('click',ev=>{P=ev.latlng;startAnalysis(true);});
   for(let m2=1;m2<=60;m2++) mt.add(new Option('≤ '+m2+' min',m2));
   mt.value=10;
   document.getElementById('listDate').value=listDateStr;
+  document.getElementById('listFrom').add(new Option('Nu (automatiskt)',''));
   for(let h2=6;h2<=21.5;h2+=0.5)
     document.getElementById('listFrom').add(new Option(fmtHH(h2),h2));
   document.getElementById('listBtn').addEventListener('click',searchVenues);
   document.getElementById('listDur').addEventListener('change',()=>renderVenues());
   document.getElementById('maxTravel').addEventListener('change',()=>renderVenues());
   document.getElementById('whenChip').addEventListener('click',()=>{
+    document.getElementById('listDate').value=listDateStr;
+    document.getElementById('listFrom').value =
+      listStartH==null ? '' : String(listStartH);
     document.getElementById('whenExp').classList.toggle('open');
     document.getElementById('whenChip').classList.toggle('openp');
     document.getElementById('setExp').classList.remove('open');
     document.getElementById('setBtn').classList.remove('on');
   });
   document.getElementById('whenOk').addEventListener('click',()=>{
+    const dv=document.getElementById('listDate').value;
+    const fv=document.getElementById('listFrom').value;
+    if(dv) listDateStr=dv;
+    listStartH = fv==='' ? listStartH : +fv;
+    updateWhenLabel();
+    rebuildBands();renderVenues();
     document.getElementById('whenExp').classList.remove('open');
     document.getElementById('whenChip').classList.remove('openp');
   });
@@ -1756,18 +1783,18 @@ map.on('click',ev=>{P=ev.latlng;startAnalysis(true);});
   });
   document.getElementById('listDate').addEventListener('change',e=>{
     listDateStr=e.target.value||listDateStr;
-    rebuildBands();renderVenues();
+    updateWhenLabel();rebuildBands();renderVenues();
   });
   document.getElementById('listFrom').addEventListener('change',e=>{
-    listStartH=+e.target.value;renderVenues();
+    listStartH = e.target.value==='' ? null : +e.target.value;
+    updateWhenLabel();renderVenues();
   });
   document.getElementById('nowBtn').addEventListener('click',()=>{
     listStartH=null;
     listDateStr=new Date().toISOString().slice(0,10);
-    const mt=document.getElementById('maxTravel');
-  for(let m2=1;m2<=60;m2++) mt.add(new Option('≤ '+m2+' min',m2));
-  mt.value=10;
-  document.getElementById('listDate').value=listDateStr;
+    document.getElementById('listDate').value=listDateStr;
+    document.getElementById('listFrom').value='';
+    updateWhenLabel();
     rebuildBands();renderVenues();
   });
   document.querySelectorAll('.modebtn').forEach(b=>b.addEventListener('click',()=>{
