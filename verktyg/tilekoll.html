@@ -11,7 +11,16 @@
 html{background:#fdf6e8}
 body{font-family:system-ui;margin:0;color:#33281a;background:#fdf6e8}
 #map{height:55vh}
-#out{padding:1rem;font-family:ui-monospace,monospace;font-size:.85rem;line-height:1.8;white-space:pre}
+#panel{display:flex;gap:1rem;padding:1rem;flex-wrap:wrap;align-items:flex-start}
+#hm{border:1px solid #d9cdb4;border-radius:8px;cursor:crosshair;image-rendering:pixelated;
+  width:300px;height:300px;background:#fdf6e8}
+#side{flex:1;min-width:280px}
+#out{font-family:ui-monospace,monospace;font-size:.8rem;line-height:1.7;white-space:pre-wrap}
+#clusters{font-family:ui-monospace,monospace;font-size:.78rem;margin-top:.8rem;line-height:1.6}
+#clusters .big{color:#b3402a;font-weight:700}
+#clusters table{border-collapse:collapse;margin-top:.3rem}
+#clusters td,#clusters th{border:1px solid #e4d9bd;padding:.15rem .45rem;text-align:right}
+#clusters th{background:#f6efe0}
 b{color:#e09112}
 .flag{font-weight:700}
 .flag.yes{color:#3f8a4f}.flag.no{color:#b3402a}
@@ -19,7 +28,14 @@ b{color:#e09112}
 </head>
 <body>
 <div id="map"></div>
-<div id="out">Klicka på kartan (t.ex. mitt på Libertins tak) så visas exakt vad appen läser ur tilesen där.</div>
+<div id="panel">
+  <canvas id="hm" width="300" height="300"></canvas>
+  <div id="side">
+    <div id="out">Klicka på kartan så ritas en höjdkarta 300×300 m och avvikande
+    strukturer mäts upp automatiskt.</div>
+    <div id="clusters"></div>
+  </div>
+</div>
 <script>
 "use strict";
 const rad=Math.PI/180;
@@ -67,11 +83,101 @@ fetch('tiles/index.json').then(r=>r.json()).then(idx=>{
   document.getElementById('out').textContent=
     `index.json: fmt=${FMT}, ${idx.tiles.length} tiles. Klicka på kartan!`;
 });
+const HM=300;   // meter (1 px = 1 m)
+async function ritaHojdkarta(E0,N0){
+  const cv=document.getElementById('hm'), cx=cv.getContext('2d');
+  const img=cx.createImageData(HM,HM);
+  const e0=Math.round(E0-HM/2), n1=Math.round(N0+HM/2);
+  const hard=new Float32Array(HM*HM).fill(NaN);
+  const bh=new Float32Array(HM*HM).fill(NaN);
+  const isB=new Uint8Array(HM*HM);
+  // ladda alla berörda tiles
+  const behov=new Set();
+  const te0=Math.floor(e0/SIZE)*SIZE, te1=Math.floor((e0+HM)/SIZE)*SIZE;
+  const tn0=Math.floor((n1-HM)/SIZE)*SIZE, tn1=Math.floor(n1/SIZE)*SIZE;
+  for(let e=te0;e<=te1;e+=SIZE) for(let n=tn0;n<=tn1;n+=SIZE)
+    behov.add(e+'_'+n);
+  const data={};
+  for(const k of behov) data[k]=await tile(k);
+  let mn=1e9,mx=-1e9;
+  for(let r=0;r<HM;r++){
+    for(let c=0;c<HM;c++){
+      const E=e0+c+0.5, N=n1-r-0.5;
+      const te=Math.floor(E/SIZE)*SIZE, tn=Math.floor(N/SIZE)*SIZE;
+      const t=data[te+'_'+tn]; if(!t||!t[0]) continue;
+      const [d,b]=t;
+      const px=Math.floor(E)-te, py=(tn+SIZE-1)-Math.floor(N);
+      const i=(py*SIZE+px)*4, v=d[i]*256+d[i+1];
+      if(v===0) continue;
+      const h=v/10-100;
+      hard[r*HM+c]=h; mn=Math.min(mn,h); mx=Math.max(mx,h);
+      if(b){ isB[r*HM+c]= b[i+1]>127?1:0; bh[r*HM+c]=b[i+2]*0.5; }
+    }
+  }
+  // färgskala
+  for(let i=0;i<HM*HM;i++){
+    const h=hard[i], o=i*4;
+    if(isNaN(h)){ img.data[o]=250;img.data[o+1]=246;img.data[o+2]=232;img.data[o+3]=255; continue; }
+    const t=(h-mn)/Math.max(1e-6,mx-mn);
+    // mark grågrön -> hus gult -> extremt rött
+    img.data[o]  = t>0.85 ? 220 : 60+t*190;
+    img.data[o+1]= t>0.85 ? 60  : 70+t*150;
+    img.data[o+2]= t>0.85 ? 50  : 60+t*40;
+    img.data[o+3]=255;
+  }
+  cx.putImageData(img,0,0);
+  // rutnät var 50 m
+  cx.strokeStyle='rgba(255,255,255,.25)';cx.lineWidth=1;
+  for(let g=50;g<HM;g+=50){cx.beginPath();cx.moveTo(g,0);cx.lineTo(g,HM);cx.moveTo(0,g);cx.lineTo(HM,g);cx.stroke();}
+  cx.strokeStyle='#33281a';cx.beginPath();cx.arc(HM/2,HM/2,5,0,7);cx.stroke();
+
+  // klusteranalys: byggnadspixlar som sticker upp >8 m över lokal takmedian
+  const mark=new Uint8Array(HM*HM);
+  const med=[];
+  for(let i=0;i<HM*HM;i++) if(isB[i]&&!isNaN(bh[i])) med.push(bh[i]);
+  med.sort((a,b)=>a-b);
+  const takmed=med.length?med[Math.floor(med.length/2)]:0;
+  const grans=takmed+8;
+  for(let i=0;i<HM*HM;i++) if(isB[i]&&bh[i]>grans) mark[i]=1;
+  const sedd=new Uint8Array(HM*HM), kluster=[];
+  for(let i=0;i<HM*HM;i++){
+    if(!mark[i]||sedd[i]) continue;
+    const kö=[i]; sedd[i]=1;
+    let n=0,maxh=0,r0=1e9,r1=-1,c0=1e9,c1=-1;
+    while(kö.length){
+      const j=kö.pop(); n++;
+      const r=(j/HM)|0, c=j%HM;
+      maxh=Math.max(maxh,bh[j]);
+      r0=Math.min(r0,r);r1=Math.max(r1,r);c0=Math.min(c0,c);c1=Math.max(c1,c);
+      for(const [dr,dc] of [[1,0],[-1,0],[0,1],[0,-1]]){
+        const rr=r+dr, cc=c+dc;
+        if(rr<0||cc<0||rr>=HM||cc>=HM) continue;
+        const k=rr*HM+cc;
+        if(mark[k]&&!sedd[k]){sedd[k]=1;kö.push(k);}
+      }
+    }
+    kluster.push({n,maxh,br:c1-c0+1,dj:r1-r0+1,c:(c0+c1)/2,r:(r0+r1)/2});
+  }
+  kluster.sort((a,b)=>b.maxh-a.maxh);
+  kluster.slice(0,12).forEach(k=>{
+    cx.strokeStyle='#0b7fd4';cx.lineWidth=1.5;
+    cx.strokeRect(k.c-k.br/2-2,k.r-k.dj/2-2,k.br+4,k.dj+4);
+  });
+  const el=document.getElementById('clusters');
+  el.innerHTML=`<b>Takmedian i rutan: ${takmed.toFixed(1)} m</b> · gräns för avvikelse: ${grans.toFixed(1)} m<br>`+
+    (kluster.length?`<table><tr><th>#</th><th>maxhöjd</th><th>bredd×djup</th><th>pixlar</th></tr>`+
+      kluster.slice(0,10).map((k,i)=>`<tr><td>${i+1}</td>`+
+        `<td class="${k.maxh>takmed+20?'big':''}">${k.maxh.toFixed(1)} m</td>`+
+        `<td>${k.br}×${k.dj} m</td><td>${k.n}</td></tr>`).join('')+`</table>`
+      :'Inga avvikande strukturer i rutan.');
+}
+
 map.on('click',async ev=>{
   const {E,N}=toSweref(ev.latlng.lat,ev.latlng.lng);
   const te=Math.floor(E/SIZE)*SIZE, tn=Math.floor(N/SIZE)*SIZE;
   const key=te+'_'+tn;
   const [d,b]=await tile(key);
+  ritaHojdkarta(E,N);
   if(mk)map.removeLayer(mk);
   mk=L.circleMarker(ev.latlng,{radius:7,color:'#33281a',fillColor:'#f7b32b',fillOpacity:1}).addTo(map);
   const o=document.getElementById('out');

@@ -64,16 +64,28 @@ def main():
         sys.exit('Inga laserrutor hittades i angiven bbox – kontrollera bbox och att området är skannat (Planer och utfall).')
     print(f'{len(hittade)} ruta/rutor täcker området.')
 
-    # 3) Ladda ner LAZ-assets
+    # 3) Välj NYASTE skanningsomgången per ruta (m21c031 > m21c030 osv)
+    basta = {}
     for item in hittade:
         for namn, asset in item.get('assets', {}).items():
             href = asset.get('href', '')
             if not href.lower().endswith(('.laz', '.las', '.copc.laz')):
                 continue
-            fil = os.path.join(a.out, os.path.basename(href.split('?')[0]))
-            if os.path.exists(fil):
-                print('Finns redan:', fil); continue
-            print('Laddar ner', href.split('/')[-1], '…', flush=True)
+            bas = os.path.basename(href.split('?')[0])
+            ruta = bas.split('-')[-1]          # t.ex. "657_67.copc.laz"
+            if ruta not in basta or bas > os.path.basename(basta[ruta].split('?')[0]):
+                basta[ruta] = href
+    print(f'{len(basta)} unika rutor (nyaste omgången vald).')
+
+    # 4) Ladda ner - hoppa rutor som redan finns oavsett omgångsprefix
+    befintliga = os.listdir(a.out) if os.path.isdir(a.out) else []
+    for ruta, href in sorted(basta.items()):
+        if any(b.endswith('-' + ruta) for b in befintliga):
+            print('Finns redan (ruta ' + ruta.split('.')[0] + '), hoppar över.')
+            continue
+        fil = os.path.join(a.out, os.path.basename(href.split('?')[0]))
+        print('Laddar ner', os.path.basename(fil), '…', flush=True)
+        try:
             with s.get(href, stream=True, timeout=600) as dl:
                 dl.raise_for_status()
                 tot = 0
@@ -82,6 +94,10 @@ def main():
                         f.write(chunk); tot += len(chunk)
                         print(f'\r  {tot/1e6:.0f} MB', end='')
             print('  klart.')
+        except Exception as e:
+            print(f'  MISSLYCKADES ({e}) - fortsätter med nästa.')
+            if os.path.exists(fil):
+                os.remove(fil)
     print(f'Klart! Filerna ligger i ./{a.out}/ – kör sedan preprocess.py mot den mappen.')
 
 if __name__ == '__main__':

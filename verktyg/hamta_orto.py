@@ -15,7 +15,7 @@ Om API-adressen skiljer sig från standarden, ange den:
   python hamta_orto.py --user X --password Y --api https://api.lantmateriet.se/stac-bild/v1
 (Rätt adress står på produktens sida "Åtkomst och leverans" i Geotorget.)
 """
-import argparse, os, sys
+import argparse, getpass, os, re, sys, time
 try:
     import requests
 except ImportError:
@@ -24,17 +24,21 @@ except ImportError:
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument('--user', required=True, help='användarnamn för systemkontot (Geotorget)')
-    ap.add_argument('--password', required=True, help='lösenord för systemkontot')
+    ap.add_argument('--password', help='lösenord (utelämna så frågar skriptet dolt)')
     ap.add_argument('--api', default='https://api.lantmateriet.se/stac-bild/v1',
                     help='STAC-API:ets basadress (se Åtkomst och leverans i Geotorget)')
     ap.add_argument('--bbox', nargs=4, type=float,
                     default=[17.985, 59.298, 18.017, 59.315],   # Aspudden/Vapengatan 2 + marginal
                     help='lon_min lat_min lon_max lat_max (WGS84)')
     ap.add_argument('--out', default='orto', help='mapp för nedladdade filer')
+    ap.add_argument('--coll', help='exakt kollektion, t.ex. orto-a2-2024 '
+                    '(annars väljs nyaste för Stockholms län automatiskt)')
+    ap.add_argument('--lan', default='a', help='länsbokstav, a=Stockholm (standard)')
     a = ap.parse_args()
 
+    losen = a.password or getpass.getpass('Lösenord (syns inte): ')
     s = requests.Session()
-    s.auth = (a.user, a.password)
+    s.auth = (a.user, losen)
     os.makedirs(a.out, exist_ok=True)
 
     # 1) Lista kataloger (collections) och hitta laserdata skog
@@ -46,7 +50,23 @@ def main():
     r.raise_for_status()
     colls = [c['id'] for c in r.json().get('collections', [])]
     print('Kataloger i API:et:', ', '.join(colls) or '(inga)')
-    lasercolls = [c for c in colls if 'orto' in c.lower()] or colls
+    # Kollektionerna heter orto-<län><variant>-<år>, t.ex. orto-a2-2024.
+    # A = Stockholms län. Vi tar de NYASTE åren för valt län - att söka i
+    # alla ~650 kollektioner ger 429 (Too Many Requests).
+    if a.coll:
+        lasercolls = [a.coll]
+    else:
+        pat = re.compile(r'^orto-' + re.escape(a.lan.lower()) + r'\d*-(\d{4})$')
+        tr = []
+        for c in colls:
+            m = pat.match(c.lower())
+            if m:
+                tr.append((int(m.group(1)), c))
+        tr.sort(reverse=True)
+        lasercolls = [c for _, c in tr[:4]]       # fyra nyaste årgångarna
+        if not lasercolls:
+            sys.exit('Hittade ingen kollektion för län "%s". Ange --coll manuellt '
+                     '(se listan ovan).' % a.lan)
     print('Söker i:', ', '.join(lasercolls))
 
     # 2) Sök items inom bbox
@@ -54,7 +74,15 @@ def main():
     for coll in lasercolls:
         url = f'{a.api}/search'
         body = {'collections': [coll], 'bbox': a.bbox, 'limit': 100}
-        r = s.post(url, json=body, timeout=60)
+        r = None
+        for forsok in range(4):
+            r = s.post(url, json=body, timeout=90)
+            if r.status_code != 429:
+                break
+            paus = 20 * (forsok + 1)
+            print(f'  (429 Too Many Requests - väntar {paus} s)')
+            time.sleep(paus)
+        time.sleep(2)
         if r.status_code == 404:   # vissa STAC-API:er saknar POST /search
             r = s.get(f'{a.api}/collections/{coll}/items',
                       params={'bbox': ','.join(map(str, a.bbox)), 'limit': 100}, timeout=60)
