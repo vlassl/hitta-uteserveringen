@@ -1,0 +1,37 @@
+{
+ "kommentar": "Kurerade artefakter i laserdatan. Preprocess kapar hårda ytan inom radien r (m) ner till omgivningens takmedian, men bara pixlar högre än minh (m över mark). minh sätts efter vad som verifierats i tilen, med god marginal över kvarterets verkliga tak. Koordinater i SWEREF99 TM.",
+ "artefakter": [
+  {
+   "namn": "Medborgarplatsen, linje NO-SV",
+   "E": 674825,
+   "N": 6579022,
+   "r": 50,
+   "minh": 45,
+   "notering": "Rak stripe E 674787-674864, N 6579015-6579030. 77 m lång, 5-8 m bred, 62-71 m ö mark, lutning ca 10 grader. Korsar tre kvarter och gatorna emellan. Verkliga tak inom radien max 33,5 m. Spänner över tilegränsen E 674816. Kapar 288 px."
+  },
+  {
+   "namn": "Medborgarplatsen, linje N-S",
+   "E": 674862,
+   "N": 6578944,
+   "r": 50,
+   "minh": 35,
+   "notering": "Rak stripe E 674854-674870, N 6578900-6578988. 89 m lang, 17 m bred, 47-52,5 m o mark i byggnadskanalen och 41-58 m i vegetationskanalen. Vinkelrat mot linje NO-SV, moter den vid korsningen. Verkliga tak inom radien max 29 m."
+  },
+  {
+   "namn": "Midsommarkransens skola, linje NV-SO",
+   "E": 671066,
+   "N": 6577660,
+   "r": 50,
+   "minh": 30,
+   "notering": "Rak stripe NV-SO, total utbredning E 671039-671094, N 6577623-6577697. Byggnadsdelen 81 px (47-50 m o mark), vegetationsdelen 171 px (upp till 51 m). r=25 tackte bara mitten - hojd till 50. Inget akta over 20,5 m inom 60 m."
+  },
+  {
+   "namn": "Ostra Medis, kort stump",
+   "E": 675087,
+   "N": 6579020,
+   "r": 20,
+   "minh": 36,
+   "notering": "14 px vegetation, E 675086-675089, N 6579018-6579022, 41-56,5 m o mark. Ligger pa samma latitud som linje NO-SV, 260 m ost darom - mojligen samma foreteelse. Hogsta akta tak 32 m, hogsta akta vegetation 30,5 m."
+  }
+ ]
+}

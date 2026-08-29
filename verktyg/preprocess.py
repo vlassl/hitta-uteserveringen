@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-============================ SOLDYRKAREN PREPROCESS v1.9 ============================
+============================ SOLDYRKAREN PREPROCESS v2.8.4 ============================
 Bygger höjdtiles (PNG) för Soldyrkaren från:
   1. Lantmäteriets laserdata (LAZ, SWEREF99 TM / EPSG:3006, RH2000)
   2. (valfritt) SBK Trädkronehöjd - absolut höjd (GeoTIFF, 50 cm, RH2000)
@@ -26,7 +26,7 @@ Beroenden:
   pip install rasterio           # endast om --sbk används
 =====================================================================================
 """
-import argparse, glob, json, math, os, ssl, sys, urllib.request, urllib.parse
+import argparse, glob, json, math, os, ssl, sys, time, urllib.request, urllib.parse
 
 import numpy as np
 from PIL import Image, ImageDraw
@@ -82,23 +82,51 @@ def en_to_latlon(E, N):
     return math.degrees(phi), math.degrees(_lon0 + dl)
 
 # ---------------- Overpass: byggnadsfotavtryck ----------------
+class OverpassNere(RuntimeError):
+    pass
+
 def fetch_buildings(e0, n0, e1, n1, pad=30):
     """Hämtar byggnadspolygoner (listor av (E,N)) inom SWEREF-bbox."""
     lat0, lon0 = en_to_latlon(e0-pad, n0-pad)
     lat1, lon1 = en_to_latlon(e1+pad, n1+pad)
-    q = (f'[out:json][timeout:60];('
+    q = (f'[out:json][timeout:150];('
          f'way["building"]({lat0},{lon0},{lat1},{lon1});'
          f'relation["building"]["type"="multipolygon"]({lat0},{lon0},{lat1},{lon1});'
          f');out geom;')
-    req = urllib.request.Request('https://overpass-api.de/api/interpreter',
-                                 data=('data='+urllib.parse.quote(q)).encode(),
-                                 headers={'User-Agent': 'Soldyrkaren-preprocess/1.0'})
-    # Python 3.14 kör strikt certvalidering; företagsproxyers certifikat
-    # saknar ofta Authority Key Identifier -> stäng av ENDAST striktheten
+    # Cache: samma block hämtas aldrig två gånger (omkörningar blir gratis)
+    os.makedirs('osm_cache', exist_ok=True)
+    cpath = os.path.join('osm_cache',
+        f'polys_{int(e0)}_{int(n0)}_{int(e1)}_{int(n1)}.json')
+    if os.path.exists(cpath):
+        print('      (byggnader ur cache)')
+        return json.load(open(cpath, encoding='utf-8'))
+
     ctx = ssl.create_default_context()
-    ctx.verify_flags &= ~ssl.VERIFY_X509_STRICT
-    with urllib.request.urlopen(req, timeout=120, context=ctx) as r:
-        data = json.load(r)
+    ctx.verify_flags &= ~ssl.VERIFY_X509_STRICT   # företagsproxy saknar ofta AKI
+    speglar = ['https://overpass-api.de/api/interpreter',
+               'https://overpass.kumi.systems/api/interpreter',
+               'https://overpass.private.coffee/api/interpreter']
+    data = None
+    for forsok in range(4):
+        if forsok:
+            paus = 15 * forsok
+            print(f'      (väntar {paus} s och försöker igen - runda {forsok+1}/4)')
+            time.sleep(paus)
+        for url in speglar:
+            try:
+                req = urllib.request.Request(url,
+                    data=('data='+urllib.parse.quote(q)).encode(),
+                    headers={'User-Agent': 'Soldyrkaren-preprocess/2.1'})
+                with urllib.request.urlopen(req, timeout=180, context=ctx) as r:
+                    data = json.load(r)
+                break
+            except Exception as e:
+                print(f'      ({url.split("/")[2]}: {e})')
+        if data is not None:
+            break
+    if data is None:
+        raise OverpassNere('Overpass onåbar efter 4 rundor')
+    time.sleep(5.0)   # artighet mot gratis-API:t vid blockkörning
     polys = []
     for el in data.get('elements', []):
         geoms = []
@@ -109,6 +137,7 @@ def fetch_buildings(e0, n0, e1, n1, pad=30):
                      if m.get('role') == 'outer' and 'geometry' in m]
         for g in geoms:
             polys.append([latlon_to_en(p['lat'], p['lon']) for p in g])
+    json.dump(polys, open(cpath, 'w', encoding='utf-8'))
     return polys
 
 def rasterize_mask(polys, e0, n_top, W, H):
@@ -138,6 +167,115 @@ def fill_nan(a, iters=15):
                                       p[:-2, 1:-1], p[2:, 1:-1]]), axis=0)
         a[m] = nb[m]
     return a
+
+def las_artefakter(path):
+    """Kurerad lista över felaktiga höga strukturer (master, kranar).
+    Format: {"artefakter":[{"namn":..,"E":..,"N":..,"r":..}]}"""
+    if not path or not os.path.exists(path):
+        return []
+    try:
+        d = json.load(open(path, encoding='utf-8'))
+        a = d.get('artefakter', d if isinstance(d, list) else [])
+        print(f'Artefaktlista: {len(a)} punkter läses in.')
+        return a
+    except Exception as e:
+        print('VARNING: kunde inte läsa artefaktlistan:', e)
+        return []
+
+def kapa_artefakter(hard, bh, bflag, veg, base, e0, n_top, W, H, lista):
+    """Kapar hårda ytan inom angivna radier ner till omgivningens takmedian.
+
+    Ändringar mot v2.7:
+      * cirkelmask i stället för bounding box (r är nu verkligen en radie)
+      * referensmedianen tas ur en ÄKTA ring - artefaktrutan exkluderas
+      * utskriften visar var pixlarna satt och hur högt de stack, så det
+        syns direkt om kapningen tog något utanför den avsedda klumpen
+      * v2.8.2: kapar även VEGETATIONEN. Delar av artefakten som ligger
+        utanför OSM:s byggnadsmask hamnar i vegetationskanalen (allt högt
+        utanför masken tolkas som träd) och överlevde tidigare kapningen
+        som gröna pelare i 3D.
+    """
+    for a in lista:
+        E, N, r = float(a['E']), float(a['N']), float(a.get('r', 40))
+        namn = a.get('namn', '?')
+        minh = a.get('minh')          # absolut golv i m over mark, valfritt
+        c0 = int(E - r - e0); c1 = int(E + r - e0)
+        r0 = int(n_top - (N + r)); r1 = int(n_top - (N - r))
+        if c1 < 0 or r1 < 0 or c0 >= W or r0 >= H:
+            continue
+        c0, c1 = max(0, c0), min(W, c1)
+        r0, r1 = max(0, r0), min(H, r1)
+        if c1 <= c0 or r1 <= r0:
+            continue
+
+        # --- referensnivå: median av byggnadshöjder i ringen r..2r ---------
+        R = int(r * 2)
+        rc0, rc1 = max(0, int(E - R - e0)), min(W, int(E + R - e0))
+        rr0, rr1 = max(0, int(n_top - (N + R))), min(H, int(n_top - (N - R)))
+        ringmask = bflag[rr0:rr1, rc0:rc1].copy()
+        ringmask[r0 - rr0:r1 - rr0, c0 - rc0:c1 - rc0] = False   # bort med mitten
+        ring = bh[rr0:rr1, rc0:rc1][ringmask]
+        ref = float(np.median(ring)) if ring.size > 20 else 12.0
+        if ring.size <= 20:
+            print(f'    artefakt "{namn}": VARNING - bara {ring.size} '
+                  f'byggnadspixlar i ringen, använder reservnivå {ref:.1f} m')
+
+        # --- cirkelmask ----------------------------------------------------
+        yy, xx = np.mgrid[r0:r1, c0:c1]
+        pE = e0 + xx + 0.5                 # pixelcentrum i SWEREF
+        pN = n_top - yy - 0.5
+        inne = (pE - E) ** 2 + (pN - N) ** 2 <= r * r
+
+        sub_h = hard[r0:r1, c0:c1]
+        sub_b = bh[r0:r1, c0:c1]
+        mark = sub_h - sub_b               # marknivå i rutan
+        # Golvet for vad som raknas som artefakt. minh ur listan ar att
+        # foredra: den satts efter vad man faktiskt sett i tilen och kan
+        # laggas hogt over kvarterets verkliga tak, sa inget akta kapas.
+        gran = float(minh) if minh is not None else ref + 6.0
+        m = inne & ~np.isnan(sub_h) & (sub_b > gran)
+
+        # Vegetationsdelen först: en artefakt som helt ligger utanför
+        # byggnadsmasken har INGA byggnadspixlar alls, och fick tidigare
+        # passera orörd eftersom funktionen hoppade vidare innan den kom hit.
+        vsub = veg[r0:r1, c0:c1]
+        bsub = base[r0:r1, c0:c1]
+        mv = inne & (vsub > gran)
+        nv = int(mv.sum())
+        if nv:
+            vfore = float(vsub[mv].max())
+            vsub[mv] = 0.0
+            bsub[mv] = 0.0
+
+        if not m.any():
+            if nv:
+                rv, cv = np.nonzero(mv)
+                print(f'    artefakt "{namn}" (gräns {gran:.1f} m): inga '
+                      f'byggnadspixlar, {nv} vegetationspixlar nollade '
+                      f'(högsta krontopp var {vfore:.1f} m) '
+                      f'[E {e0+c0+int(cv.min()):.0f}-{e0+c0+int(cv.max()):.0f}, '
+                      f'N {n_top-(r0+int(rv.max())):.0f}-'
+                      f'{n_top-(r0+int(rv.min())):.0f}]')
+            else:
+                print(f'    artefakt "{namn}": inget att kapa (ref {ref:.1f} m, '
+                      f'gräns {gran:.1f} m)')
+            continue
+
+        fore = float(np.nanmax(sub_b[m]))
+        sub_h[m] = mark[m] + ref
+        sub_b[m] = ref
+
+        rs, cs = np.nonzero(m)
+        Emin = e0 + c0 + int(cs.min()); Emax = e0 + c0 + int(cs.max())
+        Nmax = n_top - (r0 + int(rs.min())); Nmin = n_top - (r0 + int(rs.max()))
+        print(f'    artefakt "{namn}" (gräns {gran:.1f} m): {int(m.sum())} px kapade '
+              f'{fore:.1f} -> {ref:.1f} m över mark  '
+              f'[E {Emin:.0f}-{Emax:.0f}, N {Nmin:.0f}-{Nmax:.0f}, '
+              f'{Emax-Emin+1}x{Nmax-Nmin+1} m]')
+        if nv:
+            print(f'      + {nv} vegetationspixlar nollade '
+                  f'(högsta krontopp var {vfore:.1f} m över hård yta)')
+    return hard, bh, veg, base
 
 def despike(a, thr, iters=2):
     """Kapar enstaka pixlar som sticker upp mer än thr över grannarnas max."""
@@ -187,8 +325,13 @@ def merge_into(path, hard, veg, base=None, bflag=None, bh=None):
         else:
             b0 = np.zeros_like(veg); f0 = np.zeros(veg.shape, bool); bh0 = np.zeros_like(veg)
         hard = np.where(np.isnan(hard), h0, np.where(np.isnan(h0), hard, np.maximum(hard, h0)))
+        nyveg = veg                    # den här körningens vegetation, före merge
         veg = np.maximum(veg, v0)
-        base = np.minimum(base, b0)   # konservativt: lägsta basen vinner
+        # Kronbasen tas som minimum ENDAST där körningen faktiskt har
+        # vegetation. Utan villkoret raderar en körning utan data i rutan
+        # den befintliga kronbasen (min(0, gammalt) = 0), vilket gör träden
+        # massiva ner till marken i grannrutor som aldrig skulle röras.
+        base = np.where(nyveg > 0, np.minimum(base, b0), b0)
         bflag = bflag | f0
         bh = np.maximum(bh, bh0)
     Image.fromarray(encode_tile(hard, veg)).save(path, optimize=True)
@@ -263,6 +406,8 @@ def copc_query_robust(path, bbox):
             np.asarray(pts.classification)[m],
             np.asarray(pts.intensity)[m].astype(np.float64))
 
+ARTEFAKTER = []
+INTENSITET = False   # --intensitet slår på svartvit laserintensitet som textur
 SNABB = True    # --helskanning tvingar chunkskanning (facit-metoden).
                 # Voxelbuggen i LM:s filer är löst (dubbel konvention,
                 # se copcdiff2) men rimlighetskollen nedan vakar ändå.
@@ -271,14 +416,9 @@ def load_points(path, bbox):
     import laspy
     if bbox and path.lower().endswith('.copc.laz'):
         if SNABB:
-            res = copc_query_robust(path, bbox)
-            if res is None:
-                return None
-            expected = (bbox[2]-bbox[0]) * (bbox[3]-bbox[1]) * 0.2
-            if len(res[0]) >= expected:
-                return res
-            print(f'    nodvalet gav bara {len(res[0])} punkter '
-                  f'(förväntat >{expected:.0f}) - chunkskanning istället ...')
+            # Nodvalet är verifierat mot helskanning (identiska punktantal);
+            # låg täthet betyder vatten, inte fel. --helskanning för felsökning.
+            return copc_query_robust(path, bbox)
         return chunk_scan(path, bbox)
     las = laspy.read(path)
     x = np.asarray(las.x); y = np.asarray(las.y); z = np.asarray(las.z)
@@ -357,7 +497,13 @@ def process_laz(path, outdir, use_osm, keys, bbox=None):
 
     if use_osm:
         print('    hämtar byggnadsfotavtryck (Overpass) ...', flush=True)
-        bmask = rasterize_mask(fetch_buildings(e0, n0, e0 + W, n_top), e0, n_top, W, H)
+        try:
+            bmask = rasterize_mask(fetch_buildings(e0, n0, e0 + W, n_top),
+                                   e0, n_top, W, H)
+        except OverpassNere:
+            print('    BLOCKET HOPPAS ÖVER (Overpass nere) - inga tiles skrivs'
+                  ' här, kör om samma kommando senare så fylls det i.')
+            return 'OSM_NERE'
     else:
         bmask = np.zeros((H, W), dtype=bool)
 
@@ -388,6 +534,10 @@ def process_laz(path, outdir, use_osm, keys, bbox=None):
     bflag = bmask & ~np.isnan(hard) & ~np.isnan(dtm) & (hard - dtm >= 2.0)
     bh = np.where(bflag, np.clip(hard - dtm, 0, 127), 0.0)
 
+    if ARTEFAKTER:
+        hard, bh, veg, base = kapa_artefakter(
+            hard, bh, bflag, veg, base, e0, n_top, W, H, ARTEFAKTER)
+
     hard[np.isnan(dtm)] = np.nan  # utanför laserdata = nodata
 
     # Punkt 12: intensitetstextur (svartvit "flygfoto"-fallback tills orto finns)
@@ -416,10 +566,11 @@ def process_laz(path, outdir, use_osm, keys, bbox=None):
                 continue
             key = f'{te}_{tn}'
             merge_into(os.path.join(outdir, key + '.png'), th, tv, tb, tf, tbh)
-            tx = os.path.join(outdir, f'tex_{key}.jpg')
-            if not os.path.exists(tx):   # skriv inte över ev. ortotextur
-                Image.fromarray(itex[r0:r0+TILE, c0:c0+TILE]).convert('RGB').resize(
-                    (TILE*2, TILE*2), Image.BILINEAR).save(tx, quality=80)
+            if INTENSITET:      # av som standard: grå mark visar skuggor bäst
+                tx = os.path.join(outdir, f'tex_{key}.jpg')
+                if not os.path.exists(tx):
+                    Image.fromarray(itex[r0:r0+TILE, c0:c0+TILE]).convert('RGB').resize(
+                        (TILE*2, TILE*2), Image.BILINEAR).save(tx, quality=80)
             keys.add(key)
 
 # ---------------- Steg 2: SBK trädkronsraster ersätter laser-vegetation ----------------
@@ -484,21 +635,52 @@ def apply_orto(orto_dir, outdir, keys):
         found = False
         for vrt in vrts:
             b = vrt.bounds
-            if te+TILE < b.left or te > b.right or tn+TILE < b.bottom or tn > b.top:
+            if te+TILE <= b.left or te >= b.right or tn+TILE <= b.bottom or tn >= b.top:
                 continue
-            w = from_bounds(te, tn, te+TILE, tn+TILE, vrt.transform)
+            # Klipp mot rastrets utbredning (WarpedVRT tillåter inte boundless)
+            ce0, cn0 = max(te, b.left), max(tn, b.bottom)
+            ce1, cn1 = min(te+TILE, b.right), min(tn+TILE, b.top)
+            # pixelrutan i måltexturen (rad 0 = norr)
+            px0 = int(round((ce0 - te) * P2 / TILE))
+            px1 = int(round((ce1 - te) * P2 / TILE))
+            py0 = int(round((tn + TILE - cn1) * P2 / TILE))
+            py1 = int(round((tn + TILE - cn0) * P2 / TILE))
+            if px1 - px0 < 1 or py1 - py0 < 1:
+                continue
+            w = from_bounds(ce0, cn0, ce1, cn1, vrt.transform)
             nb = min(3, vrt.count)
-            d = vrt.read(list(range(1, nb+1)), window=w, out_shape=(nb, P2, P2),
-                         boundless=True, fill_value=0)
+            d = vrt.read(list(range(1, nb+1)), window=w,
+                         out_shape=(nb, py1-py0, px1-px0))
             d = np.moveaxis(d, 0, -1)
-            if nb == 1: d = np.repeat(d, 3, axis=-1)
+            if nb == 1:
+                d = np.repeat(d, 3, axis=-1)
+            sub = img[py0:py1, px0:px1]
             m = d.any(axis=-1)
-            img[m] = d[m][..., :3]
+            sub[m] = d[m][..., :3]
             found = True
         if found:
             Image.fromarray(img).save(os.path.join(outdir, f'tex_{key}.jpg'), quality=82)
     for v in vrts: v.close()
     for s0 in srcs: s0.close()
+
+def laddat_index(outdir, keys):
+    """Läser in befintlig index.json så gamla tiles inte glöms vid utbyggnad."""
+    p = os.path.join(outdir, 'index.json')
+    if os.path.exists(p):
+        try:
+            for k in json.load(open(p, encoding='utf-8')).get('tiles', []):
+                keys.add(k)
+            print(f'Befintligt index: {len(keys)} tiles behålls.')
+        except Exception:
+            pass
+
+def skriv_index(outdir, keys):
+    idx = {'tileSize': TILE, 'res': 1, 'h0': H0, 'scale': HSCALE, 'fmt': 2,
+           'vegStep': 0.5, 'crs': 'EPSG:3006',
+           'vegSource': 'Lantmäteriet laserdata',
+           'tiles': sorted(keys)}
+    with open(os.path.join(outdir, 'index.json'), 'w', encoding='utf-8') as f:
+        json.dump(idx, f)
 
 def main():
     ap = argparse.ArgumentParser(description='Soldyrkaren: LAZ (+SBK) -> höjdtiles')
@@ -508,20 +690,65 @@ def main():
     ap.add_argument('--out', default='tiles', help='utdatamapp (default: tiles)')
     ap.add_argument('--bbox', nargs=4, type=float, metavar=('EMIN','NMIN','EMAX','NMAX'),
                     help='begränsa till område i SWEREF99 TM (rekommenderas för 10 km COPC-rutor)')
+    ap.add_argument('--artefakter', default='artefakter.json',
+                    help='JSON med kurerade artefakter att kapa (standard: artefakter.json)')
+    ap.add_argument('--intensitet', action='store_true',
+                    help='skriv svartvita intensitetstexturer där ortofoto saknas')
     ap.add_argument('--helskanning', action='store_true',
                     help='tvinga långsam helskanning istället för COPC-nodval (felsökning)')
     ap.add_argument('--no-osm', action='store_true',
                     help='hoppa över byggnadsmask från OSM (allt högt blir vegetation!)')
     a = ap.parse_args()
 
-    global SNABB
+    global SNABB, INTENSITET, ARTEFAKTER
     SNABB = not a.helskanning
+    INTENSITET = a.intensitet
+    ARTEFAKTER = las_artefakter(a.artefakter)
     files = sorted(glob.glob(os.path.join(a.laz, '*.la[sz]')))
+    # Blockkörning: stora områden delas i 2048 m-block (4x4 tiles) så att
+    # minnesbehovet är konstant oavsett områdesstorlek.
+    BLOCK = 2048
+    if a.bbox and (a.bbox[2]-a.bbox[0] > BLOCK or a.bbox[3]-a.bbox[1] > BLOCK):
+        b = a.bbox
+        e0 = math.floor(b[0]/512)*512
+        n0 = math.floor(b[1]/512)*512
+        block_list = []
+        be = e0
+        while be < b[2]:
+            bn = n0
+            while bn < b[3]:
+                block_list.append([max(be, b[0]) if False else be, bn,
+                                   min(be+BLOCK, math.ceil(b[2]/512)*512),
+                                   min(bn+BLOCK, math.ceil(b[3]/512)*512)])
+                bn += BLOCK
+            be += BLOCK
+        print(f'Området delas i {len(block_list)} block om {BLOCK} m.')
+        keys = set()
+        laddat_index(a.out, keys)
+        hoppade = []
+        for bi, sub in enumerate(block_list):
+            print(f'=== Block {bi+1}/{len(block_list)}: '
+                  f'E {sub[0]}-{sub[2]}, N {sub[1]}-{sub[3]} ===')
+            for fp in files:
+                if process_laz(fp, a.out, not a.no_osm, keys, sub) == 'OSM_NERE':
+                    hoppade.append(bi + 1)
+        if a.sbk:
+            apply_sbk(a.sbk, a.out, keys)
+        if a.orto:
+            apply_orto(a.orto, a.out, keys)
+        skriv_index(a.out, keys)
+        print(f'Klart: {len(keys)} tiles totalt i {a.out}/ + index.json')
+        if hoppade:
+            print(f'OBS: {len(set(hoppade))} block ofullständiga pga Overpass: '
+                  f'{sorted(set(hoppade))}. Kör om EXAKT samma kommando senare '
+                  f'(klara block spolas förbi via cachen).')
+        return
     if not files:
         sys.exit('Inga .laz/.las-filer i ' + a.laz)
     os.makedirs(a.out, exist_ok=True)
 
     keys = set()
+    laddat_index(a.out, keys)   # annars glöms befintliga tiles vid små bbox
     print(f'Steg 1: {len(files)} laserfiler ...')
     for f in files:
         process_laz(f, a.out, not a.no_osm, keys, a.bbox)
