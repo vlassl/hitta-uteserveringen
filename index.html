@@ -322,7 +322,7 @@ select.dur{font-family:var(--mono);font-size:.85rem;padding:.35rem .5rem;border:
     <h1>Hitta uteserveringen</h1>
     <span class="sub">i solen</span>
   </div>
-  <span class="ver" id="verTag">v0.48</span>
+  <span class="ver" id="verTag">v0.49</span>
 </header>
 
 <div id="map"></div>
@@ -456,7 +456,7 @@ select.dur{font-family:var(--mono);font-size:.85rem;padding:.35rem .5rem;border:
 
 <script>
 "use strict";
-/* ================ HITTA UTESERVERINGEN v0.48 ================
+/* ================ HITTA UTESERVERINGEN v0.49 ================
    Läge A (laser): ray marching mot höjdtiles (tiles/, från
    preprocess.py) + 3D-vy som bygger mesh ur samma tiles.
    Läge B (fallback): OSM via Overpass.
@@ -1915,25 +1915,29 @@ map.on('click',ev=>{P=ev.latlng;startAnalysis(true);});
   });
   loadIndex();
 
-  // Djuplank: #3d=E,N,lat,lon oppnar 3D-vyn pa platsen (kandidatkartan).
+  // Djuplank: #3d=E,N,lat,lon - gor vad ett kartklick gor och oppnar 3D.
   // Loggar sina steg till konsolen och lyssnar aven pa hashandringar.
-  let djupForsok=0;
-  function korDjuplank(){
+  let djupForsok=0, djupUpptagen=false;
+  async function korDjuplank(){
     const m=location.hash.match(/^#3d=(\d+(?:\.\d+)?),(\d+(?:\.\d+)?),(-?\d+(?:\.\d+)?),(-?\d+(?:\.\d+)?)$/);
-    if(!m) return;
+    if(!m||djupUpptagen) return;
     const E=+m[1],N=+m[2],la=+m[3],lo=+m[4];
-    if(!grid){
+    if(!DEM.ok){
       if(++djupForsok===1) console.log('djuplank: vantar pa tile-index ...');
       if(djupForsok<150) setTimeout(korDjuplank,400);
       else console.log('djuplank: gav upp - tile-indexet laddades aldrig');
       return;
     }
-    djupForsok=0;
-    console.log('djuplank: oppnar 3D pa E',E,'N',N);
-    try{ map.setView([la,lo],17); }
-    catch(e){ console.log('djuplank: setView-fel:',e); }
-    try{ open3dAt(E,N,la,lo,'Granskning'); }
-    catch(e){ console.log('djuplank: open3dAt-fel:',e); }
+    djupForsok=0; djupUpptagen=true;
+    console.log('djuplank: analyserar E',E,'N',N,'som ett kartklick ...');
+    try{
+      map.setView([la,lo],17);
+      P=L.latLng(la,lo);
+      await startAnalysis(true);
+      open3dAt(E,N,la,lo,'Granskning');
+      console.log('djuplank: 3D oppnad');
+    }catch(e){ console.log('djuplank-fel:',e); }
+    djupUpptagen=false;
   }
   korDjuplank();
   window.addEventListener('hashchange',korDjuplank);
