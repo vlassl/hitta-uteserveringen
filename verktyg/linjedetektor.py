@@ -21,7 +21,7 @@ klassificeras utan OSM-stod och en varning skrivs.
 
 Meddelanden utan aao for att slippa teckenkrangel i konsolen.
 """
-import argparse, json, math, os, sys, time, urllib.request
+import argparse, json, math, os, ssl, sys, time, urllib.request
 from collections import deque
 import numpy as np
 from PIL import Image
@@ -84,13 +84,15 @@ def hamta_ledningar(bbox, cachefil='ledningscache.json'):
          f'way["power"~"^(line|minor_line)$"]({la0:.5f},{lo0:.5f},{la1:.5f},{lo1:.5f});'
          f'way["aerialway"]({la0:.5f},{lo0:.5f},{la1:.5f},{lo1:.5f});'
          ');out geom;')
+    ctx = ssl.create_default_context()
+    ctx.verify_flags &= ~ssl.VERIFY_X509_STRICT   # foretagsproxy saknar ofta AKI
     for runda in range(3):
         for url in SPEGLAR:
             try:
                 req = urllib.request.Request(
                     url, data=('data=' + urllib.parse.quote(q)).encode(),
                     headers={'User-Agent': 'hitta-uteserveringen/linjedetektor'})
-                with urllib.request.urlopen(req, timeout=150) as r:
+                with urllib.request.urlopen(req, timeout=150, context=ctx) as r:
                     d = json.loads(r.read())
                 linjer = []
                 for el in d.get('elements', []):
