@@ -322,7 +322,7 @@ select.dur{font-family:var(--mono);font-size:.85rem;padding:.35rem .5rem;border:
     <h1>Hitta uteserveringen</h1>
     <span class="sub">i solen</span>
   </div>
-  <span class="ver" id="verTag">v0.49</span>
+  <span class="ver" id="verTag">v0.50</span>
 </header>
 
 <div id="map"></div>
@@ -456,7 +456,7 @@ select.dur{font-family:var(--mono);font-size:.85rem;padding:.35rem .5rem;border:
 
 <script>
 "use strict";
-/* ================ HITTA UTESERVERINGEN v0.49 ================
+/* ================ HITTA UTESERVERINGEN v0.50 ================
    Läge A (laser): ray marching mot höjdtiles (tiles/, från
    preprocess.py) + 3D-vy som bygger mesh ur samma tiles.
    Läge B (fallback): OSM via Overpass.
@@ -1182,13 +1182,7 @@ function build3d(){
   const para=new THREE.Mesh(new THREE.ConeGeometry(2.8,1.2,10),
     new THREE.MeshLambertMaterial({color:0xf7b32b}));
   para.position.set(0,3.7,0);para.castShadow=true;scene.add(para);
-  const sun3=new THREE.Mesh(new THREE.SphereGeometry(170,20,20),
-    new THREE.MeshBasicMaterial({color:0xffde6a,fog:false}));
-  const glow=new THREE.Mesh(new THREE.SphereGeometry(300,20,20),
-    new THREE.MeshBasicMaterial({color:0xffe9a3,transparent:true,opacity:0.3,fog:false}));
-  sun3.add(glow);
-  scene.add(sun3);
-  T3marker={pole,para,terr,sun3};
+  T3marker={pole,para,terr};
 
   scene.add(new THREE.AmbientLight(0xffffff,0.35));
   const hemi=new THREE.HemisphereLight(0xcfe0ee,0xe8dcc0,0.35);scene.add(hemi);
