@@ -124,6 +124,12 @@ input[type=range]{width:100%;margin-top:.5rem;accent-color:var(--sun-deep)}
   box-shadow:0 4px 14px rgba(224,145,18,.35);transition:.15s}
 .piemark.hl{filter:drop-shadow(0 0 7px #e09112) drop-shadow(0 1px 3px rgba(0,0,0,.35));
   transform:scale(1.25);transform-origin:center}
+.satsw{display:inline-flex;align-items:center;gap:.35rem;font-size:.68rem;
+  font-weight:600;color:#8d7c5c;cursor:pointer;user-select:none;margin-left:auto}
+.satsw:hover{color:#33281a}
+.satsw .toggle{width:30px;height:17px}
+.satsw .toggle::after{width:13px;height:13px}
+.satsw .toggle.on::after{left:14px}
 .legend{display:flex;gap:.75rem;flex-wrap:wrap;font-size:.66rem;font-weight:600;color:#7a6a4d;margin:.5rem 0 .1rem}
 .legend i{display:inline-block;width:11px;height:11px;border-radius:3px;margin-right:.25rem;
   vertical-align:-1px;border:1px solid rgba(51,40,26,.25)}
@@ -221,7 +227,7 @@ select.dur{font-family:var(--mono);font-size:.85rem;padding:.35rem .5rem;border:
 .t3head{display:flex;align-items:center;gap:.5rem;padding:.55rem .8rem;border-bottom:1px solid var(--line)}
 .t3head .nm{font-weight:700;font-size:.95rem}
 .t3head .b3{font-size:.55rem;font-family:var(--mono);background:#3f8a4f;color:#fdf6e8;padding:.1rem .45rem;border-radius:12px}
-.t3head .x{margin-left:auto;font-size:1.3rem;cursor:pointer;color:#8d7c5c;line-height:1;padding:.1rem .3rem}
+.t3head .x{margin-left:.5rem;font-size:1.3rem;cursor:pointer;color:#8d7c5c;line-height:1;padding:.1rem .3rem}
 #t3wrap{position:relative;width:100%;aspect-ratio:1/1;background:#cfe0ee;touch-action:none}
 #t3wrap canvas{display:block;width:100%;height:100%}
 .t3hint{position:absolute;bottom:.4rem;left:.6rem;font-family:var(--mono);font-size:.58rem;color:rgba(51,40,26,.55);pointer-events:none}
@@ -316,7 +322,7 @@ select.dur{font-family:var(--mono);font-size:.85rem;padding:.35rem .5rem;border:
     <h1>Hitta uteserveringen</h1>
     <span class="sub">i solen</span>
   </div>
-  <span class="ver" id="verTag">v0.44</span>
+  <span class="ver" id="verTag">v0.46</span>
 </header>
 
 <div id="map"></div>
@@ -430,6 +436,8 @@ select.dur{font-family:var(--mono);font-size:.85rem;padding:.35rem .5rem;border:
   <div class="t3box">
     <div class="t3head">
       <span class="nm">3D-vy</span>
+      <span class="satsw" id="satSw" title="Visa flygfoto på marken">
+        <span class="satlbl">Satellitbild</span><span class="toggle" id="satTgl"></span></span>
       <span class="x" id="t3close">×</span>
     </div>
     <div id="t3wrap"><span class="t3hint" id="t3hint">dra = snurra · hjul/nyp = zooma · klick på marken = flytta parasollet</span></div>
@@ -448,7 +456,7 @@ select.dur{font-family:var(--mono);font-size:.85rem;padding:.35rem .5rem;border:
 
 <script>
 "use strict";
-/* ================ HITTA UTESERVERINGEN v0.44 ================
+/* ================ HITTA UTESERVERINGEN v0.46 ================
    Läge A (laser): ray marching mot höjdtiles (tiles/, från
    preprocess.py) + 3D-vy som bygger mesh ur samma tiles.
    Läge B (fallback): OSM via Overpass.
@@ -946,7 +954,19 @@ function recomputeDay(){
 
 /* ================ 3D-vy ur höjdtiles ================ */
 const T3SZ=240;  // sidlängd i meter/vertexar
-let T3=null, t3pos=null, T3marker=null;
+let T3=null, t3pos=null, T3marker=null, T3mat=null, T3texKey=null;
+let satOn=false;
+try{ satOn=localStorage.getItem('hu_sat')==='1'; }catch(_){}
+function applySatellite(E,N){
+  loadOrtoTexture(E,N).then(tex=>{
+    if(!tex||!T3mat) return;
+    T3mat.map=tex; T3mat.color.set(0xffffff); T3mat.needsUpdate=true;
+  });
+}
+function clearSatellite(){
+  if(!T3mat) return;
+  T3mat.map=null; T3mat.color.set(0xc9c6c0); T3mat.needsUpdate=true;
+}
 let t3anim=null;
 function bandFor3d(){
   if(t3pos.venue) return t3pos.venue.band;
@@ -1118,9 +1138,9 @@ function build3d(){
     far.receiveShadow=false; far.castShadow=false;
     scene.add(far);
   }
-  const tmat=new THREE.MeshLambertMaterial({color:0xd9cdb4});
-  // Ortotextur om tex_<key>.jpg finns (draperas över terräng OCH tak saknar - taken förblir enfärgade boxar)
-  loadOrtoTexture(E,N).then(tex=>{ if(tex&&T3){ tmat.map=tex; tmat.color.set(0xffffff); tmat.needsUpdate=true; } });
+  const tmat=new THREE.MeshLambertMaterial({color:0xc9c6c0});   // neutral grå mark
+  T3mat=tmat; T3texKey=E+'_'+N;
+  if(satOn) applySatellite(E,N);      // bara om användaren slagit på det
   const terr=new THREE.Mesh(geo,tmat);
   terr.castShadow=terr.receiveShadow=true;
   scene.add(terr);
@@ -1795,6 +1815,16 @@ map.on('click',ev=>{P=ev.latlng;startAnalysis(true);});
   document.getElementById('t3overlay').addEventListener('click',e=>{if(e.target.id==='t3overlay')close3d();});
   document.getElementById('t3time').addEventListener('input',()=>{stopT3Anim();updSun3();});
   document.getElementById('t3time').addEventListener('pointerdown',stopT3Anim);
+  const stg=document.getElementById('satTgl');
+  if(stg){
+    stg.classList.toggle('on',satOn);
+    document.getElementById('satSw').addEventListener('click',()=>{
+      satOn=!satOn;
+      stg.classList.toggle('on',satOn);
+      try{localStorage.setItem('hu_sat',satOn?'1':'0');}catch(_){}
+      if(satOn && t3pos) applySatellite(t3pos.E,t3pos.N); else clearSatellite();
+    });
+  }
   window.addEventListener('resize',()=>{if(dayData){drawBand();drawYear();}});
   for(let d=0.5;d<=18;d+=0.5)
     document.getElementById('listDur').add(new Option((d%1?d.toFixed(1).replace('.',','):d)+' h',d));
