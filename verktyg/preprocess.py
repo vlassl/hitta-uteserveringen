@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-============================ SOLDYRKAREN PREPROCESS v2.8.4 ============================
+============================ SOLDYRKAREN PREPROCESS v2.8.5 ============================
 Bygger höjdtiles (PNG) för Soldyrkaren från:
   1. Lantmäteriets laserdata (LAZ, SWEREF99 TM / EPSG:3006, RH2000)
   2. (valfritt) SBK Trädkronehöjd - absolut höjd (GeoTIFF, 50 cm, RH2000)
@@ -327,11 +327,13 @@ def merge_into(path, hard, veg, base=None, bflag=None, bh=None):
         hard = np.where(np.isnan(hard), h0, np.where(np.isnan(h0), hard, np.maximum(hard, h0)))
         nyveg = veg                    # den här körningens vegetation, före merge
         veg = np.maximum(veg, v0)
-        # Kronbasen tas som minimum ENDAST där körningen faktiskt har
-        # vegetation. Utan villkoret raderar en körning utan data i rutan
-        # den befintliga kronbasen (min(0, gammalt) = 0), vilket gör träden
-        # massiva ner till marken i grannrutor som aldrig skulle röras.
-        base = np.where(nyveg > 0, np.minimum(base, b0), b0)
+        # Kronbasen tas som minimum ENDAST där BÅDA körningarna har
+        # vegetation. Saknar den ena data (nollor) vinner den andras värde.
+        # v2.8.3 skyddade bara fallet "ny körning utan data"; när en tile
+        # först skrivits som marginalremsa av en grannkörning och sedan
+        # byggts fullt raderade min(nytt, 0) kronbasen i resten av tilen.
+        bada = (nyveg > 0) & (v0 > 0)
+        base = np.where(bada, np.minimum(base, b0), np.where(nyveg > 0, base, b0))
         bflag = bflag | f0
         bh = np.maximum(bh, bh0)
     Image.fromarray(encode_tile(hard, veg)).save(path, optimize=True)

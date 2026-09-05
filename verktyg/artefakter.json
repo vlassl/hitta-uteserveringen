@@ -32,6 +32,1270 @@
    "r": 20,
    "minh": 36,
    "notering": "14 px vegetation, E 675086-675089, N 6579018-6579022, 41-56,5 m o mark. Ligger pa samma latitud som linje NO-SV, 260 m ost darom - mojligen samma foreteelse. Hogsta akta tak 32 m, hogsta akta vegetation 30,5 m."
+  },
+  {
+   "namn": "granskad KRAN?",
+   "E": 672816,
+   "N": 6578066,
+   "r": 16,
+   "minh": 69,
+   "notering": "89,5 m kranlinje kapad till ringref 43,5 m - platan friad som acceptabel (i niva med kvarterets 45,5 m-hus). minh ater 69: sankning till 40 hade riskerat aterstoden av grannkvarterets tak."
+  },
+  {
+   "namn": "granskad STUMP?",
+   "E": 672370,
+   "N": 6578730,
+   "r": 10,
+   "minh": 39,
+   "notering": "Granskad 2026-08-30, topp 59.5 m. "
+  },
+  {
+   "namn": "kran",
+   "E": 671925,
+   "N": 6578813,
+   "r": 35,
+   "minh": 20,
+   "notering": "Granskad 2026-08-30, topp 35.5 m. kran"
+  },
+  {
+   "namn": "granskad KRAN?",
+   "E": 671561,
+   "N": 6579208,
+   "r": 18,
+   "minh": 24,
+   "notering": "Granskad 2026-08-30, topp 30 m. "
+  },
+  {
+   "namn": "granskad STUMP?",
+   "E": 671646,
+   "N": 6577811,
+   "r": 10,
+   "minh": 23,
+   "notering": "Granskad 2026-08-30, topp 43.5 m. "
+  },
+  {
+   "namn": "granskad KRAN?",
+   "E": 670558,
+   "N": 6577212,
+   "r": 39,
+   "minh": 22,
+   "notering": "Granskad 2026-08-30, topp 42.5 m. "
+  },
+  {
+   "namn": "kran",
+   "E": 670522,
+   "N": 6577253,
+   "r": 13,
+   "minh": 31,
+   "notering": "Granskad 2026-08-30, topp 51.5 m. kran"
+  },
+  {
+   "namn": "kran",
+   "E": 670540,
+   "N": 6577264,
+   "r": 28,
+   "minh": 42,
+   "notering": "Granskad 2026-08-30, topp 62 m. kran"
+  },
+  {
+   "namn": "kran",
+   "E": 670562,
+   "N": 6577278,
+   "r": 12,
+   "minh": 32,
+   "notering": "Granskad 2026-08-30, topp 52 m. kran"
+  },
+  {
+   "namn": "kran",
+   "E": 670566,
+   "N": 6577270,
+   "r": 17,
+   "minh": 32,
+   "notering": "Granskad 2026-08-30, topp 52 m. kran"
+  },
+  {
+   "namn": "kran",
+   "E": 670583,
+   "N": 6577276,
+   "r": 14,
+   "minh": 32,
+   "notering": "Granskad 2026-08-30, topp 52 m. kran"
+  },
+  {
+   "namn": "kran",
+   "E": 670578,
+   "N": 6577287,
+   "r": 13,
+   "minh": 32,
+   "notering": "Granskad 2026-08-30, topp 52 m. kran"
+  },
+  {
+   "namn": "kran",
+   "E": 670937,
+   "N": 6575423,
+   "r": 62,
+   "minh": 48,
+   "notering": "Granskad 2026-08-30, topp 68.5 m. kran"
+  },
+  {
+   "namn": "kran",
+   "E": 670984,
+   "N": 6575313,
+   "r": 45,
+   "minh": 37,
+   "notering": "Granskad 2026-08-30, topp 57.5 m. kran"
+  },
+  {
+   "namn": "kran",
+   "E": 671338,
+   "N": 6575189,
+   "r": 42,
+   "minh": 22,
+   "notering": "Granskad 2026-08-30, topp 41 m. kran"
+  },
+  {
+   "namn": "kran",
+   "E": 671380,
+   "N": 6575227,
+   "r": 47,
+   "minh": 33,
+   "notering": "Granskad 2026-08-30, topp 53.5 m. kran"
+  },
+  {
+   "namn": "kran",
+   "E": 671570,
+   "N": 6576312,
+   "r": 24,
+   "minh": 19,
+   "notering": "Granskad 2026-08-30, topp 35.5 m. kran"
+  },
+  {
+   "namn": "granskad STUMP?",
+   "E": 671868,
+   "N": 6576439,
+   "r": 14,
+   "minh": 18,
+   "notering": "Granskad 2026-08-30, topp 37 m. "
+  },
+  {
+   "namn": "kran?",
+   "E": 674045,
+   "N": 6576786,
+   "r": 19,
+   "minh": 24,
+   "notering": "Granskad 2026-08-30, topp 44.5 m. kran?"
+  },
+  {
+   "namn": "troligen kran",
+   "E": 675435,
+   "N": 6577354,
+   "r": 17,
+   "minh": 31,
+   "notering": "Granskad 2026-08-30, topp 51 m. troligen kran"
+  },
+  {
+   "namn": "ta inte bort skrapan men ta bort detta",
+   "E": 674957,
+   "N": 6578819,
+   "r": 12,
+   "minh": 59,
+   "notering": "Granskad 2026-08-30, topp 79.5 m. ta inte bort skrapan men ta bort detta"
+  },
+  {
+   "namn": "kran",
+   "E": 675192,
+   "N": 6579610,
+   "r": 27,
+   "minh": 38,
+   "notering": "Granskad 2026-08-30, topp 58 m. kran"
+  },
+  {
+   "namn": "kran",
+   "E": 674991,
+   "N": 6579700,
+   "r": 14,
+   "minh": 48,
+   "notering": "Granskad 2026-08-30, topp 68 m. kran"
+  },
+  {
+   "namn": "kran",
+   "E": 674981,
+   "N": 6579694,
+   "r": 13,
+   "minh": 48,
+   "notering": "Granskad 2026-08-30, topp 68 m. kran"
+  },
+  {
+   "namn": "kran",
+   "E": 674876,
+   "N": 6579793,
+   "r": 10,
+   "minh": 48,
+   "notering": "Granskad 2026-08-30, topp 68.5 m. kran"
+  },
+  {
+   "namn": "kran",
+   "E": 674875,
+   "N": 6579811,
+   "r": 20,
+   "minh": 48,
+   "notering": "Granskad 2026-08-30, topp 68 m. kran"
+  },
+  {
+   "namn": "kran",
+   "E": 674761,
+   "N": 6579988,
+   "r": 45,
+   "minh": 37,
+   "notering": "Granskad 2026-08-30, topp 57 m. kran"
+  },
+  {
+   "namn": "vegeationen ska bort är nog en byggnadsställning",
+   "E": 674710,
+   "N": 6580441,
+   "r": 38,
+   "minh": 28,
+   "notering": "Granskad 2026-08-30, topp 35.5 m. vegeationen ska bort är nog en byggnadsställning"
+  },
+  {
+   "namn": "kran",
+   "E": 674584,
+   "N": 6580476,
+   "r": 22,
+   "minh": 30,
+   "notering": "Granskad 2026-08-30, topp 50.5 m. kran"
+  },
+  {
+   "namn": "kran",
+   "E": 674546,
+   "N": 6580434,
+   "r": 13,
+   "minh": 30,
+   "notering": "Granskad 2026-08-30, topp 50.5 m. kran"
+  },
+  {
+   "namn": "kran",
+   "E": 674550,
+   "N": 6580416,
+   "r": 18,
+   "minh": 31,
+   "notering": "Granskad 2026-08-30, topp 51 m. kran"
+  },
+  {
+   "namn": "granskad KRAN?",
+   "E": 674452,
+   "N": 6580660,
+   "r": 15,
+   "minh": 36,
+   "notering": "Granskad 2026-08-30, topp 56 m. "
+  },
+  {
+   "namn": "kran",
+   "E": 674404,
+   "N": 6580686,
+   "r": 63,
+   "minh": 37,
+   "notering": "Granskad 2026-08-30, topp 57.5 m. kran"
+  },
+  {
+   "namn": "kran",
+   "E": 674371,
+   "N": 6580681,
+   "r": 12,
+   "minh": 36,
+   "notering": "Granskad 2026-08-30, topp 56.5 m. kran"
+  },
+  {
+   "namn": "kran",
+   "E": 673089,
+   "N": 6579340,
+   "r": 59,
+   "minh": 44,
+   "notering": "Granskad 2026-08-30, topp 64.5 m. kran"
+  },
+  {
+   "namn": "kran",
+   "E": 673088,
+   "N": 6579271,
+   "r": 52,
+   "minh": 36,
+   "notering": "Granskad 2026-08-30, topp 56 m. kran"
+  },
+  {
+   "namn": "granskad KRAN?",
+   "E": 675719,
+   "N": 6578165,
+   "r": 16,
+   "minh": 30,
+   "notering": "Granskad 2026-08-30, topp 49 m. "
+  },
+  {
+   "namn": "granskad KRAN?",
+   "E": 676974,
+   "N": 6577675,
+   "r": 45,
+   "minh": 42,
+   "notering": "Granskad 2026-08-30, topp 62 m. "
+  },
+  {
+   "namn": "kran",
+   "E": 677543,
+   "N": 6578226,
+   "r": 41,
+   "minh": 28,
+   "notering": "Granskad 2026-08-30, topp 41 m. kran"
+  },
+  {
+   "namn": "kran",
+   "E": 677656,
+   "N": 6578350,
+   "r": 39,
+   "minh": 67,
+   "notering": "Granskad 2026-08-30, topp 87.5 m. kran"
+  },
+  {
+   "namn": "kran",
+   "E": 677034,
+   "N": 6578618,
+   "r": 31,
+   "minh": 33,
+   "notering": "Granskad 2026-08-30, topp 53 m. kran"
+  },
+  {
+   "namn": "kran",
+   "E": 677005,
+   "N": 6578623,
+   "r": 11,
+   "minh": 32,
+   "notering": "Granskad 2026-08-30, topp 52.5 m. kran"
+  },
+  {
+   "namn": "kran",
+   "E": 676998,
+   "N": 6578624,
+   "r": 10,
+   "minh": 29,
+   "notering": "Granskad 2026-08-30, topp 48 m. kran"
+  },
+  {
+   "namn": "kran",
+   "E": 676994,
+   "N": 6578617,
+   "r": 24,
+   "minh": 33,
+   "notering": "Granskad 2026-08-30, topp 53.5 m. kran"
+  },
+  {
+   "namn": "kran",
+   "E": 676986,
+   "N": 6578625,
+   "r": 15,
+   "minh": 29,
+   "notering": "Granskad 2026-08-30, topp 47.5 m. kran"
+  },
+  {
+   "namn": "kran",
+   "E": 677002,
+   "N": 6578584,
+   "r": 12,
+   "minh": 31,
+   "notering": "Granskad 2026-08-30, topp 51.5 m. kran"
+  },
+  {
+   "namn": "kran",
+   "E": 676894,
+   "N": 6578692,
+   "r": 37,
+   "minh": 27,
+   "notering": "Granskad 2026-08-30, topp 47 m. kran"
+  },
+  {
+   "namn": "kran",
+   "E": 676344,
+   "N": 6578828,
+   "r": 34,
+   "minh": 29,
+   "notering": "Granskad 2026-08-30, topp 41.5 m. kran"
+  },
+  {
+   "namn": "kran",
+   "E": 676273,
+   "N": 6578819,
+   "r": 11,
+   "minh": 29,
+   "notering": "Granskad 2026-08-30, topp 48 m. kran"
+  },
+  {
+   "namn": "kran",
+   "E": 676265,
+   "N": 6578811,
+   "r": 12,
+   "minh": 41,
+   "notering": "Granskad 2026-08-30, topp 61 m. kran"
+  },
+  {
+   "namn": "kran",
+   "E": 675775,
+   "N": 6579324,
+   "r": 47,
+   "minh": 47,
+   "notering": "Granskad 2026-08-30, topp 67.5 m. kran"
+  },
+  {
+   "namn": "kran",
+   "E": 676368,
+   "N": 6579825,
+   "r": 21,
+   "minh": 28,
+   "notering": "Granskad 2026-08-30, topp 86 m. kran minh 52->28: rest 41-48 m kvar, trad i omradet under 20 m."
+  },
+  {
+   "namn": "kran",
+   "E": 676507,
+   "N": 6579816,
+   "r": 40,
+   "minh": 18,
+   "notering": "Granskad 2026-08-30, topp 34.5 m. kran"
+  },
+  {
+   "namn": "kran",
+   "E": 676129,
+   "N": 6580398,
+   "r": 11,
+   "minh": 36,
+   "notering": "Granskad 2026-08-30, topp 56 m. kran"
+  },
+  {
+   "namn": "kran",
+   "E": 676361,
+   "N": 6582743,
+   "r": 41,
+   "minh": 43,
+   "notering": "Granskad 2026-08-30, topp 63 m. kran"
+  },
+  {
+   "namn": "kran",
+   "E": 676385,
+   "N": 6582771,
+   "r": 10,
+   "minh": 41,
+   "notering": "Granskad 2026-08-30, topp 61 m. kran"
+  },
+  {
+   "namn": "kran",
+   "E": 676820,
+   "N": 6583529,
+   "r": 26,
+   "minh": 49,
+   "notering": "Granskad 2026-08-30, topp 69 m. kran"
+  },
+  {
+   "namn": "kran",
+   "E": 676978,
+   "N": 6583089,
+   "r": 43,
+   "minh": 33,
+   "notering": "Granskad 2026-08-30, topp 52 m. kran"
+  },
+  {
+   "namn": "båt",
+   "E": 677240,
+   "N": 6583244,
+   "r": 18,
+   "minh": 33,
+   "notering": "Granskad 2026-08-30, topp 47.5 m. båt"
+  },
+  {
+   "namn": "kran",
+   "E": 676154,
+   "N": 6584033,
+   "r": 33,
+   "minh": 22,
+   "notering": "Granskad 2026-08-30, topp 36.5 m. kran"
+  },
+  {
+   "namn": "granskad STUMP?",
+   "E": 676077,
+   "N": 6584139,
+   "r": 11,
+   "minh": 22,
+   "notering": "Granskad 2026-08-30, topp 41.5 m. "
+  },
+  {
+   "namn": "granskad STUMP?",
+   "E": 674982,
+   "N": 6582511,
+   "r": 11,
+   "minh": 26,
+   "notering": "Granskad 2026-08-30, topp 45 m. "
+  },
+  {
+   "namn": "granskad STUMP?",
+   "E": 675101,
+   "N": 6582454,
+   "r": 11,
+   "minh": 26,
+   "notering": "Granskad 2026-08-30, topp 42.5 m. "
+  },
+  {
+   "namn": "kran",
+   "E": 673890,
+   "N": 6583512,
+   "r": 58,
+   "minh": 25,
+   "notering": "Granskad 2026-08-30, topp 45.5 m. kran"
+  },
+  {
+   "namn": "kran",
+   "E": 672838,
+   "N": 6582869,
+   "r": 48,
+   "minh": 43,
+   "notering": "Granskad 2026-08-30, topp 63.5 m. kran"
+  },
+  {
+   "namn": "granskad STUMP?",
+   "E": 672808,
+   "N": 6582834,
+   "r": 14,
+   "minh": 45,
+   "notering": "Granskad 2026-08-30, topp 65 m. "
+  },
+  {
+   "namn": "kran",
+   "E": 672767,
+   "N": 6582864,
+   "r": 28,
+   "minh": 49,
+   "notering": "Granskad 2026-08-30, topp 69 m. kran"
+  },
+  {
+   "namn": "kran",
+   "E": 672566,
+   "N": 6582805,
+   "r": 19,
+   "minh": 30,
+   "notering": "Granskad 2026-08-30, topp 44 m. kran"
+  },
+  {
+   "namn": "kran",
+   "E": 672549,
+   "N": 6582814,
+   "r": 14,
+   "minh": 31,
+   "notering": "Granskad 2026-08-30, topp 51 m. kran"
+  },
+  {
+   "namn": "kran",
+   "E": 672540,
+   "N": 6582819,
+   "r": 10,
+   "minh": 35,
+   "notering": "Granskad 2026-08-30, topp 55.5 m. kran"
+  },
+  {
+   "namn": "kran",
+   "E": 672551,
+   "N": 6582765,
+   "r": 11,
+   "minh": 38,
+   "notering": "Granskad 2026-08-30, topp 58.5 m. kran"
+  },
+  {
+   "namn": "kran",
+   "E": 672374,
+   "N": 6582416,
+   "r": 30,
+   "minh": 41,
+   "notering": "Granskad 2026-08-30, topp 61.5 m. kran"
+  },
+  {
+   "namn": "kran",
+   "E": 672425,
+   "N": 6582379,
+   "r": 31,
+   "minh": 38,
+   "notering": "Granskad 2026-08-30, topp 58.5 m. kran"
+  },
+  {
+   "namn": "granskad STUMP?",
+   "E": 670156,
+   "N": 6583882,
+   "r": 10,
+   "minh": 25,
+   "notering": "Granskad 2026-08-30, topp 45 m. "
+  },
+  {
+   "namn": "granskad STUMP?",
+   "E": 670533,
+   "N": 6583925,
+   "r": 11,
+   "minh": 26,
+   "notering": "Granskad 2026-08-30, topp 43 m. "
+  },
+  {
+   "namn": "kran",
+   "E": 670431,
+   "N": 6584573,
+   "r": 40,
+   "minh": 29,
+   "notering": "Granskad 2026-08-30, topp 49 m. kran"
+  },
+  {
+   "namn": "granskad STUMP?",
+   "E": 670792,
+   "N": 6585010,
+   "r": 12,
+   "minh": 29,
+   "notering": "Granskad 2026-08-30, topp 46.5 m. "
+  },
+  {
+   "namn": "granskad KRAN?",
+   "E": 676865,
+   "N": 6584930,
+   "r": 17,
+   "minh": 22,
+   "notering": "Granskad 2026-08-30, topp 42.5 m. "
+  },
+  {
+   "namn": "kran",
+   "E": 678555,
+   "N": 6579561,
+   "r": 49,
+   "minh": 27,
+   "notering": "Granskad 2026-08-30, topp 42 m. kran"
+  },
+  {
+   "namn": "kran",
+   "E": 678879,
+   "N": 6579421,
+   "r": 75,
+   "minh": 45,
+   "notering": "Granskad 2026-08-30, topp 70 m. kran"
+  },
+  {
+   "namn": "kran",
+   "E": 678900,
+   "N": 6579442,
+   "r": 22,
+   "minh": 42,
+   "notering": "Granskad 2026-08-30, topp 62.5 m. kran"
+  },
+  {
+   "namn": "kran",
+   "E": 677634,
+   "N": 6576404,
+   "r": 22,
+   "minh": 25,
+   "notering": "Granskad 2026-08-30, topp 45.5 m. kran"
+  },
+  {
+   "namn": "kran",
+   "E": 677633,
+   "N": 6576380,
+   "r": 29,
+   "minh": 27,
+   "notering": "Granskad 2026-08-30, topp 47.5 m. kran"
+  },
+  {
+   "namn": "kran",
+   "E": 677635,
+   "N": 6576370,
+   "r": 10,
+   "minh": 26,
+   "notering": "Granskad 2026-08-30, topp 46 m. kran"
+  },
+  {
+   "namn": "kran",
+   "E": 677604,
+   "N": 6576393,
+   "r": 13,
+   "minh": 22,
+   "notering": "Granskad 2026-08-30, topp 41.5 m. kran"
+  },
+  {
+   "namn": "kran",
+   "E": 677362,
+   "N": 6575939,
+   "r": 41,
+   "minh": 19,
+   "notering": "Granskad 2026-08-30, topp 41 m. kran"
+  },
+  {
+   "namn": "kran",
+   "E": 677363,
+   "N": 6575924,
+   "r": 11,
+   "minh": 20,
+   "notering": "Granskad 2026-08-30, topp 40 m. kran"
+  },
+  {
+   "namn": "kran",
+   "E": 677366,
+   "N": 6575914,
+   "r": 12,
+   "minh": 19,
+   "notering": "Granskad 2026-08-30, topp 39.5 m. kran"
+  },
+  {
+   "namn": "kran",
+   "E": 677293,
+   "N": 6575898,
+   "r": 29,
+   "minh": 19,
+   "notering": "Granskad 2026-08-30, topp 37.5 m. kran"
+  },
+  {
+   "namn": "båt",
+   "E": 675252,
+   "N": 6580347,
+   "r": 12,
+   "minh": 27,
+   "notering": "Granskad 2026-08-30, topp 44.5 m. båt"
+  },
+  {
+   "namn": "kran",
+   "E": 673247,
+   "N": 6581135,
+   "r": 48,
+   "minh": 31,
+   "notering": "Granskad 2026-08-30, topp 51 m. kran"
+  },
+  {
+   "namn": "kran",
+   "E": 673269,
+   "N": 6581164,
+   "r": 15,
+   "minh": 30,
+   "notering": "Granskad 2026-08-30, topp 50 m. kran"
+  },
+  {
+   "namn": "kran",
+   "E": 673279,
+   "N": 6581169,
+   "r": 12,
+   "minh": 31,
+   "notering": "Granskad 2026-08-30, topp 50 m. kran"
+  },
+  {
+   "namn": "kran",
+   "E": 673280,
+   "N": 6581178,
+   "r": 14,
+   "minh": 32,
+   "notering": "Granskad 2026-08-30, topp 50.5 m. kran"
+  },
+  {
+   "namn": "kran",
+   "E": 673288,
+   "N": 6581178,
+   "r": 14,
+   "minh": 32,
+   "notering": "Granskad 2026-08-30, topp 51 m. kran"
+  },
+  {
+   "namn": "kran",
+   "E": 673288,
+   "N": 6581188,
+   "r": 13,
+   "minh": 32,
+   "notering": "Granskad 2026-08-30, topp 50.5 m. kran"
+  },
+  {
+   "namn": "kran",
+   "E": 673296,
+   "N": 6581187,
+   "r": 10,
+   "minh": 32,
+   "notering": "Granskad 2026-08-30, topp 52 m. kran"
+  },
+  {
+   "namn": "granskad STUMP?",
+   "E": 672923,
+   "N": 6580918,
+   "r": 10,
+   "minh": 56,
+   "notering": "Granskad 2026-08-30, topp 76 m. "
+  },
+  {
+   "namn": "kran",
+   "E": 668407,
+   "N": 6583523,
+   "r": 40,
+   "minh": 54,
+   "notering": "Granskad 2026-08-30, topp 74.5 m. kran"
+  },
+  {
+   "namn": "kran",
+   "E": 667992,
+   "N": 6584221,
+   "r": 12,
+   "minh": 30,
+   "notering": "Granskad 2026-08-30, topp 50.5 m. kran"
+  },
+  {
+   "namn": "kran",
+   "E": 666748,
+   "N": 6585195,
+   "r": 40,
+   "minh": 31,
+   "notering": "Granskad 2026-08-30, topp 51 m. kran"
+  },
+  {
+   "namn": "kran",
+   "E": 666688,
+   "N": 6585207,
+   "r": 60,
+   "minh": 44,
+   "notering": "Granskad 2026-08-30, topp 64.5 m. kran"
+  },
+  {
+   "namn": "skorsten",
+   "E": 666713,
+   "N": 6581245,
+   "r": 10,
+   "minh": 36,
+   "notering": "Granskad 2026-08-30, topp 56.5 m. skorsten"
+  },
+  {
+   "namn": "kraftledning",
+   "E": 666218,
+   "N": 6580022,
+   "r": 12,
+   "minh": 19,
+   "notering": "Granskad 2026-08-30, topp 38 m. kraftledning"
+  },
+  {
+   "namn": "kraftledning",
+   "E": 666207,
+   "N": 6579954,
+   "r": 16,
+   "minh": 24,
+   "notering": "Granskad 2026-08-30, topp 44.5 m. kraftledning"
+  },
+  {
+   "namn": "kraftledning",
+   "E": 666970,
+   "N": 6575331,
+   "r": 15,
+   "minh": 20,
+   "notering": "Granskad 2026-08-30, topp 40.5 m. kraftledning"
+  },
+  {
+   "namn": "kraftledning",
+   "E": 666924,
+   "N": 6575309,
+   "r": 46,
+   "minh": 34,
+   "notering": "Granskad 2026-08-30, topp 54 m. kraftledning"
+  },
+  {
+   "namn": "kraftledning",
+   "E": 666869,
+   "N": 6575279,
+   "r": 21,
+   "minh": 19,
+   "notering": "Granskad 2026-08-30, topp 38.5 m. kraftledning"
+  },
+  {
+   "namn": "kraftledning",
+   "E": 666689,
+   "N": 6575184,
+   "r": 16,
+   "minh": 21,
+   "notering": "Granskad 2026-08-30, topp 41.5 m. kraftledning"
+  },
+  {
+   "namn": "kraftledning",
+   "E": 666644,
+   "N": 6575158,
+   "r": 45,
+   "minh": 30,
+   "notering": "Granskad 2026-08-30, topp 50.5 m. kraftledning"
+  },
+  {
+   "namn": "granskad KRAFTLEDNING",
+   "E": 666598,
+   "N": 6575117,
+   "r": 15,
+   "minh": 23,
+   "notering": "Granskad 2026-08-30, topp 43.5 m. "
+  },
+  {
+   "namn": "granskad KRAFTLEDNING",
+   "E": 666585,
+   "N": 6575106,
+   "r": 15,
+   "minh": 23,
+   "notering": "Granskad 2026-08-30, topp 43.5 m. "
+  },
+  {
+   "namn": "granskad KRAFTLEDNING",
+   "E": 666548,
+   "N": 6575073,
+   "r": 24,
+   "minh": 30,
+   "notering": "Granskad 2026-08-30, topp 50 m. "
+  },
+  {
+   "namn": "granskad KRAFTLEDNING",
+   "E": 666502,
+   "N": 6575032,
+   "r": 29,
+   "minh": 35,
+   "notering": "Granskad 2026-08-30, topp 55.5 m. "
+  },
+  {
+   "namn": "granskad KRAFTLEDNING",
+   "E": 666476,
+   "N": 6575009,
+   "r": 21,
+   "minh": 39,
+   "notering": "Granskad 2026-08-30, topp 59.5 m. "
+  },
+  {
+   "namn": "granskad KRAFTLEDNING",
+   "E": 673999,
+   "N": 6585160,
+   "r": 17,
+   "minh": 21,
+   "notering": "Granskad 2026-08-30, topp 27.5 m. "
+  },
+  {
+   "namn": "granskad KRAFTLEDNING",
+   "E": 674293,
+   "N": 6585055,
+   "r": 26,
+   "minh": 21,
+   "notering": "Granskad 2026-08-30, topp 36.5 m. "
+  },
+  {
+   "namn": "granskad KRAFTLEDNING",
+   "E": 674378,
+   "N": 6584974,
+   "r": 16,
+   "minh": 10,
+   "notering": "Granskad 2026-08-30, topp 28.5 m. "
+  },
+  {
+   "namn": "granskad KRAFTLEDNING",
+   "E": 674407,
+   "N": 6584947,
+   "r": 15,
+   "minh": 10,
+   "notering": "Granskad 2026-08-30, topp 28.5 m. "
+  },
+  {
+   "namn": "granskad KRAFTLEDNING",
+   "E": 674430,
+   "N": 6584926,
+   "r": 16,
+   "minh": 10,
+   "notering": "Granskad 2026-08-30, topp 28.5 m. "
+  },
+  {
+   "namn": "granskad KRAFTLEDNING",
+   "E": 674472,
+   "N": 6584885,
+   "r": 16,
+   "minh": 12,
+   "notering": "Granskad 2026-08-30, topp 32.5 m. "
+  },
+  {
+   "namn": "granskad KRAFTLEDNING",
+   "E": 674557,
+   "N": 6584805,
+   "r": 15,
+   "minh": 16,
+   "notering": "Granskad 2026-08-30, topp 36.5 m. "
+  },
+  {
+   "namn": "granskad KRAFTLEDNING",
+   "E": 675110,
+   "N": 6584712,
+   "r": 16,
+   "minh": 16,
+   "notering": "Granskad 2026-08-30, topp 27.5 m. "
+  },
+  {
+   "namn": "granskad KRAFTLEDNING",
+   "E": 675171,
+   "N": 6584665,
+   "r": 25,
+   "minh": 16,
+   "notering": "Granskad 2026-08-30, topp 28.5 m. "
+  },
+  {
+   "namn": "granskad KRAFTLEDNING",
+   "E": 675306,
+   "N": 6584539,
+   "r": 16,
+   "minh": 16,
+   "notering": "Granskad 2026-08-30, topp 34 m. "
+  },
+  {
+   "namn": "granskad KRAFTLEDNING",
+   "E": 675320,
+   "N": 6584524,
+   "r": 17,
+   "minh": 16,
+   "notering": "Granskad 2026-08-30, topp 33 m. "
+  },
+  {
+   "namn": "granskad KRAFTLEDNING",
+   "E": 675384,
+   "N": 6584450,
+   "r": 30,
+   "minh": 14,
+   "notering": "Granskad 2026-08-30, topp 33 m. "
+  },
+  {
+   "namn": "granskad KRAFTLEDNING",
+   "E": 675440,
+   "N": 6584389,
+   "r": 38,
+   "minh": 23,
+   "notering": "Granskad 2026-08-30, topp 43 m. "
+  },
+  {
+   "namn": "granskad STOLPE",
+   "E": 675412,
+   "N": 6584419,
+   "r": 15,
+   "minh": 22,
+   "notering": "Granskad 2026-08-30, topp 42.5 m. "
+  },
+  {
+   "namn": "granskad STOLPE",
+   "E": 675306,
+   "N": 6584555,
+   "r": 13,
+   "minh": 23,
+   "notering": "Granskad 2026-08-30, topp 43 m. "
+  },
+  {
+   "namn": "granskad STOLPE",
+   "E": 674542,
+   "N": 6584831,
+   "r": 11,
+   "minh": 21,
+   "notering": "Granskad 2026-08-30, topp 41 m. "
+  },
+  {
+   "namn": "granskad STOLPE",
+   "E": 674526,
+   "N": 6584848,
+   "r": 11,
+   "minh": 27,
+   "notering": "Granskad 2026-08-30, topp 47.5 m. "
+  },
+  {
+   "namn": "granskad STOLPE",
+   "E": 674506,
+   "N": 6584852,
+   "r": 13,
+   "minh": 18,
+   "notering": "Granskad 2026-08-30, topp 38 m. "
+  },
+  {
+   "namn": "granskad STOLPE",
+   "E": 674494,
+   "N": 6584864,
+   "r": 12,
+   "minh": 15,
+   "notering": "Granskad 2026-08-30, topp 35.5 m. "
+  },
+  {
+   "namn": "granskad STOLPE",
+   "E": 674480,
+   "N": 6584876,
+   "r": 10,
+   "minh": 22,
+   "notering": "Granskad 2026-08-30, topp 42 m. "
+  },
+  {
+   "namn": "granskad STOLPE",
+   "E": 674276,
+   "N": 6585071,
+   "r": 13,
+   "minh": 21,
+   "notering": "Granskad 2026-08-30, topp 38.5 m. "
+  },
+  {
+   "namn": "granskad STOLPE",
+   "E": 674233,
+   "N": 6585094,
+   "r": 14,
+   "minh": 21,
+   "notering": "Granskad 2026-08-30, topp 36.5 m. "
+  },
+  {
+   "namn": "granskad STOLPE",
+   "E": 673307,
+   "N": 6575403,
+   "r": 9,
+   "minh": 20,
+   "notering": "Granskad 2026-08-30, topp 38.5 m. "
+  },
+  {
+   "namn": "granskad STOLPE",
+   "E": 673113,
+   "N": 6575267,
+   "r": 10,
+   "minh": 18,
+   "notering": "Granskad 2026-08-30, topp 38 m. "
+  },
+  {
+   "namn": "granskad STOLPE",
+   "E": 667233,
+   "N": 6575464,
+   "r": 14,
+   "minh": 18,
+   "notering": "Granskad 2026-08-30, topp 36 m. "
+  },
+  {
+   "namn": "granskad STOLPE",
+   "E": 667219,
+   "N": 6575457,
+   "r": 14,
+   "minh": 18,
+   "notering": "Granskad 2026-08-30, topp 35 m. "
+  },
+  {
+   "namn": "granskad STOLPE",
+   "E": 667023,
+   "N": 6575358,
+   "r": 11,
+   "minh": 19,
+   "notering": "Granskad 2026-08-30, topp 35.5 m. "
+  },
+  {
+   "namn": "granskad STOLPE",
+   "E": 667013,
+   "N": 6575353,
+   "r": 12,
+   "minh": 19,
+   "notering": "Granskad 2026-08-30, topp 36 m. "
+  },
+  {
+   "namn": "granskad STOLPE",
+   "E": 666984,
+   "N": 6575338,
+   "r": 15,
+   "minh": 19,
+   "notering": "Granskad 2026-08-30, topp 39.5 m. "
+  },
+  {
+   "namn": "granskad STOLPE",
+   "E": 666788,
+   "N": 6575236,
+   "r": 13,
+   "minh": 19,
+   "notering": "Granskad 2026-08-30, topp 35.5 m. "
+  },
+  {
+   "namn": "granskad STOLPE",
+   "E": 666768,
+   "N": 6575226,
+   "r": 13,
+   "minh": 19,
+   "notering": "Granskad 2026-08-30, topp 35.5 m. "
+  },
+  {
+   "namn": "granskad STOLPE",
+   "E": 666748,
+   "N": 6575215,
+   "r": 12,
+   "minh": 19,
+   "notering": "Granskad 2026-08-30, topp 36.5 m. "
+  },
+  {
+   "namn": "granskad STOLPE",
+   "E": 666735,
+   "N": 6575208,
+   "r": 12,
+   "minh": 19,
+   "notering": "Granskad 2026-08-30, topp 36.5 m. "
+  },
+  {
+   "namn": "granskad STOLPE",
+   "E": 666721,
+   "N": 6575200,
+   "r": 12,
+   "minh": 19,
+   "notering": "Granskad 2026-08-30, topp 38 m. "
+  },
+  {
+   "namn": "granskad STOLPE",
+   "E": 666711,
+   "N": 6575195,
+   "r": 12,
+   "minh": 19,
+   "notering": "Granskad 2026-08-30, topp 39 m. "
+  },
+  {
+   "namn": "granskad STOLPE",
+   "E": 666703,
+   "N": 6575191,
+   "r": 11,
+   "minh": 19,
+   "notering": "Granskad 2026-08-30, topp 39.5 m. "
+  },
+  {
+   "namn": "granskad STOLPE",
+   "E": 666610,
+   "N": 6575127,
+   "r": 15,
+   "minh": 23,
+   "notering": "Granskad 2026-08-30, topp 43 m. "
+  },
+  {
+   "namn": "granskad STOLPE",
+   "E": 666569,
+   "N": 6575091,
+   "r": 11,
+   "minh": 26,
+   "notering": "Granskad 2026-08-30, topp 46 m. "
+  },
+  {
+   "namn": "granskad STOLPE",
+   "E": 666531,
+   "N": 6575057,
+   "r": 14,
+   "minh": 31,
+   "notering": "Granskad 2026-08-30, topp 51 m. "
+  },
+  {
+   "namn": "granskad STOLPE",
+   "E": 666522,
+   "N": 6575050,
+   "r": 12,
+   "minh": 31,
+   "notering": "Granskad 2026-08-30, topp 51.5 m. "
+  },
+  {
+   "namn": "kran",
+   "E": 674820,
+   "N": 6579803,
+   "r": 25,
+   "minh": 26,
+   "notering": "Granskad 2026-08-30, topp 30.5 m. kran"
+  },
+  {
+   "namn": "kranrest efter omkorning",
+   "E": 679079,
+   "N": 6579464,
+   "r": 18,
+   "minh": 28,
+   "notering": "Rest under tidigare minh, topp 35.5 m, takmedian 5.5 m. minh 28 sa trad under 28 m sparas."
+  },
+  {
+   "namn": "Liljeholmskajen, kranspets",
+   "E": 672833,
+   "N": 6578054,
+   "r": 7,
+   "minh": 60,
+   "notering": "4 px pa 86-89,5 m utanfor gamla cirkeln. r=7 nar inte norra kvarterets akta 87 m-hus (N>=6578075), och minh 60 gar fritt over sodra kvarterets 45,5 m."
   }
  ]
 }

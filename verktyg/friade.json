@@ -1,0 +1,1169 @@
+{
+ "kommentar": "Granskade objekt som ar AKTA och ska sta kvar. Detektorn tystar kandidater inom r meter fran punkten. Koordinater i SWEREF99 TM.",
+ "friade": [
+  {
+   "namn": "Soder Torn",
+   "E": 674706,
+   "N": 6579155,
+   "r": 40
+  },
+  {
+   "namn": "Skrapan + annex",
+   "E": 674935,
+   "N": 6578838,
+   "r": 60
+  },
+  {
+   "namn": "claude: det är en bro, den ska vara kvar, resten av bron syns inte. kolla på det",
+   "E": 673055,
+   "N": 6578075,
+   "r": 20
+  },
+  {
+   "namn": "granskad KRAN?",
+   "E": 672235,
+   "N": 6578910,
+   "r": 36
+  },
+  {
+   "namn": "granskad KRAN?",
+   "E": 672254,
+   "N": 6578928,
+   "r": 15
+  },
+  {
+   "namn": "granskad KRAN?",
+   "E": 672050,
+   "N": 6578698,
+   "r": 25
+  },
+  {
+   "namn": "granskad KRAN?",
+   "E": 672077,
+   "N": 6578668,
+   "r": 43
+  },
+  {
+   "namn": "skorsten",
+   "E": 671810,
+   "N": 6579027,
+   "r": 9
+  },
+  {
+   "namn": "claude: det är en bro, essingeleden. ska vara kvar men är inte träd. kan du fixa",
+   "E": 670930,
+   "N": 6578980,
+   "r": 66
+  },
+  {
+   "namn": "claude: det är en bro, essingeleden. ska vara kvar men är inte träd. kan du fixa",
+   "E": 670901,
+   "N": 6578971,
+   "r": 16
+  },
+  {
+   "namn": "claude: det är en bro, essingeleden. ska vara kvar men är inte träd. kan du fixa",
+   "E": 670900,
+   "N": 6579018,
+   "r": 23
+  },
+  {
+   "namn": "claude: det är en bro, essingeleden. ska vara kvar men är inte träd. kan du fixa",
+   "E": 670940,
+   "N": 6578931,
+   "r": 10
+  },
+  {
+   "namn": "claude: det är en bro, essingeleden. ska vara kvar men är inte träd. kan du fixa",
+   "E": 671088,
+   "N": 6578643,
+   "r": 11
+  },
+  {
+   "namn": "claude: det är en bro, essingeleden. ska vara kvar men är inte träd. kan du fixa",
+   "E": 671115,
+   "N": 6578624,
+   "r": 26
+  },
+  {
+   "namn": "claude: det är en bro, essingeleden. ska vara kvar men är inte träd. kan du fixa",
+   "E": 671107,
+   "N": 6578610,
+   "r": 11
+  },
+  {
+   "namn": "claude: det är en bro, essingeleden. ska vara kvar men är inte träd. kan du fixa",
+   "E": 671098,
+   "N": 6578595,
+   "r": 25
+  },
+  {
+   "namn": "claude: det är en bro, essingeleden. ska vara kvar men är inte träd. kan du fixa",
+   "E": 671133,
+   "N": 6578592,
+   "r": 32
+  },
+  {
+   "namn": "claude: det är en bro, essingeleden. ska vara kvar men är inte träd. kan du fixa",
+   "E": 671116,
+   "N": 6578561,
+   "r": 26
+  },
+  {
+   "namn": "claude: det är en bro, essingeleden. ska vara kvar men är inte träd. kan du fixa",
+   "E": 671139,
+   "N": 6578550,
+   "r": 11
+  },
+  {
+   "namn": "claude: det är en bro, essingeleden. ska vara kvar men är inte träd. kan du fixa",
+   "E": 671154,
+   "N": 6578517,
+   "r": 12
+  },
+  {
+   "namn": "claude: det är en bro, essingeleden. ska vara kvar men är inte träd. kan du fixa",
+   "E": 671141,
+   "N": 6578511,
+   "r": 49
+  },
+  {
+   "namn": "claude: det är en bro, essingeleden. ska vara kvar men är inte träd. kan du fixa",
+   "E": 671172,
+   "N": 6578485,
+   "r": 10
+  },
+  {
+   "namn": "claude: det är en bro, essingeleden. ska vara kvar men är inte träd. kan du fixa",
+   "E": 671188,
+   "N": 6578485,
+   "r": 16
+  },
+  {
+   "namn": "claude: det är en bro, essingeleden. ska vara kvar men är inte träd. kan du fixa",
+   "E": 671625,
+   "N": 6577993,
+   "r": 16
+  },
+  {
+   "namn": "granskad KRAN?",
+   "E": 672093,
+   "N": 6577978,
+   "r": 53
+  },
+  {
+   "namn": "granskad KRAN?",
+   "E": 671751,
+   "N": 6577264,
+   "r": 24
+  },
+  {
+   "namn": "granskad KRAN?",
+   "E": 671641,
+   "N": 6577197,
+   "r": 27
+  },
+  {
+   "namn": "granskad KRAN?",
+   "E": 670995,
+   "N": 6576911,
+   "r": 37
+  },
+  {
+   "namn": "granskad KRAN?",
+   "E": 670463,
+   "N": 6577135,
+   "r": 25
+  },
+  {
+   "namn": "skorsten",
+   "E": 670317,
+   "N": 6577272,
+   "r": 9
+  },
+  {
+   "namn": "skorsten, ej vegetation",
+   "E": 669878,
+   "N": 6577660,
+   "r": 9
+  },
+  {
+   "namn": "granskad KRAN?",
+   "E": 669668,
+   "N": 6577631,
+   "r": 34
+  },
+  {
+   "namn": "skorsten ej vegetation",
+   "E": 668645,
+   "N": 6577953,
+   "r": 10
+  },
+  {
+   "namn": "skorsten",
+   "E": 668921,
+   "N": 6576256,
+   "r": 10
+  },
+  {
+   "namn": "permanent mast, kan vara kvar som vegetation, samma genomsläpplighet",
+   "E": 668042,
+   "N": 6575993,
+   "r": 9
+  },
+  {
+   "namn": "granskad KRAN?",
+   "E": 667225,
+   "N": 6576341,
+   "r": 42
+  },
+  {
+   "namn": "granskad KRAN?",
+   "E": 667355,
+   "N": 6576576,
+   "r": 43
+  },
+  {
+   "namn": "granskad LEDNING?",
+   "E": 666553,
+   "N": 6575478,
+   "r": 40
+  },
+  {
+   "namn": "granskad LEDNING?",
+   "E": 666480,
+   "N": 6575470,
+   "r": 40
+  },
+  {
+   "namn": "granskad LEDNING?",
+   "E": 666458,
+   "N": 6575362,
+   "r": 41
+  },
+  {
+   "namn": "skorsten ej vegetation",
+   "E": 671086,
+   "N": 6576133,
+   "r": 10
+  },
+  {
+   "namn": "granskad KRAN?",
+   "E": 673738,
+   "N": 6576641,
+   "r": 18
+  },
+  {
+   "namn": "permament mast, kan vara kvar som vegetation, samma genomsläpplighet",
+   "E": 674180,
+   "N": 6576974,
+   "r": 9
+  },
+  {
+   "namn": "granskad KRAN?",
+   "E": 673815,
+   "N": 6576124,
+   "r": 22
+  },
+  {
+   "namn": "granskad KRAN?",
+   "E": 673848,
+   "N": 6576103,
+   "r": 27
+  },
+  {
+   "namn": "granskad KRAN?",
+   "E": 675087,
+   "N": 6576004,
+   "r": 33
+  },
+  {
+   "namn": "skorsten",
+   "E": 675313,
+   "N": 6576756,
+   "r": 10
+  },
+  {
+   "namn": "claude: det här är globen, den ser bara delvis ut att ha kommit med, ser ut som ",
+   "E": 675531,
+   "N": 6576806,
+   "r": 17
+  },
+  {
+   "namn": "claude: detta är globen, se annan punkt i närheten",
+   "E": 675552,
+   "N": 6576768,
+   "r": 41
+  },
+  {
+   "namn": "ej vegetation, hårdgjord yta, är en sskorsten av något slag",
+   "E": 675604,
+   "N": 6576681,
+   "r": 12
+  },
+  {
+   "namn": "granskad KRAN?",
+   "E": 675655,
+   "N": 6576732,
+   "r": 53
+  },
+  {
+   "namn": "granskad KRAN?",
+   "E": 675514,
+   "N": 6577152,
+   "r": 17
+  },
+  {
+   "namn": "claude: korsningen johanneshovsbron, hela bron ska vara hårdgjord, ej vegetation",
+   "E": 675361,
+   "N": 6577702,
+   "r": 17
+  },
+  {
+   "namn": "claude: korsningen johanneshovsbron, hela bron ska vara hårdgjord, ej vegetation",
+   "E": 675334,
+   "N": 6577714,
+   "r": 11
+  },
+  {
+   "namn": "claude: detta är johanneshovsbron, hela bron ska vara hårdgjord, ej vegetation o",
+   "E": 675326,
+   "N": 6577719,
+   "r": 12
+  },
+  {
+   "namn": "granskad STUMP?",
+   "E": 675315,
+   "N": 6577726,
+   "r": 13
+  },
+  {
+   "namn": "claude: detta är johanneshovsbron, hela bron ska vara hårdgjord, ej vegetation o",
+   "E": 675299,
+   "N": 6577753,
+   "r": 12
+  },
+  {
+   "namn": "claude: detta är johanneshovsbron, hela bron ska vara hårdgjord, ej vegetation o",
+   "E": 675284,
+   "N": 6577774,
+   "r": 10
+  },
+  {
+   "namn": "claude: detta är johanneshovsbron, hela bron ska vara hårdgjord, ej vegetation o",
+   "E": 675265,
+   "N": 6577788,
+   "r": 13
+  },
+  {
+   "namn": "claude: detta är johanneshovsbron, hela bron ska vara hårdgjord, ej vegetation o",
+   "E": 675262,
+   "N": 6577796,
+   "r": 10
+  },
+  {
+   "namn": "claude: detta är johanneshovsbron, hela bron ska vara hårdgjord, ej vegetation o",
+   "E": 675254,
+   "N": 6577807,
+   "r": 15
+  },
+  {
+   "namn": "claude: detta är johanneshovsbron, hela bron ska vara hårdgjord, ej vegetation o",
+   "E": 675255,
+   "N": 6577818,
+   "r": 11
+  },
+  {
+   "namn": "claude: detta är johanneshovsbron, hela bron ska vara hårdgjord, ej vegetation o",
+   "E": 675264,
+   "N": 6577817,
+   "r": 11
+  },
+  {
+   "namn": "claude: detta är johanneshovsbron, hela bron ska vara hårdgjord, ej vegetation o",
+   "E": 675270,
+   "N": 6577811,
+   "r": 13
+  },
+  {
+   "namn": "claude: detta är johanneshovsbron, hela bron ska vara hårdgjord, ej vegetation o",
+   "E": 675246,
+   "N": 6577827,
+   "r": 11
+  },
+  {
+   "namn": "claude: detta är johanneshovsbron, hela bron ska vara hårdgjord, ej vegetation o",
+   "E": 675253,
+   "N": 6577835,
+   "r": 14
+  },
+  {
+   "namn": "claude: detta är johanneshovsbron, hela bron ska vara hårdgjord, ej vegetation o",
+   "E": 675245,
+   "N": 6577846,
+   "r": 12
+  },
+  {
+   "namn": "claude: detta är johanneshovsbron, hela bron ska vara hårdgjord, ej vegetation o",
+   "E": 675239,
+   "N": 6577838,
+   "r": 14
+  },
+  {
+   "namn": "claude: detta är johanneshovsbron, hela bron ska vara hårdgjord, ej vegetation o",
+   "E": 675235,
+   "N": 6577829,
+   "r": 30
+  },
+  {
+   "namn": "claude: detta är johanneshovsbron, hela bron ska vara hårdgjord, ej vegetation o",
+   "E": 675215,
+   "N": 6577859,
+   "r": 22
+  },
+  {
+   "namn": "claude: detta är johanneshovsbron, hela bron ska vara hårdgjord, ej vegetation o",
+   "E": 675227,
+   "N": 6577873,
+   "r": 23
+  },
+  {
+   "namn": "claude: detta är skanstullsbron, hela bron ska vara hårdgjord, ej vegetation obs",
+   "E": 675283,
+   "N": 6577893,
+   "r": 23
+  },
+  {
+   "namn": "claude: detta är skanstullsbron, hela bron ska vara hårdgjord, ej vegetation obs",
+   "E": 675295,
+   "N": 6577924,
+   "r": 15
+  },
+  {
+   "namn": "claude: detta är skanstullsbron, hela bron ska vara hårdgjord, ej vegetation obs",
+   "E": 675304,
+   "N": 6577934,
+   "r": 16
+  },
+  {
+   "namn": "claude: detta är skanstullsbron, hela bron ska vara hårdgjord, ej vegetation obs",
+   "E": 675317,
+   "N": 6577900,
+   "r": 17
+  },
+  {
+   "namn": "claude: detta är skanstullsbron, hela bron ska vara hårdgjord, ej vegetation obs",
+   "E": 675328,
+   "N": 6577871,
+   "r": 15
+  },
+  {
+   "namn": "claude: detta är skanstullsbron, hela bron ska vara hårdgjord, ej vegetation obs",
+   "E": 675302,
+   "N": 6577864,
+   "r": 25
+  },
+  {
+   "namn": "granskad LEDNING?",
+   "E": 675402,
+   "N": 6577843,
+   "r": 26
+  },
+  {
+   "namn": "claude: detta är johanneshovsbron, hela bron ska vara hårdgjord, ej vegetation o",
+   "E": 675165,
+   "N": 6577953,
+   "r": 24
+  },
+  {
+   "namn": "claude: detta är johanneshovsbron, hela bron ska vara hårdgjord, ej vegetation o",
+   "E": 675156,
+   "N": 6577978,
+   "r": 24
+  },
+  {
+   "namn": "granskad STUMP?",
+   "E": 675117,
+   "N": 6578276,
+   "r": 13
+  },
+  {
+   "namn": "granskad KRAN?",
+   "E": 675254,
+   "N": 6578662,
+   "r": 35
+  },
+  {
+   "namn": "clauade detta är katarina kyrka, men kupolen kom inte med, kan du få med den?",
+   "E": 675171,
+   "N": 6579397,
+   "r": 12
+  },
+  {
+   "namn": "granskad STUMP?",
+   "E": 675185,
+   "N": 6579401,
+   "r": 12
+  },
+  {
+   "namn": "granskad STUMP?",
+   "E": 675181,
+   "N": 6579414,
+   "r": 13
+  },
+  {
+   "namn": "claude: detta är katarinahissen, ingen vegetation, men skall vara luft under bro",
+   "E": 674878,
+   "N": 6579693,
+   "r": 21
+  },
+  {
+   "namn": "granskad KRAN?",
+   "E": 674284,
+   "N": 6580206,
+   "r": 23
+  },
+  {
+   "namn": "granskad KRAN?",
+   "E": 674045,
+   "N": 6579722,
+   "r": 26
+  },
+  {
+   "namn": "skorsten",
+   "E": 673685,
+   "N": 6579699,
+   "r": 10
+  },
+  {
+   "namn": "granskad KRAN?",
+   "E": 674143,
+   "N": 6578822,
+   "r": 18
+  },
+  {
+   "namn": "granskad KRAN?",
+   "E": 675975,
+   "N": 6577647,
+   "r": 28
+  },
+  {
+   "namn": "skorsten ej vegetation",
+   "E": 676955,
+   "N": 6577523,
+   "r": 10
+  },
+  {
+   "namn": "granskad KRAN?",
+   "E": 677510,
+   "N": 6578385,
+   "r": 29
+  },
+  {
+   "namn": "granskad KRAN?",
+   "E": 677891,
+   "N": 6578437,
+   "r": 33
+  },
+  {
+   "namn": "skorsten ej vegetation",
+   "E": 677315,
+   "N": 6578701,
+   "r": 10
+  },
+  {
+   "namn": "granskad KRAN?",
+   "E": 676915,
+   "N": 6579157,
+   "r": 34
+  },
+  {
+   "namn": "granskad KRAN?",
+   "E": 676942,
+   "N": 6579206,
+   "r": 25
+  },
+  {
+   "namn": "granskad KRAN?",
+   "E": 675885,
+   "N": 6579220,
+   "r": 20
+  },
+  {
+   "namn": "granskad KRAN?",
+   "E": 676147,
+   "N": 6580136,
+   "r": 23
+  },
+  {
+   "namn": "gröna lund attraktion",
+   "E": 676104,
+   "N": 6580125,
+   "r": 11
+  },
+  {
+   "namn": "gröna lund attraktion ej vegetation",
+   "E": 676121,
+   "N": 6580186,
+   "r": 27
+  },
+  {
+   "namn": "gröna lund attraktion ej vegetation",
+   "E": 676108,
+   "N": 6580226,
+   "r": 21
+  },
+  {
+   "namn": "hällestadsstapeln",
+   "E": 676739,
+   "N": 6580350,
+   "r": 10
+  },
+  {
+   "namn": "granskad LEDNING?",
+   "E": 676480,
+   "N": 6581412,
+   "r": 91
+  },
+  {
+   "namn": "granskad KRAN?",
+   "E": 676467,
+   "N": 6583059,
+   "r": 44
+  },
+  {
+   "namn": "granskad STUMP?",
+   "E": 676209,
+   "N": 6583135,
+   "r": 10
+  },
+  {
+   "namn": "skorsten ej vegetation",
+   "E": 675836,
+   "N": 6584094,
+   "r": 10
+  },
+  {
+   "namn": "granskad KRAN?",
+   "E": 675621,
+   "N": 6583787,
+   "r": 20
+  },
+  {
+   "namn": "granskad STUMP?",
+   "E": 675014,
+   "N": 6583400,
+   "r": 12
+  },
+  {
+   "namn": "granskad KRAN?",
+   "E": 674843,
+   "N": 6582962,
+   "r": 33
+  },
+  {
+   "namn": "granskad STUMP?",
+   "E": 674641,
+   "N": 6582841,
+   "r": 11
+  },
+  {
+   "namn": "skorsten",
+   "E": 674604,
+   "N": 6582851,
+   "r": 11
+  },
+  {
+   "namn": "granskad KRAN?",
+   "E": 672362,
+   "N": 6582964,
+   "r": 41
+  },
+  {
+   "namn": "granskad KRAN?",
+   "E": 672198,
+   "N": 6582842,
+   "r": 28
+  },
+  {
+   "namn": "granskad KRAN?",
+   "E": 672148,
+   "N": 6582802,
+   "r": 48
+  },
+  {
+   "namn": "skorsten ej vegetation",
+   "E": 672141,
+   "N": 6583071,
+   "r": 11
+  },
+  {
+   "namn": "kyrktorn",
+   "E": 673004,
+   "N": 6582440,
+   "r": 10
+  },
+  {
+   "namn": "mast",
+   "E": 671829,
+   "N": 6582440,
+   "r": 10
+  },
+  {
+   "namn": "granskad KRAN?",
+   "E": 671417,
+   "N": 6581789,
+   "r": 62
+  },
+  {
+   "namn": "granskad KRAN?",
+   "E": 671164,
+   "N": 6581493,
+   "r": 57
+  },
+  {
+   "namn": "granskad KRAN?",
+   "E": 671865,
+   "N": 6581154,
+   "r": 17
+  },
+  {
+   "namn": "granskad KRAN?",
+   "E": 671773,
+   "N": 6580347,
+   "r": 52
+  },
+  {
+   "namn": "granskad KRAN?",
+   "E": 671582,
+   "N": 6580363,
+   "r": 22
+  },
+  {
+   "namn": "claude detta är essingeleden, ska vara hårdgjord",
+   "E": 670547,
+   "N": 6579458,
+   "r": 11
+  },
+  {
+   "namn": "torn",
+   "E": 670183,
+   "N": 6579556,
+   "r": 10
+  },
+  {
+   "namn": "granskad KRAN?",
+   "E": 669736,
+   "N": 6580810,
+   "r": 41
+  },
+  {
+   "namn": "granskad KRAN?",
+   "E": 669665,
+   "N": 6580832,
+   "r": 29
+  },
+  {
+   "namn": "granskad KRAN?",
+   "E": 670307,
+   "N": 6582792,
+   "r": 17
+  },
+  {
+   "namn": "granskad KRAN?",
+   "E": 670715,
+   "N": 6582865,
+   "r": 29
+  },
+  {
+   "namn": "granskad KRAN?",
+   "E": 670350,
+   "N": 6583488,
+   "r": 60
+  },
+  {
+   "namn": "belysningsmast",
+   "E": 669979,
+   "N": 6583919,
+   "r": 9
+  },
+  {
+   "namn": "granskad KRAN?",
+   "E": 669828,
+   "N": 6583975,
+   "r": 22
+  },
+  {
+   "namn": "granskad KRAN?",
+   "E": 670749,
+   "N": 6584943,
+   "r": 17
+  },
+  {
+   "namn": "granskad KRAN?",
+   "E": 670796,
+   "N": 6584968,
+   "r": 35
+  },
+  {
+   "namn": "granskad KRAN?",
+   "E": 671076,
+   "N": 6583549,
+   "r": 42
+  },
+  {
+   "namn": "granskad STUMP?",
+   "E": 672616,
+   "N": 6583829,
+   "r": 11
+  },
+  {
+   "namn": "granskad KRAN?",
+   "E": 674463,
+   "N": 6585279,
+   "r": 19
+  },
+  {
+   "namn": "granskad KRAN?",
+   "E": 676995,
+   "N": 6584686,
+   "r": 31
+  },
+  {
+   "namn": "kaknästornet",
+   "E": 677848,
+   "N": 6581542,
+   "r": 11
+  },
+  {
+   "namn": "kaknästornet",
+   "E": 677855,
+   "N": 6581537,
+   "r": 13
+  },
+  {
+   "namn": "granskad KRAN?",
+   "E": 678665,
+   "N": 6579646,
+   "r": 17
+  },
+  {
+   "namn": "granskad STUMP?",
+   "E": 678746,
+   "N": 6579618,
+   "r": 14
+  },
+  {
+   "namn": "granskad STUMP?",
+   "E": 678768,
+   "N": 6579621,
+   "r": 11
+  },
+  {
+   "namn": "granskad KRAN?",
+   "E": 678850,
+   "N": 6579114,
+   "r": 43
+  },
+  {
+   "namn": "granskad KRAN?",
+   "E": 676493,
+   "N": 6576263,
+   "r": 37
+  },
+  {
+   "namn": "granskad KRAN?",
+   "E": 676470,
+   "N": 6576267,
+   "r": 22
+  },
+  {
+   "namn": "granskad KRAN?",
+   "E": 676460,
+   "N": 6576302,
+   "r": 23
+  },
+  {
+   "namn": "granskad KRAN?",
+   "E": 676434,
+   "N": 6576309,
+   "r": 22
+  },
+  {
+   "namn": "granskad KRAN?",
+   "E": 674816,
+   "N": 6575128,
+   "r": 29
+  },
+  {
+   "namn": "skorsten",
+   "E": 674568,
+   "N": 6575015,
+   "r": 11
+  },
+  {
+   "namn": "granskad LEDNING?",
+   "E": 673736,
+   "N": 6580878,
+   "r": 25
+  },
+  {
+   "namn": "granskad LEDNING?",
+   "E": 673683,
+   "N": 6580960,
+   "r": 21
+  },
+  {
+   "namn": "granskad LEDNING?",
+   "E": 673655,
+   "N": 6581008,
+   "r": 22
+  },
+  {
+   "namn": "granskad KRAN?",
+   "E": 673264,
+   "N": 6581080,
+   "r": 18
+  },
+  {
+   "namn": "skorsten",
+   "E": 668971,
+   "N": 6583084,
+   "r": 11
+  },
+  {
+   "namn": "granskad KRAN?",
+   "E": 668640,
+   "N": 6583512,
+   "r": 35
+  },
+  {
+   "namn": "granskad KRAN?",
+   "E": 668608,
+   "N": 6583539,
+   "r": 36
+  },
+  {
+   "namn": "granskad KRAN?",
+   "E": 668572,
+   "N": 6583570,
+   "r": 22
+  },
+  {
+   "namn": "granskad KRAN?",
+   "E": 668549,
+   "N": 6583597,
+   "r": 22
+  },
+  {
+   "namn": "granskad KRAN?",
+   "E": 668516,
+   "N": 6583629,
+   "r": 21
+  },
+  {
+   "namn": "granskad KRAN?",
+   "E": 668905,
+   "N": 6584108,
+   "r": 40
+  },
+  {
+   "namn": "granskad KRAN?",
+   "E": 669089,
+   "N": 6584053,
+   "r": 17
+  },
+  {
+   "namn": "granskad KRAN?",
+   "E": 669044,
+   "N": 6585003,
+   "r": 38
+  },
+  {
+   "namn": "granskad KRAN?",
+   "E": 667663,
+   "N": 6584382,
+   "r": 36
+  },
+  {
+   "namn": "granskad KRAN?",
+   "E": 667643,
+   "N": 6584617,
+   "r": 16
+  },
+  {
+   "namn": "granskad KRAN?",
+   "E": 667451,
+   "N": 6584755,
+   "r": 27
+  },
+  {
+   "namn": "granskad KRAN?",
+   "E": 666873,
+   "N": 6581027,
+   "r": 33
+  },
+  {
+   "namn": "granskad KRAN?",
+   "E": 666184,
+   "N": 6580551,
+   "r": 55
+  },
+  {
+   "namn": "granskad TRAD",
+   "E": 667369,
+   "N": 6576377,
+   "r": 18
+  },
+  {
+   "namn": "granskad TRAD",
+   "E": 669249,
+   "N": 6576405,
+   "r": 17
+  },
+  {
+   "namn": "granskad TRAD",
+   "E": 669943,
+   "N": 6578076,
+   "r": 17
+  },
+  {
+   "namn": "claude: essingeleden ska vara kvar",
+   "E": 670874,
+   "N": 6579020,
+   "r": 24
+  },
+  {
+   "namn": "granskad TRAD",
+   "E": 670732,
+   "N": 6579276,
+   "r": 16
+  },
+  {
+   "namn": "claude essingeleden ska vara kvar",
+   "E": 670581,
+   "N": 6579488,
+   "r": 16
+  },
+  {
+   "namn": "claude: bro ska vara kvar",
+   "E": 670705,
+   "N": 6579995,
+   "r": 23
+  },
+  {
+   "namn": "claudevästerbron ska vara kvar men inte tät under",
+   "E": 672159,
+   "N": 6580196,
+   "r": 17
+  },
+  {
+   "namn": "claudevästerbron ska vara kvar men inte tät under",
+   "E": 672177,
+   "N": 6580170,
+   "r": 24
+  },
+  {
+   "namn": "järnvägsbro, kvar men inte tät under",
+   "E": 673144,
+   "N": 6578368,
+   "r": 23
+  },
+  {
+   "namn": "järnvägsbro, kvar men inte tät under",
+   "E": 673109,
+   "N": 6578307,
+   "r": 16
+  },
+  {
+   "namn": "claude skanstullsbron: ska var, kvar men inte tät under",
+   "E": 675260,
+   "N": 6578053,
+   "r": 26
+  },
+  {
+   "namn": "granskad TRAD",
+   "E": 675516,
+   "N": 6577157,
+   "r": 16
+  },
+  {
+   "namn": "granskad TRAD",
+   "E": 676798,
+   "N": 6575149,
+   "r": 29
+  },
+  {
+   "namn": "granskad TRAD",
+   "E": 676895,
+   "N": 6582518,
+   "r": 16
+  },
+  {
+   "namn": "granskad TRAD",
+   "E": 676783,
+   "N": 6583507,
+   "r": 17
+  },
+  {
+   "namn": "granskad TRAD",
+   "E": 674640,
+   "N": 6585112,
+   "r": 22
+  },
+  {
+   "namn": "granskad TRAD",
+   "E": 674612,
+   "N": 6585097,
+   "r": 17
+  },
+  {
+   "namn": "granskad TRAD",
+   "E": 674587,
+   "N": 6585279,
+   "r": 24
+  },
+  {
+   "namn": "granskad TRAD",
+   "E": 672479,
+   "N": 6583975,
+   "r": 24
+  },
+  {
+   "namn": "granskad TRAD",
+   "E": 672005,
+   "N": 6582837,
+   "r": 16
+  },
+  {
+   "namn": "granskad TRAD",
+   "E": 669993,
+   "N": 6582573,
+   "r": 17
+  },
+  {
+   "namn": "granskad TRAD",
+   "E": 669089,
+   "N": 6583786,
+   "r": 18
+  },
+  {
+   "namn": "granskad TRAD",
+   "E": 672061,
+   "N": 6585151,
+   "r": 21
+  },
+  {
+   "namn": "granskad TRAD",
+   "E": 666287,
+   "N": 6579374,
+   "r": 19
+  },
+  {
+   "namn": "Liljeholmskajen, kapplata pa ringniva 43,5 m - i niva med grannhusen, ok",
+   "E": 672814,
+   "N": 6578062,
+   "r": 16
+  }
+ ]
+}
