@@ -327,7 +327,7 @@ select.dur{font-family:var(--mono);font-size:.85rem;padding:.35rem .5rem;border:
     <h1>Hitta uteserveringen</h1>
     <span class="sub">i solen</span>
   </div>
-  <span class="ver" id="verTag">v0.51</span>
+  <span class="ver" id="verTag">v0.52</span>
 </header>
 
 <div id="map"></div>
@@ -461,7 +461,7 @@ select.dur{font-family:var(--mono);font-size:.85rem;padding:.35rem .5rem;border:
 
 <script>
 "use strict";
-/* ================ HITTA UTESERVERINGEN v0.51 ================
+/* ================ HITTA UTESERVERINGEN v0.52 ================
    Läge A (laser): ray marching mot höjdtiles (tiles/, från
    preprocess.py) + 3D-vy som bygger mesh ur samma tiles.
    Läge B (fallback): OSM via Overpass.
@@ -1472,6 +1472,42 @@ function snapToGround(E,N,maxR=35){
   return {E,N,snapped:false};
 }
 
+/* ---------- SMHI väder (punktprognos, öppna data, ingen nyckel) ---------- */
+let WX=null;   // {lat,lon,fetched,ts:[{t,tcc,temp,pcat,sym}]}
+const WX_CLOUD=0.85;    // helmulet (8/8) släpper igenom 15 % av "solvärdet"
+async function loadWeather(lat,lng){
+  const la=+lat.toFixed(2), lo=+lng.toFixed(2);       // SMHI-rutan är 2,8 km
+  try{
+    const c=JSON.parse(localStorage.getItem('hu_wx')||'null');
+    if(c&&c.ts&&Date.now()-c.fetched<3600e3&&Math.abs(c.lat-la)<0.03&&Math.abs(c.lon-lo)<0.05){WX=c;return WX;}
+  }catch(_){}
+  try{
+    // snow1g v1 (ersatte pmp3g 2026-03-31): platt data-objekt, molnighet i åttondelar, 9999 = saknas
+    const url=`https://opendata-download-metfcst.smhi.se/api/category/snow1g/version/1/geotype/point/lon/${lo}/lat/${la}/data.json`;
+    const r=await fetch(url); if(!r.ok) throw new Error('SMHI '+r.status);
+    const d=await r.json();
+    const ok=x=>(x==null||x===9999||x===-9)?null:x;
+    const ts=(d.timeSeries||[]).map(e=>{
+      const g=e.data||{};
+      return {t:Date.parse(e.time||e.validTime),tcc:ok(g.cloud_area_fraction),temp:ok(g.air_temperature),
+              pcat:ok(g.predominant_precipitation_type_at_surface)||0,pmm:ok(g.precipitation_amount_mean)||0,sym:ok(g.symbol_code)};
+    }).filter(e=>e.t&&e.tcc!=null);
+    if(!ts.length) throw new Error('tom prognos');
+    WX={lat:la,lon:lo,fetched:Date.now(),ts};
+    try{localStorage.setItem('hu_wx',JSON.stringify(WX));}catch(_){}
+  }catch(e){ console.log('väder: '+e.message+' – visar geometrisk sol'); WX=null; }
+  return WX;
+}
+function wxAt(ms){   // närmast föregående prognospunkt (timvis första dygnen, 3–6 h därefter)
+  if(!WX||!WX.ts.length) return null;
+  const ts=WX.ts;
+  if(ms<ts[0].t-3600e3||ms>ts[ts.length-1].t+3*3600e3) return null;
+  let best=null;
+  for(const e of ts){ if(e.t<=ms+1800e3) best=e; else break; }
+  return best;
+}
+const wxFac=e=>e?1-WX_CLOUD*Math.min(8,Math.max(0,e.tcc))/8:1;   // 1 = klart, 0,15 = helmulet
+
 async function fetchVenues(lat,lng,r){
   const q=`[out:json][timeout:30];nwr["amenity"~"^(cafe|bar|pub|restaurant|biergarten|ice_cream)$"]["name"](around:${r},${lat},${lng});nwr["shop"="ice_cream"]["name"](around:${r},${lat},${lng});out center tags;way["building"](around:${r+80},${lat},${lng});out geom;`;
   return (await overpass(q)).elements;
@@ -1500,7 +1536,7 @@ async function searchVenues(){
   const c=map.getCenter();
   info.innerHTML='<span class="spin"></span>Hämtar ställen från OpenStreetMap …';
   try{
-    const els=await fetchVenues(c.lat,c.lng,700);
+    const [els]=await Promise.all([fetchVenues(c.lat,c.lng,700), loadWeather(c.lat,c.lng)]);
     const {E:cE,N:cN}=toSweref(c.lat,c.lng);
     // Byggnadskonturer i SWEREF for fasadsnappning
     const polys=[];
@@ -1592,13 +1628,19 @@ function renderVenues(skipped){
   const wanted=[...document.querySelectorAll('#listCard .chip.on')].map(x=>x.dataset.cat);
   document.getElementById('favSw').classList.toggle('show',favs.size>0);
   const month=new Date().getMonth();
+  // Väder per kvart (06–22) för valt datum; null = ingen prognos (annat datum, SMHI nere)
+  const day0=new Date(listDateStr+'T00:00:00').getTime();
+  const wxQ=Array.from({length:64},(_,q2)=>wxAt(day0+(6*60+q2*15)*60e3));
+  const hasWx=wxQ.some(Boolean);
   const sunOf=v=>{
-    let sun=0,tree=0;
+    let sun=0,tree=0,eff=0;
     for(let q2=Math.round((f-6)*4);q2<Math.round((t-6)*4);q2++){
       if(q2<0||q2>=64)continue;
-      if(v.band[q2]===2)sun+=0.25; else if(v.band[q2]===1)tree+=0.25;
+      const fac=hasWx?wxFac(wxQ[q2]):1;
+      if(v.band[q2]===2){sun+=0.25;eff+=0.25*fac;}
+      else if(v.band[q2]===1){tree+=0.25;eff+=0.125*fac;}
     }
-    return {sun,tree};
+    return {sun,tree,eff};
   };
   const wd=(new Date(listDateStr+'T12:00:00').getDay()+6)%7;   // 0=måndag
   const maxT=+document.getElementById('maxTravel').value;
@@ -1610,8 +1652,20 @@ function renderVenues(skipped){
   );
   vs.sort((a,b)=>{
     const A=sunOf(a),B=sunOf(b);
-    return (B.sun+0.5*B.tree)-(A.sun+0.5*A.tree) || travel(a).mins-travel(b).mins;
+    return B.eff-A.eff || travel(a).mins-travel(b).mins;   // molnighet vägs in när prognos finns
   });
+  // Vädersammanfattning för perioden: medelmolnighet, temperatur, regn
+  let wxTxt='';
+  if(hasWx){
+    const qs=[]; for(let q2=Math.round((f-6)*4);q2<Math.round((t-6)*4);q2++) if(q2>=0&&q2<64&&wxQ[q2]) qs.push(wxQ[q2]);
+    if(qs.length){
+      const tcc=qs.reduce((a,e)=>a+e.tcc,0)/qs.length;
+      const rain=qs.filter(e=>e.pcat>0).length*0.25;
+      const temp=qs[Math.floor(qs.length/2)].temp;
+      const moln=tcc<1.5?'klart':tcc<3.5?'mest klart':tcc<5.5?'halvklart':tcc<7?'mulet':'helmulet';
+      wxTxt=` · SMHI: ${moln} (${tcc.toFixed(0)}/8)${temp!=null?`, ${Math.round(temp)} °C`:''}${rain?`, nederbörd ${fmtTim(rain)}`:''}`;
+    }
+  }
   renderFavList();
   document.getElementById('legend').style.display=vs.length?'flex':'none';
   venueLayer.clearLayers();
@@ -1654,7 +1708,7 @@ function renderVenues(skipped){
   window._huMarks=marks; window._huVenues=vs;
   info.textContent=`Sol ${fmtHH(f)}–${fmtHH(t)} den ${(+listDateStr.slice(8,10))}/${(+listDateStr.slice(5,7))} · ${vs.length} ställen`
     +(skipped?` (${skipped} utanför höjddatan)`:'')
-    +' · mest sol, sen kortast restid · kända stängda dolda';
+    +wxTxt+(hasWx?' · rankat efter sol × molnighet':' · mest sol, sen kortast restid')+' · kända stängda dolda';
   listEl.innerHTML='';
   const cols={0:'#93a0b4',1:'#7db36a',2:'#f7b32b',3:'#2c3a5c'};
   vs.forEach((v,i)=>{
@@ -1695,6 +1749,13 @@ function renderVenues(skipped){
     const pw=w/64, Hb=24;
     // Full färgstyrka i hela bandet (ingen nedtoning utanför perioden)
     for(let q2=0;q2<64;q2++){cx.fillStyle=cols[v.band[q2]];cx.fillRect(q2*pw,0,pw+.5,Hb);}
+    // Molnslöja ur SMHI: grå ton proportionell mot molnigheten, blå kant vid nederbörd
+    if(hasWx) for(let q2=0;q2<64;q2++){
+      const e=wxQ[q2]; if(!e) continue;
+      const a=0.6*Math.min(8,e.tcc)/8;
+      if(a>0.05){cx.fillStyle=`rgba(96,104,118,${a.toFixed(2)})`;cx.fillRect(q2*pw,0,pw+.5,Hb);}
+      if(e.pcat>0){cx.fillStyle='#3d7fd6';cx.fillRect(q2*pw,Hb-3,pw+.5,3);}
+    }
     // Trim-ram runt vald period, med pilspetsar inåt (Apple-klippstil)
     const xa=(f-6)*4*pw, xb=(t-6)*4*pw, LW=3;
     cx.strokeStyle='#33281a'; cx.lineWidth=LW;
@@ -1708,7 +1769,8 @@ function renderVenues(skipped){
     cx.moveTo(xb-LW, Hb/2-ar); cx.lineTo(xb-LW-ar*0.75, Hb/2); cx.lineTo(xb-LW, Hb/2+ar);
     cx.closePath(); cx.fill();
     // Trädskuggning: månadsvis transmission visas i tooltip
-    cv.title=`Silad sol: krona skuggar ~${Math.round((1-TREE_TRANS[month])*100)}% denna månad`;
+    cv.title=`Silad sol: krona skuggar ~${Math.round((1-TREE_TRANS[month])*100)}% denna månad`
+      +(hasWx?' · grå slöja = molnighet enligt SMHI, blå kant = nederbörd':'');
     el.querySelector('.v3d').addEventListener('click',()=>
       open3dAt(v.E,v.N,v.lat,v.lng,v.name,v));
     el.querySelector('.vheart').addEventListener('click',e=>{
