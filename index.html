@@ -82,6 +82,9 @@ input[type=range]{width:100%;margin-top:.5rem;accent-color:var(--sun-deep)}
   box-shadow:0 1px 5px rgba(0,0,0,.3)}
 .locbtn:hover{color:#33281a}
 .locbtn.busy{opacity:.5}
+.pinbtn.on{background:#ffe3a3;border-color:#c98a06}
+.pinmark{filter:drop-shadow(0 2px 2px rgba(0,0,0,.35))}
+#map.pinmode{cursor:crosshair}
 .ctlrow{display:flex;flex-wrap:nowrap;align-items:flex-end;gap:.4rem}
 .ctlrow .ctl{min-width:0;flex:1 1 auto}
 .ctlrow .ctl:first-child{flex:0 0 auto}
@@ -342,7 +345,7 @@ body.kurera #t3close,body.kurera #hint,body.kurera .t3head{display:none!importan
     <h1>Hitta uteserveringen</h1>
     <span class="sub">i solen</span>
   </div>
-  <span class="ver" id="verTag">v0.57</span>
+  <span class="ver" id="verTag">v0.58</span>
 </header>
 
 <div id="map"></div>
@@ -474,7 +477,7 @@ body.kurera #t3close,body.kurera #hint,body.kurera .t3head{display:none!importan
 
 <script>
 "use strict";
-/* ================ HITTA UTESERVERINGEN v0.57 ================
+/* ================ HITTA UTESERVERINGEN v0.58 ================
    Läge A (laser): ray marching mot höjdtiles (tiles/, från
    preprocess.py) + 3D-vy som bygger mesh ur samma tiles.
    Läge B (fallback): OSM via Overpass.
@@ -897,7 +900,7 @@ function updateStatus(){
   document.getElementById('statusMeta').textContent=
     r.s.altDeg>0?`solhöjd ${r.s.altDeg.toFixed(0)}° · azimut ${r.s.azDeg.toFixed(0)}°`:'solen under horisonten';
   if(sunRay){map.removeLayer(sunRay);sunRay=null;}
-  if(marker)marker.setStyle({fillColor:COLORS[r.c]});
+  if(marker&&marker.setStyle)marker.setStyle({fillColor:COLORS[r.c]});   // röd nål har ingen stil att byta
   if(r.s.altDeg>0){
     const len=.0018;
     const lat2=P.lat+Math.cos(r.s.azDeg*rad)*len;
@@ -922,8 +925,7 @@ async function startAnalysis(refetch){
   const hint=document.getElementById('hint');
   if(!P) return;
   if(marker)map.removeLayer(marker);
-  marker=L.circleMarker([P.lat,P.lng],{radius:9,color:'#33281a',weight:2,
-    fillColor:'#f7b32b',fillOpacity:1}).addTo(map);
+  marker=L.marker([P.lat,P.lng],{icon:L.divIcon({className:'pinmark',html:'<svg viewBox="0 0 24 24" width="34" height="34"><path d="M12 22s7-7.2 7-12.5A7 7 0 0 0 5 9.5C5 14.8 12 22 12 22z" fill="#e0322a" stroke="#8f1d17" stroke-width="1.2"/><circle cx="12" cy="9.5" r="2.6" fill="#fff"/></svg>',iconSize:[34,34],iconAnchor:[17,33]}),interactive:false}).addTo(map);
   const R=+document.getElementById('radiusInput').value||600;
   try{
     let info='';
@@ -1383,7 +1385,11 @@ if(KURERA) document.documentElement.classList.add('kurera-html');
 window.HU={get map(){return map;},get DEM(){return DEM;},get lastVenues(){return lastVenues;},get grid(){return grid;}};
 function savePos(){ try{localStorage.setItem('hu_pos',JSON.stringify(manPos));}catch(_){} }
 try{ favs=new Set(JSON.parse(localStorage.getItem('hu_favs')||'[]')); }catch(_){}
-function saveFavs(){ try{localStorage.setItem('hu_favs',JSON.stringify([...favs]));}catch(_){} }
+let favNames={};   // OSM-id -> namn, för listan
+try{ favNames=JSON.parse(localStorage.getItem('hu_favnames')||'{}'); }catch(_){}
+function saveFavs(){ try{localStorage.setItem('hu_favs',JSON.stringify([...favs]));localStorage.setItem('hu_favnames',JSON.stringify(favNames));}catch(_){} }
+const isFav=v=>favs.has(v.id)||favs.has(v.name);
+const favLabel=k=>favNames[k]||k;
 
 /* Punkt 8: opening_hours - parser för de vanligaste mönstren.
    Klarar: "Mo-Fr 10:00-22:00; Sa,Su 12:00-20:00", "Mo-Su 15:00-22:00",
@@ -1620,7 +1626,7 @@ async function searchVenues(){
       const cst=curStatus(oid,t.name);                   // kurerad status ur lagen.json
       if(!KURERA&&(cst==='stangt'||cst==='ej_uteservering')) continue;
       const pp=posFor(t.name,oid);
-      const roofTag=/^(roof|rooftop)$/i.test(t.location||'');
+      const roofTag=/^(roof|rooftop)$/i.test(t.location||'')||/^(roof|rooftop)$/i.test(t.outdoor_seating||'');
       let roofWanted=roofTag;
       if(listMode==='bank'){ E=sw.E; N=sw.N; }            // bänken står där den står
       else if(pp){
@@ -1710,7 +1716,7 @@ function renderVenues(skipped){
     (v.bank||wanted.some(cc=>v.cats[cc])) &&
     travel(v).mins<=maxT &&
     (!v.ohp.ok || ohOpen(v.ohp, wd, f, t)) &&   // kända stängda filtreras bort
-    (!onlyFavs||favs.has(v.name))
+    (!onlyFavs||isFav(v))
   );
   vs.sort((a,b)=>{
     const A=sunOf(a),B=sunOf(b);
@@ -1786,7 +1792,7 @@ function renderVenues(skipped){
     el.innerHTML=`
       <div class="vtop"><span class="rank">${i+1}</span><span class="vname">${v.name}</span>
         <span class="v3d">3D</span>
-        <span class="vheart${favs.has(v.name)?' on':''}">♥</span></div>
+        <span class="vheart${isFav(v)?' on':''}">♥</span></div>
       <div class="vmeta">
         <a href="${gurl}" target="_blank" rel="noopener"><svg class="ci"><use href="#${M.icon}"/></svg> ${mins} min</a>
         ${v.bank?'':v.outdoor==='yes'?'<span class="ute">uteservering</span>':
@@ -1848,7 +1854,8 @@ function renderVenues(skipped){
     el.querySelector('.v3d').addEventListener('click',()=>
       open3dAt(v.E,v.N,v.lat,v.lng,v.name,v));
     el.querySelector('.vheart').addEventListener('click',e=>{
-      favs.has(v.name)?favs.delete(v.name):favs.add(v.name);
+      if(isFav(v)){ favs.delete(v.id); favs.delete(v.name); }
+      else { favs.add(v.id); favNames[v.id]=v.name; }
       if(!favs.size){onlyFavs=false;document.getElementById('favTgl').classList.remove('on');}
       saveFavs();renderVenues(skipped);
     });
@@ -1916,7 +1923,7 @@ function renderFavList(){
   if(!el) return;
   if(!favs.size){el.innerHTML='<span class="none">Inga favoriter ännu – tryck på ett hjärta eller skriv nedan.</span>';return;}
   el.innerHTML=[...favs].map(n=>
-    `<span class="favpill">♥ ${n}<b data-rm="${n.replace(/"/g,'&quot;')}">×</b></span>`).join('');
+    `<span class="favpill">♥ ${favLabel(n)}<b data-rm="${n.replace(/"/g,'&quot;')}">×</b></span>`).join('');
   el.querySelectorAll('b[data-rm]').forEach(b=>b.addEventListener('click',()=>{
     favs.delete(b.dataset.rm);
     if(!favs.size){onlyFavs=false;document.getElementById('favTgl').classList.remove('on');}
@@ -1972,7 +1979,31 @@ L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',
 bldLayer=L.layerGroup().addTo(map);
 treeLayer=L.layerGroup().addTo(map);
 const venueLayer=L.layerGroup().addTo(map);
-map.on('click',ev=>{P=ev.latlng;startAnalysis(true);});
+// Pin-läge: kartklick ger sol i valfri punkt bara när pin-knappen (nere till höger) är aktiv
+let pinMode=false;
+const PinBtn=L.Control.extend({
+  options:{position:'bottomright'},
+  onAdd:function(){
+    const b=L.DomUtil.create('div','locbtn pinbtn');
+    b.innerHTML='<svg viewBox="0 0 24 24" width="22" height="22"><path d="M12 22s7-7.2 7-12.5A7 7 0 0 0 5 9.5C5 14.8 12 22 12 22z" fill="#e0322a" stroke="#8f1d17" stroke-width="1.2"/><circle cx="12" cy="9.5" r="2.6" fill="#fff"/></svg>';
+    b.title='Sol i valfri punkt: tryck här, sedan på kartan';
+    L.DomEvent.disableClickPropagation(b);
+    b.addEventListener('click',()=>{
+      pinMode=!pinMode;
+      b.classList.toggle('on',pinMode);
+      document.getElementById('map').classList.toggle('pinmode',pinMode);
+    });
+    return b;
+  }
+});
+map.addControl(new PinBtn());
+map.on('click',ev=>{
+  if(!pinMode) return;
+  pinMode=false;
+  document.querySelector('.pinbtn').classList.remove('on');
+  document.getElementById('map').classList.remove('pinmode');
+  P=ev.latlng;startAnalysis(true);
+});
 
 (function init(){
   const today=new Date();
@@ -2073,7 +2104,7 @@ map.on('click',ev=>{P=ev.latlng;startAnalysis(true);});
     const msg=[];
     for(const line of lines){
       const hit=matchVenueName(line);
-      if(hit){favs.add(hit.name);msg.push(`<span class="hit">✓ ${hit.name}</span>`);}
+      if(hit){favs.add(hit.id);favNames[hit.id]=hit.name;msg.push(`<span class="hit">✓ ${hit.name}</span>`);}
       else msg.push(`<span class="miss">✗ ingen träff: &quot;${line}&quot;</span>`);
     }
     document.getElementById('favMsg').innerHTML=msg.join('<br>');
@@ -2081,7 +2112,7 @@ map.on('click',ev=>{P=ev.latlng;startAnalysis(true);});
     saveFavs();renderVenues();
   });
   document.getElementById('favExport').addEventListener('click',()=>{
-    document.getElementById('favInput').value=[...favs].join('\n');
+    document.getElementById('favInput').value=[...favs].map(favLabel).join('\n');
     document.getElementById('favMsg').innerHTML=`<span class="hit">${favs.size} favoriter listade – kopiera och spara var du vill.</span>`;
   });
   document.querySelectorAll('#listCard .chip').forEach(ch=>
