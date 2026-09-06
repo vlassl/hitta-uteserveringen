@@ -342,7 +342,7 @@ body.kurera #t3close,body.kurera #hint,body.kurera .t3head{display:none!importan
     <h1>Hitta uteserveringen</h1>
     <span class="sub">i solen</span>
   </div>
-  <span class="ver" id="verTag">v0.56</span>
+  <span class="ver" id="verTag">v0.57</span>
 </header>
 
 <div id="map"></div>
@@ -354,7 +354,7 @@ body.kurera #t3close,body.kurera #hint,body.kurera .t3head{display:none!importan
   </div>
 
   <div class="card" id="listCard">
-    <h2>Soliga uteserveringar nära kartans mitt<span class="setbtn" id="setBtn" title="Inställningar"><svg class="ci lg"><use href="#i-gear"/></svg></span></h2>
+    <h2><span id="modeTitle" style="cursor:pointer" title="Tryck för att växla mellan uteserveringar och parkbänkar">Soliga uteserveringar nära kartans mitt</span><span class="setbtn" id="setBtn" title="Inställningar"><svg class="ci lg"><use href="#i-gear"/></svg></span></h2>
     <div class="controls ctlrow">
       <span class="ctl"><span class="lbl">När?</span>
         <span class="bigchip" id="whenChip"><span id="whenLabel">Nu</span><span class="car">▼</span></span></span>
@@ -388,7 +388,7 @@ body.kurera #t3close,body.kurera #hint,body.kurera .t3head{display:none!importan
         </div>
       </div>
     </div>
-    <div class="controls chiprow" style="margin-top:.4rem">
+    <div class="controls chiprow" id="catRow" style="margin-top:.4rem">
       <span class="chip on" data-cat="coffee"><svg class="ci"><use href="#i-coffee"/></svg>Kaffe</span>
       <span class="chip on" data-cat="beer"><svg class="ci"><use href="#i-beer"/></svg>Öl</span>
       <span class="chip on" data-cat="wine"><svg class="ci"><use href="#i-wine"/></svg>Vin</span>
@@ -477,7 +477,7 @@ body.kurera #t3close,body.kurera #hint,body.kurera .t3head{display:none!importan
 
 <script>
 "use strict";
-/* ================ HITTA UTESERVERINGEN v0.56 ================
+/* ================ HITTA UTESERVERINGEN v0.57 ================
    Läge A (laser): ray marching mot höjdtiles (tiles/, från
    preprocess.py) + 3D-vy som bygger mesh ur samma tiles.
    Läge B (fallback): OSM via Overpass.
@@ -1330,6 +1330,7 @@ function updSun3(){
 
 /* ================ Uteserveringslistan ================ */
 let favs=new Set(), onlyFavs=false, lastVenues=null;
+let listMode='ute';   // 'ute' = uteserveringar, 'bank' = parkbänkar (OSM amenity=bench)
 let wxOn=true;   // SMHI molntäcke: viktar soltimmar och sortering, visar väderband
 try{ wxOn=localStorage.getItem('hu_wx_on')!=='0'; }catch(_){}
 let listDateStr=new Date().toISOString().slice(0,10);
@@ -1543,8 +1544,15 @@ function wxAt(ms){   // närmast föregående prognospunkt (timvis första dygne
 const wxFac=e=>e?1-WX_CLOUD*Math.min(8,Math.max(0,e.tcc))/8:1;   // 1 = klart, 0,15 = helmulet
 
 async function fetchVenues(lat,lng,r){
-  const q=`[out:json][timeout:30];(nwr["amenity"~"^(cafe|bar|pub|restaurant|biergarten|ice_cream)$"]["name"](around:${r},${lat},${lng});nwr["shop"="ice_cream"]["name"](around:${r},${lat},${lng}););out center tags;way["building"](around:${r+80},${lat},${lng});out geom;`;
+  const q=listMode==='bank'
+    ? `[out:json][timeout:30];(node["amenity"="bench"](around:${r},${lat},${lng});node["leisure"="picnic_table"](around:${r},${lat},${lng}););out tags;`
+    : `[out:json][timeout:30];(nwr["amenity"~"^(cafe|bar|pub|restaurant|biergarten|ice_cream)$"]["name"](around:${r},${lat},${lng});nwr["shop"="ice_cream"]["name"](around:${r},${lat},${lng}););out center tags;way["building"](around:${r+80},${lat},${lng});out geom;`;
   return (await overpass(q)).elements;
+}
+function benchName(t){
+  if(t.leisure==='picnic_table') return 'Picknickbord';
+  const d=[]; if(t.backrest==='yes') d.push('ryggstöd'); if(t.material) d.push(({wood:'trä',metal:'metall',stone:'sten',concrete:'betong'})[t.material]||t.material);
+  return 'Parkbänk'+(d.length?' · '+d.join(', '):'');
 }
 
 function venueBand(lat,lng,hB,vegIv){
@@ -1570,7 +1578,12 @@ async function searchVenues(){
   const c=map.getCenter();
   info.innerHTML='<span class="spin"></span>Hämtar ställen från OpenStreetMap …';
   try{
-    const [els]=await Promise.all([fetchVenues(c.lat,c.lng,700), loadWeather(c.lat,c.lng)]);
+    let [els]=await Promise.all([fetchVenues(c.lat,c.lng,700), loadWeather(c.lat,c.lng)]);
+    if(listMode==='bank'){                        // parker kan ha hundratals bänkar - ta de 120 närmaste
+      const c0=toSweref(c.lat,c.lng);
+      els=els.map(e=>{const p=toSweref(e.lat,e.lon);return [Math.hypot(p.E-c0.E,p.N-c0.N),e];})
+             .sort((a,b)=>a[0]-b[0]).slice(0,120).map(x=>x[1]);
+    }
     const {E:cE,N:cN}=toSweref(c.lat,c.lng);
     // Byggnadskonturer i SWEREF for fasadsnappning
     const polys=[];
@@ -1593,6 +1606,7 @@ async function searchVenues(){
     for(const el of els){
       const t=el.tags||{};
       if(t.building) continue;                    // konturer, inte ställen
+      if(listMode==='bank') t.name=benchName(t);  // bänkar saknar namn
       const vlat=el.lat??el.center?.lat, vlng=el.lon??el.center?.lon;
       if(vlat==null) continue;
       const sw=toSweref(vlat,vlng);
@@ -1603,7 +1617,8 @@ async function searchVenues(){
       const pp=posFor(t.name,oid);
       const roofTag=/^(roof|rooftop)$/i.test(t.location||'');
       let roofWanted=roofTag;
-      if(pp){
+      if(listMode==='bank'){ E=sw.E; N=sw.N; }            // bänken står där den står
+      else if(pp){
         [E,N]=pp; manual=true;
         if(pp[2]===1) roofWanted=true;                     // uttryckligen flyttad upp på taket i 3D
         else { const s0=sample(E,N); if(s0&&s0[3]){ const sn=snapToGround(E,N); E=sn.E; N=sn.N; } }  // annars ner på gatan
@@ -1624,7 +1639,7 @@ async function searchVenues(){
       venues.push({
         name:t.name, id:oid, osmE:sw.E, osmN:sw.N, lat:vlat, lng:vlng, E, N, status:cst,
         snapped:!manual&&_snapped, manual, roof:roofWanted&&!!(sR&&sR[3]),
-        cats:CAT_OF(t), outdoor:t.outdoor_seating||'', oh:t.opening_hours||'',
+        cats:listMode==='bank'?{bank:1}:CAT_OF(t), bank:listMode==='bank', outdoor:listMode==='bank'?'yes':(t.outdoor_seating||''), oh:t.opening_hours||'',
         dist:Math.round(Math.hypot(dx,dy)),
         ohp:parseOH(t.opening_hours),
         h,
@@ -1687,7 +1702,7 @@ function renderVenues(skipped){
   const wd=(new Date(listDateStr+'T12:00:00').getDay()+6)%7;   // 0=måndag
   const maxT=+document.getElementById('maxTravel').value;
   let vs=lastVenues.filter(v=>
-    wanted.some(cc=>v.cats[cc]) &&
+    (v.bank||wanted.some(cc=>v.cats[cc])) &&
     travel(v).mins<=maxT &&
     (!v.ohp.ok || ohOpen(v.ohp, wd, f, t)) &&   // kända stängda filtreras bort
     (!onlyFavs||favs.has(v.name))
@@ -1769,7 +1784,7 @@ function renderVenues(skipped){
         <span class="vheart${favs.has(v.name)?' on':''}">♥</span></div>
       <div class="vmeta">
         <a href="${gurl}" target="_blank" rel="noopener"><svg class="ci"><use href="#${M.icon}"/></svg> ${mins} min</a>
-        ${v.outdoor==='yes'?'<span class="ute">uteservering</span>':
+        ${v.bank?'':v.outdoor==='yes'?'<span class="ute">uteservering</span>':
           v.outdoor==='no'?'':'<span class="uteq">uteservering?</span>'}
         ${Object.keys(v.cats).map(cc=>({coffee:'i-coffee',beer:'i-beer',wine:'i-wine',drinks:'i-drink',food:'i-food',ice:'i-ice'})[cc])
           .filter(Boolean).map(ic=>`<svg class="ci"><use href="#${ic}"/></svg>`).join(' ')}
@@ -2066,6 +2081,13 @@ map.on('click',ev=>{P=ev.latlng;startAnalysis(true);});
   });
   document.querySelectorAll('#listCard .chip').forEach(ch=>
     ch.addEventListener('click',()=>{ch.classList.toggle('on');renderVenues();}));
+  document.getElementById('modeTitle').addEventListener('click',()=>{
+    listMode=listMode==='ute'?'bank':'ute';
+    document.getElementById('modeTitle').textContent=listMode==='bank'?'Soliga parkbänkar nära kartans mitt':'Soliga uteserveringar nära kartans mitt';
+    document.getElementById('catRow').style.display=listMode==='bank'?'none':'';
+    lastVenues=null; document.getElementById('venueList').innerHTML=''; venueLayer.clearLayers();
+    document.getElementById('listInfo').textContent=listMode==='bank'?'Tryck Sök för att hämta parkbänkar (OpenStreetMap) runt kartans mitt.':'';
+  });
   document.getElementById('wxTgl').classList.toggle('on',wxOn);
   document.getElementById('wxTgl').addEventListener('click',()=>{
     wxOn=!wxOn;
