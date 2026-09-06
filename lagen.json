@@ -1,0 +1,457 @@
+{
+ "version": 2,
+ "kommentar": "Kurerade uteserveringslägen (SWEREF99 TM). status: ok | osaker | ej_uteservering | stangt. Nyckel = OSM-id.",
+ "skapad": "2026-09-06",
+ "lagen": {
+  "n8132552417": {
+   "namn": "800 Grader",
+   "E": 670966.6,
+   "N": 6577694.4,
+   "tak": 0,
+   "status": "ok",
+   "datum": "2026-09-06",
+   "not": ""
+  },
+  "n2852670618": {
+   "namn": "Asian Garden",
+   "E": 671429.4,
+   "N": 6577107.1,
+   "tak": 0,
+   "status": "ok",
+   "datum": "2026-09-06",
+   "not": ""
+  },
+  "n6356434207": {
+   "namn": "Bakom hörnet",
+   "E": 671125.9,
+   "N": 6577269.3,
+   "tak": 0,
+   "status": "ej_uteservering",
+   "datum": "2026-09-06",
+   "not": ""
+  },
+  "n1243139715": {
+   "namn": "Bella Notte",
+   "E": 671612.8,
+   "N": 6577600.1,
+   "tak": 0,
+   "status": "ok",
+   "datum": "2026-09-06",
+   "not": ""
+  },
+  "n6312673777": {
+   "namn": "Biocafé Tellus",
+   "E": 671238.1,
+   "N": 6577537.4,
+   "tak": 0,
+   "status": "ej_uteservering",
+   "datum": "2026-09-06",
+   "not": ""
+  },
+  "n10825637012": {
+   "namn": "Bistro Aspen",
+   "E": 671164.5,
+   "N": 6577995.6,
+   "tak": 0,
+   "status": "ej_uteservering",
+   "datum": "2026-09-06",
+   "not": ""
+  },
+  "n7352675485": {
+   "namn": "Bonne Femme Stenungsbageri",
+   "E": 671050.8,
+   "N": 6577267.7,
+   "tak": 0,
+   "status": "ok",
+   "datum": "2026-09-06",
+   "not": ""
+  },
+  "n2662904955": {
+   "namn": "Butsaya",
+   "E": 671018,
+   "N": 6577208.3,
+   "tak": 0,
+   "status": "ej_uteservering",
+   "datum": "2026-09-06",
+   "not": ""
+  },
+  "n3336439851": {
+   "namn": "GAIA",
+   "E": 671301.4,
+   "N": 6577594.8,
+   "tak": 0,
+   "status": "ok",
+   "datum": "2026-09-06",
+   "not": ""
+  },
+  "n13606924747": {
+   "namn": "Kringelgården Kransen",
+   "E": 670994.9,
+   "N": 6577143.4,
+   "tak": 0,
+   "status": "ok",
+   "datum": "2026-09-06",
+   "not": ""
+  },
+  "n11975236598": {
+   "namn": "Lulu",
+   "E": 670957.8,
+   "N": 6577089.9,
+   "tak": 0,
+   "status": "ok",
+   "datum": "2026-09-06",
+   "not": ""
+  },
+  "n13424000447": {
+   "namn": "Magic Masala",
+   "E": 671730.9,
+   "N": 6577516.8,
+   "tak": 0,
+   "status": "ok",
+   "datum": "2026-09-06",
+   "not": ""
+  },
+  "n2852670617": {
+   "namn": "Mejram",
+   "E": 671433.2,
+   "N": 6577122.8,
+   "tak": 0,
+   "status": "ok",
+   "datum": "2026-09-06",
+   "not": ""
+  },
+  "w1050270413": {
+   "namn": "Midsommarköket",
+   "E": 671070.3,
+   "N": 6577411.1,
+   "tak": 0,
+   "status": "ok",
+   "datum": "2026-09-06",
+   "not": ""
+  },
+  "n1313408725": {
+   "namn": "Morningstar Cafe",
+   "E": 671952.7,
+   "N": 6576992.8,
+   "tak": 0,
+   "status": "stangt",
+   "datum": "2026-09-06",
+   "not": ""
+  },
+  "n2853138560": {
+   "namn": "Nancys Freshfood",
+   "E": 671663.2,
+   "N": 6577172.7,
+   "tak": 0,
+   "status": "stangt",
+   "datum": "2026-09-06",
+   "not": ""
+  },
+  "n12027900375": {
+   "namn": "Noli Deli",
+   "E": 671498.2,
+   "N": 6577474.8,
+   "tak": 0,
+   "status": "ok",
+   "datum": "2026-09-06",
+   "not": ""
+  },
+  "n1408221915": {
+   "namn": "Nygammalt",
+   "E": 671080,
+   "N": 6577302.7,
+   "tak": 0,
+   "status": "ok",
+   "datum": "2026-09-06",
+   "not": ""
+  },
+  "n4354616231": {
+   "namn": "Pezzo",
+   "E": 671551.3,
+   "N": 6577505.7,
+   "tak": 0,
+   "status": "ok",
+   "datum": "2026-09-06",
+   "not": ""
+  },
+  "n534138281": {
+   "namn": "Pita i parken",
+   "E": 671195.2,
+   "N": 6577447.6,
+   "tak": 0,
+   "status": "ok",
+   "datum": "2026-09-06",
+   "not": ""
+  },
+  "n3610617870": {
+   "namn": "Rain",
+   "E": 671018.2,
+   "N": 6577249.9,
+   "tak": 0,
+   "status": "ok",
+   "datum": "2026-09-06",
+   "not": ""
+  },
+  "n1437290666": {
+   "namn": "Restaurang Udden",
+   "E": 671154.7,
+   "N": 6578037.9,
+   "tak": 0,
+   "status": "ok",
+   "datum": "2026-09-06",
+   "not": ""
+  },
+  "n534138253": {
+   "namn": "Restaurant Kransen",
+   "E": 671655.2,
+   "N": 6577590.9,
+   "tak": 0,
+   "status": "ok",
+   "datum": "2026-09-06",
+   "not": ""
+  },
+  "n1408221883": {
+   "namn": "Svenska Sushiköket",
+   "E": 671050.4,
+   "N": 6577353.8,
+   "tak": 0,
+   "status": "ok",
+   "datum": "2026-09-06",
+   "not": ""
+  },
+  "n13982313104": {
+   "namn": "T.A.T Matcafé",
+   "E": 671020.5,
+   "N": 6577254.5,
+   "tak": 0,
+   "status": "osaker",
+   "datum": "2026-09-06",
+   "not": ""
+  },
+  "n534138248": {
+   "namn": "Tegelbruket",
+   "E": 671676.5,
+   "N": 6577567.6,
+   "tak": 0,
+   "status": "ok",
+   "datum": "2026-09-06",
+   "not": ""
+  },
+  "n1408221928": {
+   "namn": "The Swan",
+   "E": 671641.2,
+   "N": 6577415.5,
+   "tak": 0,
+   "status": "ok",
+   "datum": "2026-09-06",
+   "not": ""
+  },
+  "n534128497": {
+   "namn": "Tre Vänner",
+   "E": 671490.5,
+   "N": 6577499,
+   "tak": 0,
+   "status": "ok",
+   "datum": "2026-09-06",
+   "not": ""
+  },
+  "n2853138559": {
+   "namn": "Västberga Grillen",
+   "E": 671735.8,
+   "N": 6577253.3,
+   "tak": 0,
+   "status": "ej_uteservering",
+   "datum": "2026-09-06",
+   "not": ""
+  },
+  "n2852670620": {
+   "namn": "Västbergakällan",
+   "E": 671840.5,
+   "N": 6576902.2,
+   "tak": 0,
+   "status": "stangt",
+   "datum": "2026-09-06",
+   "not": ""
+  },
+  "n4349473222": {
+   "namn": "Wild Flower Bakehouse Café",
+   "E": 670907.1,
+   "N": 6577583.2,
+   "tak": 0,
+   "status": "ok",
+   "datum": "2026-09-06",
+   "not": ""
+  },
+  "n4908936659": {
+   "namn": "WRAP'Z",
+   "E": 671673.9,
+   "N": 6577552.2,
+   "tak": 0,
+   "status": "ok",
+   "datum": "2026-09-06",
+   "not": ""
+  },
+  "n1671335590": {
+   "namn": "Bar Libertin",
+   "E": 670650.1,
+   "N": 6577979.7,
+   "tak": 0,
+   "status": "ok",
+   "datum": "2026-09-06",
+   "not": ""
+  },
+  "n1879690671": {
+   "namn": "Bombay Taj",
+   "E": 670968.5,
+   "N": 6577928.5,
+   "tak": 0,
+   "status": "ok",
+   "datum": "2026-09-06",
+   "not": ""
+  },
+  "n6461820897": {
+   "namn": "Bonne Femme",
+   "E": 670838.8,
+   "N": 6578001.7,
+   "tak": 0,
+   "status": "ok",
+   "datum": "2026-09-06",
+   "not": ""
+  },
+  "n13811261703": {
+   "namn": "Café Hørnet",
+   "E": 670940.7,
+   "N": 6577920.3,
+   "tak": 0,
+   "status": "ej_uteservering",
+   "datum": "2026-09-06",
+   "not": ""
+  },
+  "n2301881203": {
+   "namn": "Café Tärnan",
+   "E": 670835.5,
+   "N": 6577937.1,
+   "tak": 0,
+   "status": "ok",
+   "datum": "2026-09-06",
+   "not": ""
+  },
+  "n502523372": {
+   "namn": "Cafe Vintervikens Trädgård",
+   "E": 670706.5,
+   "N": 6578562,
+   "tak": 0,
+   "status": "ok",
+   "datum": "2026-09-06",
+   "not": ""
+  },
+  "n12028281719": {
+   "namn": "El Rinconcito",
+   "E": 670434.4,
+   "N": 6577884.4,
+   "tak": 0,
+   "status": "stangt",
+   "datum": "2026-09-06",
+   "not": ""
+  },
+  "n13811529801": {
+   "namn": "Fabelbar",
+   "E": 670823.1,
+   "N": 6577935.9,
+   "tak": 0,
+   "status": "ok",
+   "datum": "2026-09-06",
+   "not": ""
+  },
+  "n7352661785": {
+   "namn": "Furellios Ristorante",
+   "E": 670506.8,
+   "N": 6577566.3,
+   "tak": 0,
+   "status": "stangt",
+   "datum": "2026-09-06",
+   "not": ""
+  },
+  "n9884507217": {
+   "namn": "Golf Baren Aspudden",
+   "E": 670487.1,
+   "N": 6578115.7,
+   "tak": 0,
+   "status": "ok",
+   "datum": "2026-09-06",
+   "not": ""
+  },
+  "n12760046349": {
+   "namn": "Naked fish",
+   "E": 670399.8,
+   "N": 6577899.9,
+   "tak": 0,
+   "status": "ok",
+   "datum": "2026-09-06",
+   "not": ""
+  },
+  "n728664561": {
+   "namn": "Nickys Thai",
+   "E": 670924.7,
+   "N": 6578361.5,
+   "tak": 0,
+   "status": "ok",
+   "datum": "2026-09-06",
+   "not": ""
+  },
+  "n7178959500": {
+   "namn": "Parkfiken",
+   "E": 670486.5,
+   "N": 6578141.3,
+   "tak": 0,
+   "status": "ok",
+   "datum": "2026-09-06",
+   "not": ""
+  },
+  "n6464803571": {
+   "namn": "Saigon House",
+   "E": 670685.7,
+   "N": 6577925.3,
+   "tak": 0,
+   "status": "ok",
+   "datum": "2026-09-06",
+   "not": ""
+  },
+  "n10942959993": {
+   "namn": "Thai Wok Orkidé",
+   "E": 670441.6,
+   "N": 6577535.6,
+   "tak": 0,
+   "status": "ok",
+   "datum": "2026-09-06",
+   "not": ""
+  },
+  "n2962651036": {
+   "namn": "The meeting bar & restaurant",
+   "E": 670347.6,
+   "N": 6577849.6,
+   "tak": 0,
+   "status": "ok",
+   "datum": "2026-09-06",
+   "not": ""
+  },
+  "n5314135180": {
+   "namn": "Vår Pizza",
+   "E": 670856.4,
+   "N": 6577967.5,
+   "tak": 0,
+   "status": "ok",
+   "datum": "2026-09-06",
+   "not": ""
+  },
+  "n7529075385": {
+   "namn": "Xi'an Köket",
+   "E": 670491.1,
+   "N": 6577557.8,
+   "tak": 0,
+   "status": "ok",
+   "datum": "2026-09-06",
+   "not": ""
+  }
+ }
+}

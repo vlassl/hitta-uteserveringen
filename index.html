@@ -1152,11 +1152,19 @@ function build3d(){
     const fg=new THREE.PlaneGeometry(FAR,FAR,FN,FN);
     fg.rotateX(-Math.PI/2);
     const fp=fg.attributes.position;
+    // Närmarkens lägsta nivå: fjärrplanet får aldrig sticka upp genom den
+    // fina 240 m-rutan (50 m-medlet ligger ofta över laserns mark i kuperad
+    // terräng och gömde då hela närmarken under ett beige lock).
+    let gmin=Infinity;
+    for(let i=0;i<pos.count;i++) gmin=Math.min(gmin,pos.getY(i));
+    const NEAR=half+FAR/FN*1.5;
     for(let iy=0;iy<=FN;iy++){
       for(let ix=0;ix<=FN;ix++){
         const vx=-FAR/2+ix*(FAR/FN), vz=-FAR/2+iy*(FAR/FN);
         const g=sampleO(E+vx, N-vz);
-        fp.setY(iy*(FN+1)+ix, (g==null?0:g)-z0-1.5);
+        let y=(g==null?0:g)-z0-1.5;
+        if(Math.abs(vx)<NEAR&&Math.abs(vz)<NEAR) y=Math.min(y,gmin-3);
+        fp.setY(iy*(FN+1)+ix, y);
       }
     }
     fg.computeVertexNormals();
