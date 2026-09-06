@@ -1,0 +1,7 @@
+{
+ "kommentar": "Tile-urval for bygg_om: v2.9.0-test av brodack (Arstabroarna, Liljeholmsbron). Kapas ej.",
+ "artefakter": [
+  {"namn": "Arstabroarna", "E": 673100, "N": 6578300, "r": 300},
+  {"namn": "Liljeholmsbron", "E": 672560, "N": 6578870, "r": 120}
+ ]
+}

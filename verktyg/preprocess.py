@@ -1,7 +1,21 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-============================ SOLDYRKAREN PREPROCESS v2.8.6 ============================
+============================ SOLDYRKAREN PREPROCESS v2.9.1 ============================
+v2.9.1: stadning intill dacket. Klass 1-pixlar inom 3 m fran ett dack som
+  ligger >= 6 m over mark ar broutrustning (racken, lyktor, master, pelare
+  sedda fran sidan) och stod kvar som grona pelare fran vattnet: de i
+  dackniva (dack-1 .. dack+2 m) gar in i dacket, ovriga slopas. Trad vid
+  landfasten (dack < 6 m over mark) rors inte.
+v2.9.0: BROAR ur laserns klass 17 (brodack).
+  Dack >= 2,5 m over mark laggs i vegetationskanalen: B = dackets ovansida
+  (inkl. bilar/racken upp till 2 m over dacket), _bas R = undersida =
+  ovansida - 3,0 m (--brotjocklek), och _bas G = 64 markerar "bro" -
+  ogenomslapplig aret runt i appen. Lagre dack (pafarter, landfasten)
+  lyfter harda ytan i stallet. Aldre app laser G>127 som byggnad och
+  ser bron som trad - samma som forut, inget gar sonder.
+  Dessutom: index.json behaller extra nycklar (oversikt = fjarrhorisont)
+  vid omskrivning - de forsvann tidigare vid varje korning.
 v2.8.6: markmodellen fylls i pyramid (8x/64x nedskalning) under stora tak.
   Tidigare fylldes dtm bara 15 m in fran narmaste markretur, och
   hard[isnan(dtm)] = nan nollade darfor mitten av alla tak bredare an ~30 m
@@ -19,7 +33,7 @@ Utdata: <out>/index.json + <out>/<E>_<N>.png  (512x512 px, 1 m/px, SWEREF99 TM)
   B = trädkronans TOPP över hårda ytan i 0,5 m-steg (0 = inget träd)
   Dessutom <key>_bas.png (RGB, formatversion 2):
     R = kronans UNDERKANT över hårda ytan i 0,5 m-steg (0 = ner till marken)
-    G = byggnadsflagga (255 = pixeln är byggnad enligt OSM-mask + höjd)
+    G = flagga: 255 = byggnad (OSM-mask + höjd), 64 = brodäck (klass 17), 0 = övrigt
     B = byggnadens höjd över marken i 0,5 m-steg (ground = hård - B*0,5)
   Valfritt: tex_<key>.jpg - ortofototextur 0,5 m/px (via --orto)
 
@@ -42,6 +56,12 @@ H0, HSCALE = -100.0, 10.0   # höjdkodning
 GROUND_CLS = (2, 9)         # mark + vatten
 OBJECT_CLS = (1,)           # "övrigt" i Lantmäteriets klassning (hus, träd, m.m.)
 VEG_MIN = 1.5               # lägsta objekthöjd som räknas som vegetation, m
+BRO_CLS = (17,)             # brodäck i Lantmäteriets klassning
+BRO_T = 3.0                 # antagen däcktjocklek (ovansida - undersida), m; --brotjocklek
+BRO_MINH = 2.5              # däck lägre än så över mark blir hård yta (påfarter)
+BRO_PA = 2.0                # objekt (bilar, räcken) upp till så här högt över däcket räknas in
+BRO_KANT = 3                # px runt däcket som städas från broutrustning (v2.9.1)
+BRO_FRI = 6.0               # städning bara där däcket ligger minst så högt över mark
 
 # ---------------- SWEREF99 TM (EPSG:3006) <-> WGS84, Gauss-Krügerserier ----------------
 _a, _f = 6378137.0, 1.0/298.257222101
@@ -345,18 +365,20 @@ def decode_tile(rgb):
     veg = rgb[..., 2].astype(np.float64) * 0.5
     return hard, veg
 
-def merge_into(path, hard, veg, base=None, bflag=None, bh=None):
+def merge_into(path, hard, veg, base=None, flagg=None, bh=None):
+    """flagg: uint8-kanal (255 byggnad, 64 bro, 0 ovrigt); v2.9.0 tar max
+    vid merge sa byggnad vinner over bro och bro over inget."""
     bpath = path.replace('.png', '_bas.png')
     if base is None: base = np.zeros_like(veg)
-    if bflag is None: bflag = np.zeros(veg.shape, dtype=bool)
+    if flagg is None: flagg = np.zeros(veg.shape, dtype=np.uint8)
     if bh is None: bh = np.zeros_like(veg)
     if os.path.exists(path):
         h0, v0 = decode_tile(np.array(Image.open(path)))
         if os.path.exists(bpath):
             old = np.array(Image.open(bpath).convert('RGB'), dtype=np.float64)
-            b0, f0, bh0 = old[..., 0]*0.5, old[..., 1] > 127, old[..., 2]*0.5
+            b0, f0, bh0 = old[..., 0]*0.5, old[..., 1].astype(np.uint8), old[..., 2]*0.5
         else:
-            b0 = np.zeros_like(veg); f0 = np.zeros(veg.shape, bool); bh0 = np.zeros_like(veg)
+            b0 = np.zeros_like(veg); f0 = np.zeros(veg.shape, np.uint8); bh0 = np.zeros_like(veg)
         hard = np.where(np.isnan(hard), h0, np.where(np.isnan(h0), hard, np.maximum(hard, h0)))
         nyveg = veg                    # den här körningens vegetation, före merge
         veg = np.maximum(veg, v0)
@@ -367,12 +389,12 @@ def merge_into(path, hard, veg, base=None, bflag=None, bh=None):
         # byggts fullt raderade min(nytt, 0) kronbasen i resten av tilen.
         bada = (nyveg > 0) & (v0 > 0)
         base = np.where(bada, np.minimum(base, b0), np.where(nyveg > 0, base, b0))
-        bflag = bflag | f0
+        flagg = np.maximum(flagg, f0)
         bh = np.maximum(bh, bh0)
     Image.fromarray(encode_tile(hard, veg)).save(path, optimize=True)
     out = np.zeros((TILE, TILE, 3), dtype=np.uint8)
     out[..., 0] = np.clip(np.round(np.nan_to_num(base) / 0.5), 0, 255)
-    out[..., 1] = np.where(bflag, 255, 0)
+    out[..., 1] = flagg
     out[..., 2] = np.clip(np.round(np.nan_to_num(bh) / 0.5), 0, 255)
     if out.any():
         Image.fromarray(out, mode='RGB').save(bpath, optimize=True)
@@ -544,6 +566,13 @@ def process_laz(path, outdir, use_osm, keys, bbox=None):
     objmin = objmin.reshape(H, W)
     objmin[np.isinf(objmin)] = np.nan
 
+    # v2.9.0: brodack (klass 17) - ovansidans max per pixel
+    b17 = np.isin(cls, BRO_CLS)
+    deck = np.full(W * H, -np.inf)
+    np.maximum.at(deck, flat[b17], z[b17])
+    deck = deck.reshape(H, W)
+    deck[np.isinf(deck)] = np.nan
+
     if use_osm:
         print('    hämtar byggnadsfotavtryck (Overpass) ...', flush=True)
         try:
@@ -583,11 +612,62 @@ def process_laz(path, outdir, use_osm, keys, bbox=None):
     bflag = bmask & ~np.isnan(hard) & ~np.isnan(dtm) & (hard - dtm >= 2.0)
     bh = np.where(bflag, np.clip(hard - dtm, 0, 127), 0.0)
 
+    # v2.9.0: broar. Dacket laggs in EFTER despike/konfetti/kronbas sa
+    # inget av de filtren nallar pa det. Sma hal i dacket (1-2 m utan
+    # klass 17-ekon) fylls, men bara inom 1 px fran riktiga dackpixlar.
+    brflag = np.zeros((H, W), dtype=bool)
+    har17 = ~np.isnan(deck)
+    if har17.any():
+        nara = har17.copy()
+        nara[1:, :] |= har17[:-1, :]; nara[:-1, :] |= har17[1:, :]
+        nara[:, 1:] |= har17[:, :-1]; nara[:, :-1] |= har17[:, 1:]
+        deck = fill_nan(deck, iters=2)
+        deck[~nara] = np.nan
+        # bilar, racken m.m. (klass 1) upp till BRO_PA over dacket raknas in
+        pa = ~np.isnan(deck) & ~np.isnan(objmax) & (objmax > deck) & (objmax <= deck + BRO_PA)
+        deck[pa] = objmax[pa]
+        bm17 = ~np.isnan(deck) & ~bmask & ~np.isnan(dtm) & ~np.isnan(hard)
+        hd = deck - dtm
+        lag = bm17 & (hd < BRO_MINH)          # pafart/landfaste -> hard yta
+        hard[lag] = np.maximum(hard[lag], deck[lag])
+        hog = bm17 & (hd >= BRO_MINH)         # fritt dack -> veg-kanal, solid
+        veg[hog] = deck[hog] - hard[hog]
+        base[hog] = np.clip(deck[hog] - BRO_T - hard[hog], 0.0, None)
+        # v2.9.1: broutrustning intill dacket. Narmaste dackhojd = max i
+        # (2*BRO_KANT+1)-fonster; bara dar dacket ar fritt (>= BRO_FRI over mark).
+        dabs = np.where(hog, deck, -np.inf)
+        k = BRO_KANT
+        dp = np.pad(dabs, k, constant_values=-np.inf)
+        dmax = dabs.copy()
+        for dr in range(-k, k + 1):
+            for dc in range(-k, k + 1):
+                dmax = np.maximum(dmax, dp[k+dr:k+dr+H, k+dc:k+dc+W])
+        kant = ~hog & ~bmask & np.isfinite(dmax) & (veg > 0) & ~np.isnan(hard) & \
+               ~np.isnan(dtm) & (dmax - dtm >= BRO_FRI)
+        topp = hard + veg
+        inn = kant & (topp >= dmax - 1.0) & (topp <= dmax + BRO_PA)
+        bort = kant & ~inn
+        veg[inn] = topp[inn] - hard[inn]           # dackniva: in i dacket
+        base[inn] = np.clip(dmax[inn] - BRO_T - hard[inn], 0.0, None)
+        hog = hog | inn
+        veg[bort] = 0.0; base[bort] = 0.0          # lyktor, master, pelare: bort
+        brflag = hog
+        hdh = (hard + veg - dtm)[hog]
+        n17 = int(har17.sum())
+        if hog.any():
+            print(f'    brodack: {n17} px klass 17 -> {int(hog.sum())} px dack i veg-kanalen '
+                  f'({float(hdh.min()):.1f}-{float(hdh.max()):.1f} m over mark, '
+                  f'tjocklek {BRO_T:.1f} m), {int(lag.sum())} px lagt dack i hard yta, '
+                  f'kant: {int(inn.sum())} px in i dacket, {int(bort.sum())} px utrustning bort')
+        else:
+            print(f'    brodack: {n17} px klass 17, inget fritt dack (>= {BRO_MINH} m over mark)')
+
     if ARTEFAKTER:
         hard, bh, veg, base = kapa_artefakter(
             hard, bh, bflag, veg, base, e0, n_top, W, H, ARTEFAKTER)
 
     hard[np.isnan(dtm)] = np.nan  # utanför laserdata = nodata
+    flagg = np.where(bflag, 255, np.where(brflag, 64, 0)).astype(np.uint8)
 
     # Punkt 12: intensitetstextur (svartvit "flygfoto"-fallback tills orto finns)
     isum = np.zeros(W * H); icnt = np.zeros(W * H)
@@ -609,7 +689,7 @@ def process_laz(path, outdir, use_osm, keys, bbox=None):
             th = hard[r0:r0+TILE, c0:c0+TILE]
             tv = veg[r0:r0+TILE, c0:c0+TILE]
             tb = base[r0:r0+TILE, c0:c0+TILE]
-            tf = bflag[r0:r0+TILE, c0:c0+TILE]
+            tf = flagg[r0:r0+TILE, c0:c0+TILE]
             tbh = bh[r0:r0+TILE, c0:c0+TILE]
             if np.all(np.isnan(th)):
                 continue
@@ -723,13 +803,30 @@ def laddat_index(outdir, keys):
         except Exception:
             pass
 
-def skriv_index(outdir, keys):
-    idx = {'tileSize': TILE, 'res': 1, 'h0': H0, 'scale': HSCALE, 'fmt': 2,
-           'vegStep': 0.5, 'crs': 'EPSG:3006',
-           'vegSource': 'Lantmäteriet laserdata',
-           'tiles': sorted(keys)}
-    with open(os.path.join(outdir, 'index.json'), 'w', encoding='utf-8') as f:
+def skriv_index(outdir, keys, veg_source='Lantmäteriet laserdata'):
+    """v2.9.0: extra nycklar i befintlig index.json (t.ex. 'oversikt' fran
+    bygga_oversikt.py = fjarrhorisonten) foljer med - de skrevs tidigare
+    over vid varje korning och fjarrhorisonten slocknade tyst i appen."""
+    p = os.path.join(outdir, 'index.json')
+    idx = {}
+    if os.path.exists(p):
+        try:
+            gammal = json.load(open(p, encoding='utf-8'))
+            idx = {k: v for k, v in gammal.items()
+                   if k not in ('tileSize', 'res', 'h0', 'scale', 'fmt', 'vegStep',
+                                'crs', 'vegSource', 'tiles')}
+        except Exception:
+            pass
+    idx.update({'tileSize': TILE, 'res': 1, 'h0': H0, 'scale': HSCALE, 'fmt': 2,
+                'vegStep': 0.5, 'crs': 'EPSG:3006', 'vegSource': veg_source,
+                'tiles': sorted(keys)})
+    with open(p, 'w', encoding='utf-8') as f:
         json.dump(idx, f)
+    if 'oversikt' in idx:
+        print('index.json: oversikt (fjarrhorisont) behallen.')
+    else:
+        print('index.json: OBS ingen oversikt-nyckel - fjarrhorisonten ar av i appen '
+              '(kor bygga_oversikt.py).')
 
 def main():
     ap = argparse.ArgumentParser(description='Soldyrkaren: LAZ (+SBK) -> höjdtiles')
@@ -747,9 +844,12 @@ def main():
                     help='tvinga långsam helskanning istället för COPC-nodval (felsökning)')
     ap.add_argument('--no-osm', action='store_true',
                     help='hoppa över byggnadsmask från OSM (allt högt blir vegetation!)')
+    ap.add_argument('--brotjocklek', type=float, default=3.0,
+                    help='antagen däcktjocklek för broar, m (standard 3,0)')
     a = ap.parse_args()
 
-    global SNABB, INTENSITET, ARTEFAKTER
+    global SNABB, INTENSITET, ARTEFAKTER, BRO_T
+    BRO_T = a.brotjocklek
     SNABB = not a.helskanning
     INTENSITET = a.intensitet
     ARTEFAKTER = las_artefakter(a.artefakter)
@@ -810,12 +910,7 @@ def main():
     if a.orto:
         apply_orto(a.orto, a.out, keys)
 
-    idx = {'tileSize': TILE, 'res': 1, 'h0': H0, 'scale': HSCALE, 'fmt': 2,
-           'vegStep': 0.5, 'crs': 'EPSG:3006',
-           'vegSource': 'SBK Trädkronehöjd 2022' if a.sbk else 'Lantmäteriet laserdata',
-           'tiles': sorted(keys)}
-    with open(os.path.join(a.out, 'index.json'), 'w') as f:
-        json.dump(idx, f)
+    skriv_index(a.out, keys, 'SBK Trädkronehöjd 2022' if a.sbk else 'Lantmäteriet laserdata')
     print(f'Klart: {len(keys)} tiles i {a.out}/ + index.json')
 
 if __name__ == '__main__':

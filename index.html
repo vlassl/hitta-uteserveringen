@@ -322,7 +322,7 @@ select.dur{font-family:var(--mono);font-size:.85rem;padding:.35rem .5rem;border:
     <h1>Hitta uteserveringen</h1>
     <span class="sub">i solen</span>
   </div>
-  <span class="ver" id="verTag">v0.50</span>
+  <span class="ver" id="verTag">v0.51</span>
 </header>
 
 <div id="map"></div>
@@ -440,7 +440,7 @@ select.dur{font-family:var(--mono);font-size:.85rem;padding:.35rem .5rem;border:
         <span class="satlbl">Satellitbild</span><span class="toggle" id="satTgl"></span></span>
       <span class="x" id="t3close">×</span>
     </div>
-    <div id="t3wrap"><span class="t3hint" id="t3hint">dra = snurra · hjul/nyp = zooma · klick på marken = flytta parasollet</span></div>
+    <div id="t3wrap"><span class="t3hint" id="t3hint">dra = snurra · hjul/nyp = zooma · klick på mark eller tak = flytta parasollet</span></div>
     <div class="t3foot">
       <div class="t3bandrow">
         <canvas id="t3band" height="16"></canvas>
@@ -456,7 +456,7 @@ select.dur{font-family:var(--mono);font-size:.85rem;padding:.35rem .5rem;border:
 
 <script>
 "use strict";
-/* ================ HITTA UTESERVERINGEN v0.50 ================
+/* ================ HITTA UTESERVERINGEN v0.51 ================
    Läge A (laser): ray marching mot höjdtiles (tiles/, från
    preprocess.py) + 3D-vy som bygger mesh ur samma tiles.
    Läge B (fallback): OSM via Overpass.
@@ -620,8 +620,9 @@ function sample(E,N){
   const top=hard+t.d[i+2]*0.5;
   const bas=hard+(t.b?t.b[i]*0.5:0);
   const isB=DEM.fmt>=2 && t.b && t.b[i+1]>127;
+  const isBr=DEM.fmt>=2 && t.b && t.b[i+1]>=32 && t.b[i+1]<=127;   // brodäck (G=64): solid året runt
   const ground=isB ? hard-t.b[i+2]*0.5 : hard;
-  return [hard, top, bas, isB, ground];
+  return [hard, top, bas, isB, ground, isBr];
 }
 function horizonAt(E,N,R){
   const base=sample(E,N);
@@ -641,7 +642,7 @@ function horizonAt(E,N,R){
       if(s[1]>s[0]+0.4){
         const et=Math.atan2(s[1]-eyeAbs,d)/rad;
         const eBas=Math.max(-90, Math.atan2(s[2]-eyeAbs,d)/rad);
-        if(et>eBas) raw.push([eBas,et]);
+        if(et>eBas) raw.push([eBas,et,s[5]?1:0]);
       }
     }
     if(OV.ok){
@@ -657,12 +658,16 @@ function horizonAt(E,N,R){
     }
     hB[az]=mb;
     // slå ihop överlappande intervall, kapa småglipor < 0.7 grader
+    // träd och brodäck slås ihop var för sig: [bottenvinkel, toppvinkel, solid]
     raw.sort((a,b)=>a[0]-b[0]);
     const mg=[];
-    for(const iv of raw){
-      const last=mg[mg.length-1];
-      if(last && iv[0]<=last[1]+0.7) last[1]=Math.max(last[1],iv[1]);
-      else mg.push([iv[0],iv[1]]);
+    for(const sol of [1,0]){          // solida (broar) först så de vinner i classify
+      let last=null;
+      for(const iv of raw){
+        if(iv[2]!==sol) continue;
+        if(last && iv[0]<=last[1]+0.7) last[1]=Math.max(last[1],iv[1]);
+        else { last=[iv[0],iv[1],sol]; mg.push(last); }
+      }
     }
     vegIv[az]=mg;
   }
@@ -781,7 +786,7 @@ function classify(date){
   if(s.altDeg<=horB[bin]) return {c:'shadow',s};
   if(mode==='laser'){
     if(vegIvG) for(const iv of vegIvG[bin])
-      if(s.altDeg>=iv[0]&&s.altDeg<=iv[1]) return {c:'tree',s};
+      if(s.altDeg>=iv[0]&&s.altDeg<=iv[1]) return {c:iv[2]?'shadow':'tree',s};
   } else {
     for(const iv of treeBins[bin])
       if(s.altDeg>=iv.bot&&s.altDeg<=iv.top) return {c:'tree',s};
@@ -1104,7 +1109,7 @@ function build3d(){
   const geo=new THREE.PlaneGeometry(T3SZ,T3SZ,T3SZ-1,T3SZ-1);
   geo.rotateX(-Math.PI/2);          // +x=öst, -z=norr
   const pos=geo.attributes.position;
-  const vegPix=[], bldPix=[];
+  const vegPix=[], bldPix=[], broPix=[];
   for(let iy=0;iy<T3SZ;iy++){       // rad 0 = norr
     for(let ix=0;ix<T3SZ;ix++){
       const e=E-half+ix+0.5, n=N+half-iy-0.5;
@@ -1115,7 +1120,7 @@ function build3d(){
       if(s[3] && s[0]-s[4]>=2)
         bldPix.push([ix-half+0.5, g, iy-half+0.5, s[0]-s[4]]);
       if(s[1]>s[0]+0.5)
-        vegPix.push([ix-half+0.5, s[2]-z0, iy-half+0.5, s[1]-s[2]]);
+        (s[5]?broPix:vegPix).push([ix-half+0.5, s[2]-z0, iy-half+0.5, s[1]-s[2]]);
     }
   }
   geo.computeVertexNormals();
@@ -1146,6 +1151,7 @@ function build3d(){
   scene.add(terr);
 
   // Byggnader: instansierade boxar med lodräta väggar
+  let bldMesh=null;
   if(bldPix.length){
     const bbox=new THREE.BoxGeometry(1,1,1);
     const bld=new THREE.InstancedMesh(bbox,
@@ -1157,7 +1163,7 @@ function build3d(){
       bld.setMatrixAt(i,bm4);
     });
     bld.castShadow=bld.receiveShadow=true;
-    scene.add(bld);
+    scene.add(bld); bldMesh=bld;
   }
 
   // Vegetation: instansierade pelare ur B-kanalen
@@ -1175,14 +1181,31 @@ function build3d(){
     scene.add(veg);
   }
 
+  // Brodäck: grå boxar från undersida till ovansida, tomt därunder
+  if(broPix.length){
+    const box=new THREE.BoxGeometry(1,1,1);
+    const bro=new THREE.InstancedMesh(box,
+      new THREE.MeshLambertMaterial({color:0x8f8c88}),broPix.length);
+    const m4=new THREE.Matrix4();
+    broPix.forEach(([x,hb,z,vh],i)=>{
+      m4.makeScale(1,Math.max(0.5,vh),1);
+      m4.setPosition(x,hb+vh/2,z);
+      bro.setMatrixAt(i,m4);
+    });
+    bro.castShadow=bro.receiveShadow=true;
+    scene.add(bro);
+  }
+
   // Markören: parasoll vid P
   const pole=new THREE.Mesh(new THREE.CylinderGeometry(0.15,0.15,3.4,8),
     new THREE.MeshLambertMaterial({color:0x6b5a44}));
-  pole.position.set(0,1.7,0);pole.castShadow=true;scene.add(pole);
+  // Står P på ett tak (takbar) sätts parasollet på takets höjd, inte marken
+  const y0=base?base[0]-z0:0;
+  pole.position.set(0,y0+1.7,0);pole.castShadow=true;scene.add(pole);
   const para=new THREE.Mesh(new THREE.ConeGeometry(2.8,1.2,10),
     new THREE.MeshLambertMaterial({color:0xf7b32b}));
-  para.position.set(0,3.7,0);para.castShadow=true;scene.add(para);
-  T3marker={pole,para,terr};
+  para.position.set(0,y0+3.7,0);para.castShadow=true;scene.add(para);
+  T3marker={pole,para,terr,bld:bldMesh,z0};
 
   scene.add(new THREE.AmbientLight(0xffffff,0.35));
   const hemi=new THREE.HemisphereLight(0xcfe0ee,0xe8dcc0,0.35);scene.add(hemi);
@@ -1244,18 +1267,21 @@ function moveParasol(e,el,cam){
                             -((e.clientY-r.top)/r.height)*2+1);
   const rc=new THREE.Raycaster();
   rc.setFromCamera(p,cam);
-  const hit=rc.intersectObject(T3marker.terr)[0];
+  const hit=rc.intersectObjects([T3marker.terr,T3marker.bld].filter(Boolean))[0];
   if(!hit) return;
-  const {x,y,z}=hit.point;
+  const {x,z}=hit.point;
+  const newE=t3pos.E+x, newN=t3pos.N-z;   // -z = norr
+  // Höjd ur rastret: hårda ytan = marken, eller taket om man klickat på ett hus (takbar)
+  const sh=sample(newE,newN);
+  const y=sh?sh[0]-T3marker.z0:hit.point.y;
   T3marker.pole.position.set(x,y+1.7,z);
   T3marker.para.position.set(x,y+3.7,z);
-  const newE=t3pos.E+x, newN=t3pos.N-z;   // -z = norr
   if(t3pos.venue){
     const v=t3pos.venue;
     manPos[v.name]=[newE,newN]; savePos();
     const h=horizonAt(newE,newN,400);
     if(h){
-      v.E=newE; v.N=newN; v.manual=true; v.snapped=false;
+      v.E=newE; v.N=newN; v.manual=true; v.snapped=false; v.roof=!!(sh&&sh[3]);
       v.band=venueBand(v.lat,v.lng,h.hB,h.vegIv);
       renderVenues(0);
     }
@@ -1453,9 +1479,9 @@ function venueBand(lat,lng,hB,vegIv){
     if(s.altDeg<=0.3){ band[q2]=3; continue; }
     const bin=Math.floor(s.azDeg)%AZBINS;
     if(s.altDeg<=hB[bin]){ band[q2]=0; continue; }
-    let tr=false;
-    for(const iv of vegIv[bin]) if(s.altDeg>=iv[0]&&s.altDeg<=iv[1]){tr=true;break;}
-    band[q2]=tr?1:2;
+    let code=2;
+    for(const iv of vegIv[bin]) if(s.altDeg>=iv[0]&&s.altDeg<=iv[1]){code=iv[2]?0:1;break;}
+    band[q2]=code;
   }
   return band;
 }
@@ -1494,7 +1520,9 @@ async function searchVenues(){
       const sw=toSweref(vlat,vlng);
       let E,N,manual=false,_snapped=false;
       const pp=posFor(t.name);
+      const roofTag=/^(roof|rooftop)$/i.test(t.location||'');
       if(pp){ [E,N]=pp; manual=true; }
+      else if(roofTag){ E=sw.E; N=sw.N; }                 // takbar: stanna på taket
       else {
         const fs=snapOutsideFacade(sw.E,sw.N,polys);   // 1) OSM-fasad + 1,5 m
         if(fs){ E=fs.E; N=fs.N; _snapped=true; }
@@ -1506,9 +1534,10 @@ async function searchVenues(){
       const h=horizonAt(E,N,400);
       if(!h){ skipped++; continue; }
       const dx=E-cE, dy=N-cN;
+      const sR=sample(E,N);
       venues.push({
         name:t.name, lat:vlat, lng:vlng, E, N,
-        snapped:!manual&&_snapped, manual,
+        snapped:!manual&&_snapped, manual, roof:!!(sR&&sR[3]),
         cats:CAT_OF(t), outdoor:t.outdoor_seating||'', oh:t.opening_hours||'',
         dist:Math.round(Math.hypot(dx,dy)),
         ohp:parseOH(t.opening_hours),
@@ -1524,6 +1553,15 @@ async function searchVenues(){
   }
 }
 
+function syncStartForDate(){
+  // Annan dag än i dag: "Nu (automatiskt)" är meningslöst - välj ett klockslag (12:00)
+  const idag=new Date().toISOString().slice(0,10);
+  const sel=document.getElementById('listFrom');
+  const annan=listDateStr!==idag;
+  if(sel&&sel.options.length) sel.options[0].disabled=annan;
+  if(annan && listStartH==null) listStartH=12;
+  if(sel) sel.value = listStartH==null ? '' : String(listStartH);
+}
 function updateWhenLabel(){
   const el=document.getElementById('whenLabel');
   if(!el) return;
@@ -1636,6 +1674,7 @@ function renderVenues(skipped){
           v.oh?`<span class="uteq" title="${v.oh}">öppettid?</span><span class="oh">${v.oh.slice(0,32)}</span>`:''}
         ${v.manual?`<span class="ute" title="${manPos[v.name]?'Du har placerat parasollet här i 3D-vyn':'Läge kontrollerat och kurerat'}">✔ läge</span>`:
           v.snapped?'<span class="uteq" title="Punkten låg inne i huset; flyttad till 1,5 m utanför fasadliv. Öppna 3D och klicka på marken för att finjustera.">≈ läge</span>':''}
+        ${v.roof?'<span class="ute" title="Parasollet står på taket – solen räknas från takhöjd">tak</span>':''}
       </div>
       <div class="bandrow"><canvas class="miniband"></canvas>
         <span class="sunscore">${fmtTim(sun)}${tree>0?`<b class="tr">+${fmtTim(tree)}</b>`:''}</span></div>
@@ -1825,7 +1864,7 @@ map.on('click',ev=>{P=ev.latlng;startAnalysis(true);});
   document.getElementById('listDur').value=2;
   const mt=document.getElementById('maxTravel');
   for(let m2=1;m2<=60;m2++) mt.add(new Option('≤ '+m2+' min',m2));
-  mt.value=10;
+  mt.value=5;
   document.getElementById('listDate').value=listDateStr;
   document.getElementById('listFrom').add(new Option('Nu (automatiskt)',''));
   for(let h2=6;h2<=21.5;h2+=0.5)
@@ -1837,8 +1876,7 @@ map.on('click',ev=>{P=ev.latlng;startAnalysis(true);});
   document.getElementById('maxTravel').addEventListener('change',()=>renderVenues());
   document.getElementById('whenChip').addEventListener('click',()=>{
     document.getElementById('listDate').value=listDateStr;
-    document.getElementById('listFrom').value =
-      listStartH==null ? '' : String(listStartH);
+    syncStartForDate();
     document.getElementById('whenExp').classList.toggle('open');
     document.getElementById('whenChip').classList.toggle('openp');
     document.getElementById('setExp').classList.remove('open');
@@ -1849,6 +1887,7 @@ map.on('click',ev=>{P=ev.latlng;startAnalysis(true);});
     const fv=document.getElementById('listFrom').value;
     if(dv) listDateStr=dv;
     listStartH = fv==='' ? listStartH : +fv;
+    syncStartForDate();
     updateWhenLabel();
     rebuildBands();renderVenues();
     document.getElementById('whenExp').classList.remove('open');
@@ -1862,6 +1901,7 @@ map.on('click',ev=>{P=ev.latlng;startAnalysis(true);});
   });
   document.getElementById('listDate').addEventListener('change',e=>{
     listDateStr=e.target.value||listDateStr;
+    syncStartForDate();
     updateWhenLabel();rebuildBands();renderVenues();
   });
   document.getElementById('listFrom').addEventListener('change',e=>{

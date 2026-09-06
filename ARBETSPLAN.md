@@ -1,149 +1,98 @@
 # HITTA UTESERVERINGEN – ARBETSPLAN
-*Uppdaterad 2026-08-29. Läge: app v0.46, preprocess v2.8.
-Live: https://vlassl.github.io/hitta-uteserveringen/ (548 tiles, ~150 km²)*
+*Uppdaterad 2026-09-06. Läge: app v0.51, preprocess v2.9.1.
+Live: https://vlassl.github.io/hitta-uteserveringen/ (550 tiles, ~150 km²)*
 
 ## Systemet i korthet
 - **Data:** Lantmäteriet Laserdata Skog (COPC/LAZ, 1–2 pkt/m²) + Ortofoto
-  `orto-o2-2025` (0,16 m, flugen 2025-05-31) + Markhöjdmodell grid 50+ (HDB)
-  för fjärrhorisonten. Allt avgiftsfritt via Geotorget/STAC.
+  (`C:\soldata\orto`, 37 raster 2,5×2,5 km, 0,16 m, EPSG:3006, 4 band) +
+  Markhöjdmodell grid 50+ (HDB) för fjärrhorisonten.
 - **Kedja:** `hamta_laser.py` / `hamta_orto.py` → `preprocess.py` → `tiles/`
-  → `index.html`. `bygga_oversikt.py` gör `tiles/oversikt.png` (50 m/px).
-- **Mappar:** laser `C:\soldata\laz`, orto `C:\soldata\orto` (37 raster,
-  25 GB), repo `C:\soldata\repo\hitta-uteserveringen`, arbetsmapp
-  OneDrive\Dropboxen\HittaUteserveringen.
+  → `index.html`. `bygga_oversikt.py` gör `tiles/oversikt.png` (50 m/px) och
+  skriver nyckeln `oversikt` i index.json (preprocess ≥ v2.9.0 bevarar den).
+- **Mappar:** laser `C:\soldata\laz`, orto `C:\soldata\orto`, repo
+  `C:\soldata\repo\hitta-uteserveringen`, arbetsmapp `C:\soldata\arbetsmapp`.
 - **Tileformat fmt 2:** huvudtile RG = hård yta ((h+100)*10), B = krontopp
-  (0,5 m-steg). `_bas.png` RGB = kronbas / byggnadsflagga / hushöjd över
-  mark. `tex_<key>.jpg` = ortofoto 0,5 m/px.
-- **Etapper (bbox SWEREF99 TM):**
-  E1 667700 6576300 672200 6579600 · E2 666400 6579600 678000 6585000 ·
-  E3 666400 6572800 678500 6576300 · E4 672200 6576300 678500 6579600
+  (0,5 m-steg). `_bas.png` R = kronbas, **G = flagga (255 byggnad, 64 brodäck,
+  0 övrigt)**, B = hushöjd över mark. `tex_<key>.jpg` = ortofoto 0,5 m/px.
+- **Laserklasser (LM):** 1 objekt, 2 mark, 7/18 brus, 9 vatten, **17 brodäck**.
 
-## LÖST 2026-08-29 – falska höga strukturer
-Fyra artefakter, alla **raka, smala, kraftigt förhöjda linjer** som skär
-tvärs över byggnadsgränser. Sannolikt byggkranar.
-
-| namn | utbredning | höjd ö mark | r / minh |
-|---|---|---|---|
-| Medborgarplatsen, linje NO-SV | E 674787–674864, N 6579015–6579030 | 62–71 m | 50 / 45 |
-| Medborgarplatsen, linje N-S | E 674855–674868, N 6578911–6578989 | 47–58 m | 50 / 35 |
-| Östra Medis, kort stump | E 675086–675089, N 6579019–6579023 | 41–56,5 m | 20 / 36 |
-| Midsommarkransen, linje NV-SO | E 671039–671094, N 6577623–6577697 | 40–51 m | 50 / 30 |
-
-De två Medis-linjerna är vinkelräta mot varandra och möts nära korsningen.
-Antingen två kranar eller en som vridit sig mellan flygstråken —
-`verktyg/krankoll.py` avgör saken via GPS-tid i punktmolnet, ej kört än.
-
-**Viktig korrigering:** de högsta klustren i tilekoll vid Medis är *äkta
-hus*. 25×26 m @ 86,5 m = Söder Torn (86 m, oktogonal plan, Bofills båge
-syns intill). 30×44 m @ 86,5 m + 15×19 m @ 81,5 m = Skrapan, Götgatan 78.
-De ska aldrig kapas. Tilekoll sorterar på maxhöjd, så Södermalms två
-skyskrapor hamnar överst i tabellen.
-
-### Fyra buggar hittade på vägen
-1. `kapa_artefakter` rörde bara hårda ytan. Delar av en artefakt utanför
-   OSM:s byggnadsmask hamnar i **vegetationskanalen** och överlevde som
-   gröna pelare i 3D. (v2.8.2)
-2. `laddat_index` anropades bara i blockgrenen, så en körning med bbox
-   under 2048 m skrev **index.json med bara sina egna tiles** — 548 blev
-   6. (v2.8.1)
-3. `merge_into` tog `base = np.minimum(base, b0)`. En körning utan data i
-   en grannruta levererar nollor, och `min(0, gammalt) = 0` **raderade
-   kronbasen** i sju tiles. Syns inte i 3D förrän solen står lågt.
-   (v2.8.3)
-4. En artefakt helt utan byggnadsdel hoppades över med `continue` innan
-   vegetationskoden nåddes. (v2.8.4)
-
-**OBS vid omkörning:** `merge_into` kombinerar med befintlig tile via
-`np.maximum`. En kapning kan aldrig sänka ett värde som redan ligger på
-disk — berörda tiles måste raderas först.
+## LÖST 2026-09-06
+1. **Nodata-hål under stora tak** (Katarina-kupolen, Globen, gallerior).
+   `fill_nan(dtm, 15)` fyllde markmodellen bara 15 m in under tak; sedan
+   `hard[isnan(dtm)] = nan`. v2.8.6: pyramidfyllning (8×/64×) där
+   laserpunkter finns inom 2 m. Katarina + Globen-rutan omkörda; övriga
+   tiles rättas vid full omkörning.
+2. **Ortofoto:** `tex_*.jpg` i repot var laserintensitet (gråskala, 203
+   helsvarta kantremsor). Färgtexturerna låg i `arbetsmapp\tiles` sedan
+   28/8 (`--out tiles` skrev dit). Kopierade till repot. Två kanttiles
+   (678912_6579712, 679424_6579200) saknar textur tills körning med `--orto`.
+3. **Fjärrhorisonten var av:** preprocess skrev om index.json utan
+   `oversikt`-nyckeln → `OV.ok=false` i appen. Nyckeln återställd
+   (e0 640000, n1 6615000, res 50, 1440×1400) och bevaras från v2.9.0.
+4. **Broar** (v2.9.0/2.9.1): klass 17 → däck i veg-kanalen, ovansida ur
+   lasern (+ bilar/räcken ≤ 2 m), undersida = ovansida − 3,0 m
+   (`--brotjocklek`, schablon – lasern ser inte undersidan), `_bas` G = 64.
+   Däck < 2,5 m över mark → hård yta. Broutrustning inom 3 m från fritt
+   däck (≥ 6 m över mark) går in i däcket eller slopas. Appen v0.51 räknar
+   G=64 som **skugga året runt** (inte "silad sol") och ritar däcken grå
+   med tomrum under. Testat på Årstabroarna + Liljeholmsbron (5 tiles).
+5. **Parasoll på tak** (v0.51): klick på hus i 3D sätter parasollet på
+   taket; horisonten räknas från takhöjd; OSM `location=roof/rooftop`
+   snappas inte ut från huset; "tak"-etikett i listan.
+6. Basfilsfynd: fyra tiles (Globen-rutan, Årsta N, 673280_6578176) hade
+   **0 px kronbas** sedan gamla min-merge-buggen – återställda vid omkörning.
 
 ## Att göra – i prioritetsordning
 
-### 1. Linjedetektor för artefakter *(gör först – skyddar allt annat)*
-Fyra artefakter hittades för hand, i fyra omgångar: varje gång en kapades
-dök nästa upp bredvid när vyn vreds. Det finns sannolikt fler i de 548
-tilesen, och fler tillkommer vid varje utbyggnad. Detektorn ska bara
-*föreslå*, aldrig kapa.
-  a) Skript som läser tiles/ och per tile kör sammanhängande kluster på
-     `bh > lokal takmedian + 15` OCH `veg > lokal takmedian + 12` —
-     båda kanalerna, annars missas hälften
-  b) Filtrera på form: bredd ≤ 8 m, längd ≥ 20 m, längd/bredd ≥ 3
-  c) Skriv ut E, N, utbredning, maxhöjd, lokal takmedian per kandidat
-  d) Manuell granskning → nya rader i `artefakter.json` med `minh`
-  e) Kontrollera om fler kandidater korsar tilegränser (båda kända gör
-     det – E 674816 respektive N 6577664; troligen slump, men värt att se)
+### 1. Full omkörning med v2.9.1 *(krävs för broar och nodata-hål överallt)*
+`py bygg_om.py --artefakter alla_tiles.json --kor --orto C:\soldata\orto`
+raderar alla 550 tiles och bygger om (Overpass-cachen gör byggnaderna
+gratis; timmar). Går det snett: `git checkout -- tiles` återställer.
+Kontroll efteråt: 550 tiles, basfiler (ingen −20 %), `oversikt` kvar,
+stickprov Söder Torn/Skrapan 86,5 m, Västerbron, Skanstull, Centralbron.
 
-### 2. Väderdata från SMHI *(störst effekt på upplevd träffsäkerhet)*
-En app som säger "här är solen 17:30" utan att veta att det är mulet
-svarar på fel fråga.
-  a) SMHI Öppna data, punktprognos (`api.smhi.se`, ingen nyckel, gratis)
-  b) Hämta molnighet + temperatur för stadens mittpunkt, cacha ~1 h
-  c) Visa i listkortet: soltimme + molnighet, inte bara geometrisk sol
-  d) Överväg att vikta rankningen – full sol i moln är sämre än
-     halvskugga i klarväder
-  e) Faller anropet: visa geometrin som i dag, ingen hård koppling
+### 2. Bro-kanten vid landfästen
+Träd/utrustning intill däck < 6 m över mark rörs inte (BRO_FRI). Granska
+i 3D vid Skanstull och Liljeholmen om gröna pelare står kvar.
 
-### 3. Lövsprickning per art
-Stockholms träddatabas (art + position) → artvis transmissionskalender
-i stället för global månadstabell. Ek lövfäller sent, björk tidigt.
+### 3. Väderdata från SMHI
+Punktprognos (`api.smhi.se`), molnighet + temperatur, cache ~1 h, visa i
+listkortet, vikta rankningen. Faller anropet: geometrin som i dag.
 
-### 4. Kurering av `lagen.json`
-Victors manuella parasollägen bakas in så alla användare får dem.
-Export: tryck 5× på versionsnumret i headern.
+### 4. Lövsprickning per art
+Stockholms träddatabas → artvis transmission. Broar = art med 0
+transmission (redan implementerat via G=64).
 
-### 5. "Föreslå korrekt läge"
-Låt användare skicka in lägen för godkännande.
+### 5. Kurering av `lagen.json`
+Export: 5× på versionsnumret i headern.
 
-### 6. dtm-cog som markreferens vid behov
-Samma STAC-API. Aktuell först om terrängen visar artefakter.
+### 6. bygg_om: 32 m marginal i bbox
+Omkörda tiles skiljer sig 0,6–3 m i yttersta 15 raderna mot grannens
+strip-merge (markmodellen saknar grannblockets punkter). Kosmetiskt.
 
-### 7. Fler stadsdelar
-Pipeline och Pages-utrymme räcker gott (278 MB av 1 GB). Kör punkt 1
-först, så artefakter fångas i samma svep.
+### 7. Kantremsor (W/H överskattas en tile när punkter ligger < 1 m från
+bbox-kanten) – ger 15 px-slivers i nästa tilekolumn. Harmlöst med
+symmetrisk merge, men källan till de svarta intensitetstexturerna.
 
-### 8. Google Places-betyg *(parkerat)*
-Kräver betalkort; betyg ligger i Enterprise-nivån (1000 fria anrop/mån).
-Måste cachas i `betyg.json`, aldrig live-anrop. Yelp uteslutet.
+### 8. "Föreslå korrekt läge" · 9. Fler stadsdelar · 10. Google Places (parkerat)
 
-## Solcellsspåret *(nytt produktbeslut, inte nästa steg)*
-Modellen är stark där kommersiella verktyg är svaga: trädskuggning med
-kronbas, och fjärrhorisont – båda avgörande för årsutbyte på denna
-breddgrad, och båda dåligt hanterade av Google Solar API och Sunroof.
-
-Men en full solcellskalkyl vore att göra om ett löst problem sämre.
-PVGIS och PVsyst finns och är validerade. Det som saknas hos dem är
-just skuggan.
-
-**Rätt ambitionsnivå:** ett skuggindex per takyta – en siffra för
-skuggförlust med trädkronor och fjärrhorisont inräknade – som matas in
-i en etablerad kalkyl.
-
-Saknas i dag: strålningsmodell (kWh/m²·år, direkt + diffus + albedo),
-sky view factor för diffus strålning, 8760 timsteg över normalår,
-taksegmentering i plan med lutning och azimut, hinderdetektering
-(`despike` kapar i dag just skorstenar och ventilationshuvar).
-
-**Börja med validering, inte kod:** jämför skuggindex mot uppmätt
-produktion på ett fåtal befintliga anläggningar. Så fort någon fattar
-investeringsbeslut på siffrorna byter projektet karaktär, och det är ett
-annat åtagande än att gissa var solen står vid ett bord.
+## Verktyg i `verktyg\`
+preprocess (v2.9.1) · bygg_om (`--artefakter <urval>.json --kor [--orto]`,
+tar med tiles som saknas på disk men står i index.json) · brokoll/brokoll2
+(klass 17-inventering, under-däck-histogram) · ortokoll · linjedetektor ·
+efterkontroll · krankoll · urval: kupol_globen.json, broar_test.json,
+alla_tiles.json.
 
 ## Parkerat med flit
-- Takrendering B/C (slätt takmesh) – testrendering visade nocktapp och
-  verkliga tak är för komplexa; A (per-pixel-boxar) behålls.
-- Fasader/fönster – flyglaser ser inte fasader, glas ger inget eko.
-- Reflekterad sol från glasfasader.
-- Intensitetstexturer – ersatta av ortofoto; grå mark är standard i 3D
-  eftersom fotots egna skuggor annars konkurrerar med de beräknade.
-- SBK trädkronraster – lasern är bättre efter kronbas-arbetet.
-- Generellt "högt och glest"-filter – kapar äkta södermalmstak. Ersatt
-  av formbaserad detektor (punkt 1) + kurerad lista.
+- Takrendering B/C, fasader/fönster, reflekterad sol, intensitetstexturer,
+  SBK trädkronraster, generellt "högt och glest"-filter (kapar äkta tak).
+- Brodäckets undersida ur lasern: klass 1 under däcken ger kantbalk
+  (1–1,5 m) där den syns, inte lådans botten; platt fördelning i övrigt.
+  Schablon 3,0 m tills vidare (brokoll2.txt har histogrammen).
 
 ## Lösta milstolpar
-COPC-voxelbuggen (LM numrerar mot dataextent, inte spec-kuben – fixad med
-dubbel konvention, verifierad 5 135 049 = facit) · kronbas som vinkel-
-intervall (låg sol passerar under kronor) · fasadsnappning + manuell
-parasollplacering · öppettidsparser med enhetstester · Overpass-failover
-och diskcache · fjärrhorisont 72×70 km · tårtdiagram som kartmarkörer ·
-fyra linjeartefakter kapade i båda kanalerna (v2.8.4) ·
-arbetssätt och projektinstruktioner nedskrivna.
+COPC-voxelbuggen · kronbas som vinkelintervall · fasadsnappning + manuell
+parasollplacering · öppettidsparser · Overpass-failover och diskcache ·
+fjärrhorisont 72×70 km · tårtdiagram som kartmarkörer · 162 artefakter
+kapade, 194 friade, linjedetektor 0 kandidater · nodata under stora tak ·
+ortofoto i färg · broar ur klass 17 · parasoll på tak.

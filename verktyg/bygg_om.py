@@ -16,6 +16,13 @@ gor att byggnadshamtningen mest gar pa disk.
 """
 import argparse, json, os, subprocess, sys
 
+# Konsolen (cp1252) och ror till Tee-Object far inte fa skriptet att krascha
+# pa tecken den inte kan skriva - ersatt i stallet.
+try:
+    sys.stdout.reconfigure(errors='replace')
+except Exception:
+    pass
+
 T = 512
 
 def main():
@@ -24,6 +31,8 @@ def main():
     ap.add_argument('--preprocess', default='preprocess.py')
     ap.add_argument('--laz', default=r'C:\soldata\laz')
     ap.add_argument('--out', default=r'C:\soldata\repo\hitta-uteserveringen\tiles')
+    ap.add_argument('--orto', default=None,
+                    help='skicka --orto <mapp> vidare till preprocess (nya texturer)')
     ap.add_argument('--kor', action='store_true',
                     help='utan denna flagga visas bara planen')
     a = ap.parse_args()
@@ -39,9 +48,16 @@ def main():
             for tn in range(int((x['N']-r)//T)*T, int((x['N']+r)//T)*T + 1, T):
                 tiles.add((te, tn))
 
+    # tiles som finns pa disk ELLER star i index.json (raderade av en
+    # avbruten korning) byggs om
+    ikeys = set()
+    ip = os.path.join(a.out, 'index.json')
+    if os.path.exists(ip):
+        ikeys = set(json.load(open(ip, encoding='utf-8')).get('tiles', []))
     finns = [(te, tn) for te, tn in sorted(tiles)
-             if os.path.exists(os.path.join(a.out, f'{te}_{tn}.png'))]
-    print(f'{len(tiles)} berorda tiles, varav {len(finns)} finns i {a.out}')
+             if os.path.exists(os.path.join(a.out, f'{te}_{tn}.png'))
+             or f'{te}_{tn}' in ikeys]
+    print(f'{len(tiles)} berorda tiles, varav {len(finns)} finns i {a.out} eller index.json')
 
     # gruppera till sammanhangande omraden (grannar inkl diagonal)
     far = list(range(len(finns)))
@@ -80,11 +96,14 @@ def main():
     fel = []
     for i, b in enumerate(boxar, 1):
         print(f'\n=== korning {i}/{len(boxar)}: bbox {b[0]} {b[1]} {b[2]} {b[3]} ===')
-        p = subprocess.Popen([sys.executable, a.preprocess,
-                              '--laz', a.laz, '--out', a.out,
-                              '--bbox', str(b[0]), str(b[1]), str(b[2]), str(b[3])],
+        cmd = [sys.executable, a.preprocess, '--laz', a.laz, '--out', a.out,
+               '--bbox', str(b[0]), str(b[1]), str(b[2]), str(b[3])]
+        if a.orto:
+            cmd += ['--orto', a.orto]
+        p = subprocess.Popen(cmd,
                              stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
-                             text=True, encoding='utf-8', errors='replace')
+                             text=True, encoding='utf-8', errors='replace',
+                             env=dict(os.environ, PYTHONIOENCODING='utf-8'))
         hoppat = False
         for rad in p.stdout:
             print(rad, end='')
@@ -100,7 +119,7 @@ def main():
         print(f'{len(fel)} korningar felade: {fel} - kor om dem manuellt.')
     else:
         print('Alla korningar gick igenom.')
-    print('Kontrollera nu: index.json (548 tiles), stickprov i tilekoll/3D,')
+    print('Kontrollera nu: index.json (tile-antalet far inte minska), stickprov i tilekoll/3D,')
     print('git diff --stat innan commit (inga _bas som tappat tiotals procent).')
 
 if __name__ == '__main__':
