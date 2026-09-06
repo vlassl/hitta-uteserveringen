@@ -33,11 +33,11 @@
   "n1243139715": {
    "namn": "Bella Notte",
    "E": 671612.8,
-   "N": 6577600.1,
+   "N": 6577602.1,
    "tak": 0,
    "status": "ok",
    "datum": "2026-09-06",
-   "not": ""
+   "not": "snappad ut ur husmask"
   },
   "n6312673777": {
    "namn": "Biocafé Tellus",
@@ -572,12 +572,12 @@
   },
   "n1509877648": {
    "namn": "Bara Enkelt",
-   "E": 675261.9,
+   "E": 675263.9,
    "N": 6578877.1,
    "tak": 0,
    "status": "ok",
    "datum": "2026-09-06",
-   "not": ""
+   "not": "snappad ut ur husmask"
   },
   "n1246188792": {
    "namn": "Baras Backe",
@@ -672,11 +672,11 @@
   "n1397247497": {
    "namn": "Bistro Bananas",
    "E": 675060.6,
-   "N": 6578817.2,
+   "N": 6578819.2,
    "tak": 0,
    "status": "ok",
    "datum": "2026-09-06",
-   "not": ""
+   "not": "snappad ut ur husmask"
   },
   "n5403905670": {
    "namn": "Bistro Boheme",
@@ -837,6 +837,1572 @@
    "N": 6579518.4,
    "tak": 0,
    "status": "ok",
+   "datum": "2026-09-06",
+   "not": ""
+  },
+  "n1246189133": {
+   "namn": "Caffè Nero",
+   "E": 674841.3,
+   "N": 6579338.8,
+   "tak": 0,
+   "status": "ok",
+   "datum": "2026-09-06",
+   "not": ""
+  },
+  "n886050423": {
+   "namn": "Casa del cava",
+   "E": 674718.2,
+   "N": 6579711.6,
+   "tak": 0,
+   "status": "ok",
+   "datum": "2026-09-06",
+   "not": ""
+  },
+  "n12078264769": {
+   "namn": "Casa Piadina",
+   "E": 674959.2,
+   "N": 6578823.2,
+   "tak": 0,
+   "status": "ej_uteservering",
+   "datum": "2026-09-06",
+   "not": ""
+  },
+  "n718408949": {
+   "namn": "Charles Dickens",
+   "E": 675052.6,
+   "N": 6579125.9,
+   "tak": 0,
+   "status": "ok",
+   "datum": "2026-09-06",
+   "not": "snappad ut ur husmask"
+  },
+  "n640304823": {
+   "namn": "Chic Konditori",
+   "E": 674337,
+   "N": 6579424.5,
+   "tak": 0,
+   "status": "ej_uteservering",
+   "datum": "2026-09-06",
+   "not": ""
+  },
+  "n345450421": {
+   "namn": "Chokladfabriken",
+   "E": 675472.5,
+   "N": 6579324.2,
+   "tak": 0,
+   "status": "osaker",
+   "datum": "2026-09-06",
+   "not": ""
+  },
+  "n1348515086": {
+   "namn": "Coffeehouse 72 by Chaqwa",
+   "E": 674953.7,
+   "N": 6578910.9,
+   "tak": 0,
+   "status": "ok",
+   "datum": "2026-09-06",
+   "not": "snappad ut ur husmask"
+  },
+  "n12451448050": {
+   "namn": "Compagniet Bar",
+   "E": 674943.8,
+   "N": 6579602.8,
+   "tak": 0,
+   "status": "osaker",
+   "datum": "2026-09-06",
+   "not": ""
+  },
+  "n13369836533": {
+   "namn": "Continental Bar",
+   "E": 675455.1,
+   "N": 6578960.4,
+   "tak": 0,
+   "status": "osaker",
+   "datum": "2026-09-06",
+   "not": ""
+  },
+  "n11917614707": {
+   "namn": "Cookies",
+   "E": 675168.8,
+   "N": 6579071.2,
+   "tak": 0,
+   "status": "ok",
+   "datum": "2026-09-06",
+   "not": ""
+  },
+  "n6634324585": {
+   "namn": "Crazy Horse",
+   "E": 674847.2,
+   "N": 6579284.8,
+   "tak": 0,
+   "status": "ok",
+   "datum": "2026-09-06",
+   "not": ""
+  },
+  "n1293508557": {
+   "namn": "Crème",
+   "E": 674984.4,
+   "N": 6579621.9,
+   "tak": 0,
+   "status": "stangt",
+   "datum": "2026-09-06",
+   "not": ""
+  },
+  "n12507213835": {
+   "namn": "Crum Heaven",
+   "E": 674816.7,
+   "N": 6579330.3,
+   "tak": 0,
+   "status": "ok",
+   "datum": "2026-09-06",
+   "not": "snappad ut ur husmask"
+  },
+  "n10056241215": {
+   "namn": "Crumheaven",
+   "E": 674812.3,
+   "N": 6579329.6,
+   "tak": 0,
+   "status": "stangt",
+   "datum": "2026-09-06",
+   "not": ""
+  },
+  "n1484835196": {
+   "namn": "Cykelcafé Le Mond",
+   "E": 675290.7,
+   "N": 6579132.9,
+   "tak": 0,
+   "status": "ok",
+   "datum": "2026-09-06",
+   "not": ""
+  },
+  "n1554617874": {
+   "namn": "da Luigi",
+   "E": 674397.6,
+   "N": 6579203.9,
+   "tak": 0,
+   "status": "ok",
+   "datum": "2026-09-06",
+   "not": ""
+  },
+  "n13369836532": {
+   "namn": "DeliKaféet",
+   "E": 675001.1,
+   "N": 6578938.4,
+   "tak": 0,
+   "status": "ok",
+   "datum": "2026-09-06",
+   "not": ""
+  },
+  "n9838832292": {
+   "namn": "Delivore",
+   "E": 675016.6,
+   "N": 6578943.2,
+   "tak": 0,
+   "status": "ok",
+   "datum": "2026-09-06",
+   "not": ""
+  },
+  "n1397247453": {
+   "namn": "demi",
+   "E": 675117.1,
+   "N": 6578839.9,
+   "tak": 0,
+   "status": "ok",
+   "datum": "2026-09-06",
+   "not": ""
+  },
+  "n1348515282": {
+   "namn": "Den Gröne Jägaren",
+   "E": 674940.9,
+   "N": 6578990.6,
+   "tak": 0,
+   "status": "ok",
+   "datum": "2026-09-06",
+   "not": ""
+  },
+  "n8521557668": {
+   "namn": "Din-Din Club",
+   "E": 674975.2,
+   "N": 6579080.6,
+   "tak": 0,
+   "status": "ok",
+   "datum": "2026-09-06",
+   "not": ""
+  },
+  "n675127161": {
+   "namn": "Dionysos",
+   "E": 675584.2,
+   "N": 6579037.4,
+   "tak": 0,
+   "status": "ok",
+   "datum": "2026-09-06",
+   "not": ""
+  },
+  "n2698629348": {
+   "namn": "Drop Coffee Roasters",
+   "E": 674307.2,
+   "N": 6579345.6,
+   "tak": 0,
+   "status": "ok",
+   "datum": "2026-09-06",
+   "not": ""
+  },
+  "n3260084807": {
+   "namn": "Dryck",
+   "E": 674338.4,
+   "N": 6579398.5,
+   "tak": 0,
+   "status": "ok",
+   "datum": "2026-09-06",
+   "not": ""
+  },
+  "n3647397698": {
+   "namn": "Dynamo",
+   "E": 675376.1,
+   "N": 6578830.4,
+   "tak": 0,
+   "status": "stangt",
+   "datum": "2026-09-06",
+   "not": ""
+  },
+  "n11744938669": {
+   "namn": "Eatnam",
+   "E": 674728,
+   "N": 6579558.6,
+   "tak": 0,
+   "status": "ok",
+   "datum": "2026-09-06",
+   "not": ""
+  },
+  "n1211022350": {
+   "namn": "Eken",
+   "E": 674715.5,
+   "N": 6579771,
+   "tak": 0,
+   "status": "ok",
+   "datum": "2026-09-06",
+   "not": ""
+  },
+  "n1509877656": {
+   "namn": "El Clasico",
+   "E": 675407,
+   "N": 6578907.6,
+   "tak": 0,
+   "status": "ok",
+   "datum": "2026-09-06",
+   "not": ""
+  },
+  "n3260084789": {
+   "namn": "Emily’s Café",
+   "E": 674366.8,
+   "N": 6579304.3,
+   "tak": 0,
+   "status": "osaker",
+   "datum": "2026-09-06",
+   "not": ""
+  },
+  "n3260084787": {
+   "namn": "En halv trappa ner",
+   "E": 674406.6,
+   "N": 6579359.6,
+   "tak": 0,
+   "status": "ok",
+   "datum": "2026-09-06",
+   "not": ""
+  },
+  "n1239298328": {
+   "namn": "Esperia",
+   "E": 674545.4,
+   "N": 6579486.7,
+   "tak": 0,
+   "status": "ok",
+   "datum": "2026-09-06",
+   "not": ""
+  },
+  "n1348515108": {
+   "namn": "Espresso House",
+   "E": 674918,
+   "N": 6579052.9,
+   "tak": 0,
+   "status": "osaker",
+   "datum": "2026-09-06",
+   "not": ""
+  },
+  "n3758991516": {
+   "namn": "Espresso House",
+   "E": 674792.6,
+   "N": 6579515.8,
+   "tak": 0,
+   "status": "osaker",
+   "datum": "2026-09-06",
+   "not": "snappad ut ur husmask"
+  },
+  "n751969511": {
+   "namn": "Eurobar Café",
+   "E": 675258.3,
+   "N": 6578606.1,
+   "tak": 0,
+   "status": "ok",
+   "datum": "2026-09-06",
+   "not": ""
+  },
+  "n1348515264": {
+   "namn": "Exit Lounge",
+   "E": 674959.6,
+   "N": 6578990.3,
+   "tak": 0,
+   "status": "ok",
+   "datum": "2026-09-06",
+   "not": ""
+  },
+  "n11023193333": {
+   "namn": "Falafelbaren",
+   "E": 675065.2,
+   "N": 6578541.9,
+   "tak": 0,
+   "status": "stangt",
+   "datum": "2026-09-06",
+   "not": ""
+  },
+  "n426918129": {
+   "namn": "Faros",
+   "E": 675400.7,
+   "N": 6578791.9,
+   "tak": 0,
+   "status": "ok",
+   "datum": "2026-09-06",
+   "not": ""
+  },
+  "n11508515121": {
+   "namn": "Florentine",
+   "E": 674839,
+   "N": 6579033.3,
+   "tak": 0,
+   "status": "ok",
+   "datum": "2026-09-06",
+   "not": ""
+  },
+  "n1580942361": {
+   "namn": "Forno Söder",
+   "E": 674670.3,
+   "N": 6578838.7,
+   "tak": 0,
+   "status": "ok",
+   "datum": "2026-09-06",
+   "not": ""
+  },
+  "n675127146": {
+   "namn": "Francesco",
+   "E": 675550.5,
+   "N": 6579122.9,
+   "tak": 0,
+   "status": "ok",
+   "datum": "2026-09-06",
+   "not": ""
+  },
+  "n1599296822": {
+   "namn": "Franky's Burger",
+   "E": 674980,
+   "N": 6578646.7,
+   "tak": 0,
+   "status": "ok",
+   "datum": "2026-09-06",
+   "not": ""
+  },
+  "n10798939300": {
+   "namn": "Freyja",
+   "E": 674610.7,
+   "N": 6579729.9,
+   "tak": 0,
+   "status": "osaker",
+   "datum": "2026-09-06",
+   "not": ""
+  },
+  "n330594500": {
+   "namn": "Fru Bellman",
+   "E": 674461.8,
+   "N": 6579505.7,
+   "tak": 0,
+   "status": "ok",
+   "datum": "2026-09-06",
+   "not": "snappad ut ur husmask"
+  },
+  "n2379382011": {
+   "namn": "Fyra knop",
+   "E": 674847.5,
+   "N": 6579412.9,
+   "tak": 0,
+   "status": "ok",
+   "datum": "2026-09-06",
+   "not": ""
+  },
+  "n1239298244": {
+   "namn": "Fåtöljen",
+   "E": 674735.6,
+   "N": 6579650.1,
+   "tak": 0,
+   "status": "ok",
+   "datum": "2026-09-06",
+   "not": ""
+  },
+  "n4258153360": {
+   "namn": "Gandhi",
+   "E": 675462.9,
+   "N": 6579247.4,
+   "tak": 0,
+   "status": "ok",
+   "datum": "2026-09-06",
+   "not": ""
+  },
+  "n720866965": {
+   "namn": "Garlic & Shots",
+   "E": 675257.8,
+   "N": 6579164.4,
+   "tak": 0,
+   "status": "ok",
+   "datum": "2026-09-06",
+   "not": ""
+  },
+  "n490186039": {
+   "namn": "Gildas rum",
+   "E": 675480.3,
+   "N": 6578945.4,
+   "tak": 0,
+   "status": "ok",
+   "datum": "2026-09-06",
+   "not": ""
+  },
+  "n6477254396": {
+   "namn": "Glashuset",
+   "E": 674278,
+   "N": 6579321.9,
+   "tak": 0,
+   "status": "osaker",
+   "datum": "2026-09-06",
+   "not": ""
+  },
+  "n12452901391": {
+   "namn": "Gondolen",
+   "E": 674884.5,
+   "N": 6579676.9,
+   "tak": 0,
+   "status": "ej_uteservering",
+   "datum": "2026-09-06",
+   "not": ""
+  },
+  "n719629895": {
+   "namn": "Greasy Spoon",
+   "E": 675394.6,
+   "N": 6579289.5,
+   "tak": 0,
+   "status": "ok",
+   "datum": "2026-09-06",
+   "not": ""
+  },
+  "n939284344": {
+   "namn": "Grinden",
+   "E": 674588.1,
+   "N": 6578558.2,
+   "tak": 0,
+   "status": "ej_uteservering",
+   "datum": "2026-09-06",
+   "not": ""
+  },
+  "n1509877880": {
+   "namn": "Habibi Bar",
+   "E": 675367.4,
+   "N": 6578909.1,
+   "tak": 0,
+   "status": "ok",
+   "datum": "2026-09-06",
+   "not": ""
+  },
+  "n13371618151": {
+   "namn": "Haket",
+   "E": 675191.8,
+   "N": 6579166.7,
+   "tak": 0,
+   "status": "ok",
+   "datum": "2026-09-06",
+   "not": ""
+  },
+  "n747463299": {
+   "namn": "Half Way Inn",
+   "E": 674340.8,
+   "N": 6579340.5,
+   "tak": 0,
+   "status": "ok",
+   "datum": "2026-09-06",
+   "not": ""
+  },
+  "n3601164234": {
+   "namn": "Hallen Södermalm",
+   "E": 675076.2,
+   "N": 6578604.6,
+   "tak": 0,
+   "status": "ok",
+   "datum": "2026-09-06",
+   "not": ""
+  },
+  "n675127158": {
+   "namn": "Harvest Home",
+   "E": 675523.2,
+   "N": 6579016.2,
+   "tak": 0,
+   "status": "ok",
+   "datum": "2026-09-06",
+   "not": ""
+  },
+  "n11524751711": {
+   "namn": "Hawaii Poké",
+   "E": 674862.5,
+   "N": 6579068.7,
+   "tak": 0,
+   "status": "ok",
+   "datum": "2026-09-06",
+   "not": ""
+  },
+  "n434458380": {
+   "namn": "Hermans",
+   "E": 675507.1,
+   "N": 6579489.5,
+   "tak": 0,
+   "status": "ok",
+   "datum": "2026-09-06",
+   "not": ""
+  },
+  "n9573877917": {
+   "namn": "Hernö Gin Bar",
+   "E": 674721.5,
+   "N": 6579686.2,
+   "tak": 0,
+   "status": "ej_uteservering",
+   "datum": "2026-09-06",
+   "not": ""
+  },
+  "n630739862": {
+   "namn": "Himlen",
+   "E": 674956.3,
+   "N": 6578832.6,
+   "tak": 0,
+   "status": "ej_uteservering",
+   "datum": "2026-09-06",
+   "not": ""
+  },
+  "n3280102237": {
+   "namn": "Hirschenkeller",
+   "E": 674850.7,
+   "N": 6579275.5,
+   "tak": 0,
+   "status": "ok",
+   "datum": "2026-09-06",
+   "not": "snappad ut ur husmask"
+  },
+  "n1348515279": {
+   "namn": "Holidays",
+   "E": 674984.7,
+   "N": 6578907.7,
+   "tak": 0,
+   "status": "ok",
+   "datum": "2026-09-06",
+   "not": ""
+  },
+  "n1348515292": {
+   "namn": "Holly Bush Bar and Restaurant",
+   "E": 674996.2,
+   "N": 6578769.2,
+   "tak": 0,
+   "status": "ok",
+   "datum": "2026-09-06",
+   "not": ""
+  },
+  "n9864252825": {
+   "namn": "Holy Greens",
+   "E": 674756.1,
+   "N": 6579582.6,
+   "tak": 0,
+   "status": "ej_uteservering",
+   "datum": "2026-09-06",
+   "not": ""
+  },
+  "n12451448015": {
+   "namn": "Holy Greens",
+   "E": 674914.9,
+   "N": 6579636.2,
+   "tak": 0,
+   "status": "ok",
+   "datum": "2026-09-06",
+   "not": ""
+  },
+  "n1501759445": {
+   "namn": "HoneyHoney",
+   "E": 675086.7,
+   "N": 6579134.2,
+   "tak": 0,
+   "status": "ok",
+   "datum": "2026-09-06",
+   "not": ""
+  },
+  "n13375865152": {
+   "namn": "Il Merlo",
+   "E": 674295.7,
+   "N": 6579342.2,
+   "tak": 0,
+   "status": "ok",
+   "datum": "2026-09-06",
+   "not": ""
+  },
+  "n8679802350": {
+   "namn": "Il Siciliano",
+   "E": 675325.6,
+   "N": 6578882.1,
+   "tak": 0,
+   "status": "ok",
+   "datum": "2026-09-06",
+   "not": ""
+  },
+  "n1246189024": {
+   "namn": "Il Tempo",
+   "E": 674772.3,
+   "N": 6579323.4,
+   "tak": 0,
+   "status": "ok",
+   "datum": "2026-09-06",
+   "not": ""
+  },
+  "n1580943080": {
+   "namn": "ilcaffè",
+   "E": 675363.0,
+   "N": 6578919.8,
+   "tak": 0,
+   "status": "ok",
+   "datum": "2026-09-06",
+   "not": "snappad ut ur husmask"
+  },
+  "n1608980391": {
+   "namn": "Indian Garden",
+   "E": 674819.8,
+   "N": 6578863.3,
+   "tak": 0,
+   "status": "stangt",
+   "datum": "2026-09-06",
+   "not": ""
+  },
+  "n11603414436": {
+   "namn": "Indian Street Food & Co",
+   "E": 675093.7,
+   "N": 6578448.5,
+   "tak": 0,
+   "status": "ej_uteservering",
+   "datum": "2026-09-06",
+   "not": ""
+  },
+  "n3661237305": {
+   "namn": "Indigo",
+   "E": 674806.8,
+   "N": 6579462.9,
+   "tak": 0,
+   "status": "ej_uteservering",
+   "datum": "2026-09-06",
+   "not": ""
+  },
+  "n3564234693": {
+   "namn": "Indio Kitchen",
+   "E": 675488,
+   "N": 6579156.5,
+   "tak": 0,
+   "status": "ok",
+   "datum": "2026-09-06",
+   "not": ""
+  },
+  "n851533632": {
+   "namn": "Indira",
+   "E": 675093,
+   "N": 6578900.7,
+   "tak": 0,
+   "status": "ej_uteservering",
+   "datum": "2026-09-06",
+   "not": ""
+  },
+  "n882394073": {
+   "namn": "invece",
+   "E": 675018.7,
+   "N": 6578789.7,
+   "tak": 0,
+   "status": "ok",
+   "datum": "2026-09-06",
+   "not": ""
+  },
+  "n2783564685": {
+   "namn": "Japan Food & Kitchen",
+   "E": 674453,
+   "N": 6578968.4,
+   "tak": 0,
+   "status": "stangt",
+   "datum": "2026-09-06",
+   "not": ""
+  },
+  "n10114316490": {
+   "namn": "Joe & The Juice",
+   "E": 674762.7,
+   "N": 6579589.5,
+   "tak": 0,
+   "status": "ok",
+   "datum": "2026-09-06",
+   "not": ""
+  },
+  "n747463330": {
+   "namn": "Johan & Nyström",
+   "E": 674373.4,
+   "N": 6579280.4,
+   "tak": 0,
+   "status": "ok",
+   "datum": "2026-09-06",
+   "not": ""
+  },
+  "n280239164": {
+   "namn": "Kafé 44",
+   "E": 675448,
+   "N": 6579297.7,
+   "tak": 0,
+   "status": "ej_uteservering",
+   "datum": "2026-09-06",
+   "not": ""
+  },
+  "n490186037": {
+   "namn": "Kaferang",
+   "E": 675505.5,
+   "N": 6578953.4,
+   "tak": 0,
+   "status": "ok",
+   "datum": "2026-09-06",
+   "not": ""
+  },
+  "n679284429": {
+   "namn": "Kaffe",
+   "E": 674561,
+   "N": 6579492.8,
+   "tak": 0,
+   "status": "ok",
+   "datum": "2026-09-06",
+   "not": ""
+  },
+  "n751969502": {
+   "namn": "Kamarina",
+   "E": 675238.1,
+   "N": 6578626.5,
+   "tak": 0,
+   "status": "ej_uteservering",
+   "datum": "2026-09-06",
+   "not": ""
+  },
+  "n719629888": {
+   "namn": "Kanon",
+   "E": 675506.7,
+   "N": 6579340.1,
+   "tak": 0,
+   "status": "osaker",
+   "datum": "2026-09-06",
+   "not": ""
+  },
+  "n11839098575": {
+   "namn": "Kapibara Söder",
+   "E": 674873.3,
+   "N": 6579502.8,
+   "tak": 0,
+   "status": "ej_uteservering",
+   "datum": "2026-09-06",
+   "not": ""
+  },
+  "n1397247494": {
+   "namn": "Katarina Ölkafé",
+   "E": 675279.3,
+   "N": 6578808.8,
+   "tak": 0,
+   "status": "ok",
+   "datum": "2026-09-06",
+   "not": ""
+  },
+  "n718653337": {
+   "namn": "Kelly's",
+   "E": 674990.0,
+   "N": 6579106.0,
+   "tak": 0,
+   "status": "ok",
+   "datum": "2026-09-06",
+   "not": "snappad ut ur husmask"
+  },
+  "n14017861150": {
+   "namn": "Kersh",
+   "E": 674833.7,
+   "N": 6579361.2,
+   "tak": 0,
+   "status": "ej_uteservering",
+   "datum": "2026-09-06",
+   "not": ""
+  },
+  "n1501759668": {
+   "namn": "Khushi",
+   "E": 675479.9,
+   "N": 6579233,
+   "tak": 0,
+   "status": "ok",
+   "datum": "2026-09-06",
+   "not": ""
+  },
+  "n721011629": {
+   "namn": "Koh Phangan",
+   "E": 675237.8,
+   "N": 6578867.3,
+   "tak": 0,
+   "status": "ok",
+   "datum": "2026-09-06",
+   "not": ""
+  },
+  "n10857872860": {
+   "namn": "Kollektivet Livet",
+   "E": 675177.7,
+   "N": 6579662.8,
+   "tak": 0,
+   "status": "ok",
+   "datum": "2026-09-06",
+   "not": ""
+  },
+  "n617376744": {
+   "namn": "Krogen Soldaten Švejk",
+   "E": 675107.4,
+   "N": 6579107.5,
+   "tak": 0,
+   "status": "ej_uteservering",
+   "datum": "2026-09-06",
+   "not": ""
+  },
+  "n7505961950": {
+   "namn": "Kupan",
+   "E": 675238.2,
+   "N": 6578679.2,
+   "tak": 0,
+   "status": "stangt",
+   "datum": "2026-09-06",
+   "not": ""
+  },
+  "n277145122": {
+   "namn": "Kvarnen",
+   "E": 674965,
+   "N": 6579152.2,
+   "tak": 0,
+   "status": "ej_uteservering",
+   "datum": "2026-09-06",
+   "not": ""
+  },
+  "n1608468869": {
+   "namn": "Kvarnens uteservering",
+   "E": 674805,
+   "N": 6579195.9,
+   "tak": 0,
+   "status": "ok",
+   "datum": "2026-09-06",
+   "not": ""
+  },
+  "n851534081": {
+   "namn": "La Cucaracha",
+   "E": 675047.8,
+   "N": 6578879.8,
+   "tak": 0,
+   "status": "ej_uteservering",
+   "datum": "2026-09-06",
+   "not": ""
+  },
+  "n11030237551": {
+   "namn": "La Gelateria SoFo",
+   "E": 675035.4,
+   "N": 6578639.5,
+   "tak": 0,
+   "status": "ok",
+   "datum": "2026-09-06",
+   "not": ""
+  },
+  "n2349662958": {
+   "namn": "La Olita",
+   "E": 675551.7,
+   "N": 6578965.7,
+   "tak": 0,
+   "status": "ok",
+   "datum": "2026-09-06",
+   "not": ""
+  },
+  "n9045389619": {
+   "namn": "La Piccola Nonna Pizza",
+   "E": 675001.6,
+   "N": 6578653.3,
+   "tak": 0,
+   "status": "ej_uteservering",
+   "datum": "2026-09-06",
+   "not": ""
+  },
+  "n882394075": {
+   "namn": "La Venezia",
+   "E": 674836.8,
+   "N": 6578791.4,
+   "tak": 0,
+   "status": "ok",
+   "datum": "2026-09-06",
+   "not": ""
+  },
+  "n1501759395": {
+   "namn": "Leonardos Kafferosteri",
+   "E": 675424.5,
+   "N": 6579236,
+   "tak": 0,
+   "status": "ej_uteservering",
+   "datum": "2026-09-06",
+   "not": ""
+  },
+  "n1509877858": {
+   "namn": "Liberdade",
+   "E": 675166.2,
+   "N": 6578846.9,
+   "tak": 0,
+   "status": "ej_uteservering",
+   "datum": "2026-09-06",
+   "not": ""
+  },
+  "n1501759674": {
+   "namn": "Lilla hotellbaren",
+   "E": 674954.1,
+   "N": 6579095.9,
+   "tak": 0,
+   "status": "ej_uteservering",
+   "datum": "2026-09-06",
+   "not": ""
+  },
+  "n4311322215": {
+   "namn": "Lilla Wien",
+   "E": 674401.2,
+   "N": 6579049.4,
+   "tak": 0,
+   "status": "ok",
+   "datum": "2026-09-06",
+   "not": ""
+  },
+  "n3572790699": {
+   "namn": "Lisas grabb",
+   "E": 674991.6,
+   "N": 6578650.3,
+   "tak": 0,
+   "status": "ok",
+   "datum": "2026-09-06",
+   "not": ""
+  },
+  "n1308089585": {
+   "namn": "Loch Ness Taverna",
+   "E": 674387.0,
+   "N": 6579350.8,
+   "tak": 0,
+   "status": "osaker",
+   "datum": "2026-09-06",
+   "not": "snappad ut ur husmask"
+  },
+  "n580137587": {
+   "namn": "Louie Louie",
+   "E": 675247.7,
+   "N": 6578950.9,
+   "tak": 0,
+   "status": "ok",
+   "datum": "2026-09-06",
+   "not": ""
+  },
+  "n580137586": {
+   "namn": "Lykke",
+   "E": 675428.1,
+   "N": 6579002.6,
+   "tak": 0,
+   "status": "ok",
+   "datum": "2026-09-06",
+   "not": ""
+  },
+  "n11035334089": {
+   "namn": "Madam",
+   "E": 675100,
+   "N": 6579201.5,
+   "tak": 0,
+   "status": "ej_uteservering",
+   "datum": "2026-09-06",
+   "not": ""
+  },
+  "n3290661661": {
+   "namn": "Makki Makki",
+   "E": 674867.8,
+   "N": 6579249.9,
+   "tak": 0,
+   "status": "stangt",
+   "datum": "2026-09-06",
+   "not": ""
+  },
+  "n3617891730": {
+   "namn": "Mamma o jag",
+   "E": 675506,
+   "N": 6579313.7,
+   "tak": 0,
+   "status": "ok",
+   "datum": "2026-09-06",
+   "not": ""
+  },
+  "n1476642436": {
+   "namn": "Marley Coffee",
+   "E": 675296.1,
+   "N": 6579029,
+   "tak": 0,
+   "status": "ok",
+   "datum": "2026-09-06",
+   "not": ""
+  },
+  "n1501759680": {
+   "namn": "Matboden Södermalm",
+   "E": 675219.2,
+   "N": 6579152.9,
+   "tak": 0,
+   "status": "ok",
+   "datum": "2026-09-06",
+   "not": ""
+  },
+  "n1509877899": {
+   "namn": "Mazra'a",
+   "E": 675315.2,
+   "N": 6578878.7,
+   "tak": 0,
+   "status": "osaker",
+   "datum": "2026-09-06",
+   "not": "snappad ut ur husmask"
+  },
+  "n720866950": {
+   "namn": "Meat on a Stick",
+   "E": 675399.5,
+   "N": 6578905.3,
+   "tak": 0,
+   "status": "ok",
+   "datum": "2026-09-06",
+   "not": ""
+  },
+  "n3578674368": {
+   "namn": "Meatballs for the People",
+   "E": 675382.3,
+   "N": 6579142.5,
+   "tak": 0,
+   "status": "ok",
+   "datum": "2026-09-06",
+   "not": ""
+  },
+  "n1608468871": {
+   "namn": "Medis kök & bar",
+   "E": 674823.7,
+   "N": 6579197,
+   "tak": 0,
+   "status": "ok",
+   "datum": "2026-09-06",
+   "not": ""
+  },
+  "n1547236386": {
+   "namn": "Melanders",
+   "E": 674796.6,
+   "N": 6579104.2,
+   "tak": 0,
+   "status": "osaker",
+   "datum": "2026-09-06",
+   "not": ""
+  },
+  "n1476642430": {
+   "namn": "Melanders Fisk Restaurang",
+   "E": 674988,
+   "N": 6578950,
+   "tak": 0,
+   "status": "ok",
+   "datum": "2026-09-06",
+   "not": ""
+  },
+  "n3617891731": {
+   "namn": "Meno Male",
+   "E": 675532,
+   "N": 6579183.7,
+   "tak": 0,
+   "status": "ok",
+   "datum": "2026-09-06",
+   "not": ""
+  },
+  "n12041088255": {
+   "namn": "Mezefabriken",
+   "E": 674898.5,
+   "N": 6579079.6,
+   "tak": 0,
+   "status": "ok",
+   "datum": "2026-09-06",
+   "not": ""
+  },
+  "n8976326463": {
+   "namn": "Mikkeller Södermalm",
+   "E": 675090.2,
+   "N": 6579156.4,
+   "tak": 0,
+   "status": "ok",
+   "datum": "2026-09-06",
+   "not": ""
+  },
+  "n1541177459": {
+   "namn": "Mira",
+   "E": 675065.3,
+   "N": 6579245.5,
+   "tak": 0,
+   "status": "stangt",
+   "datum": "2026-09-06",
+   "not": ""
+  },
+  "n4519392591": {
+   "namn": "Mister Plankstek",
+   "E": 675429,
+   "N": 6579216.2,
+   "tak": 0,
+   "status": "stangt",
+   "datum": "2026-09-06",
+   "not": ""
+  },
+  "n1397247514": {
+   "namn": "Mo Mo Cha SoFo",
+   "E": 675030.6,
+   "N": 6578803.9,
+   "tak": 0,
+   "status": "ej_uteservering",
+   "datum": "2026-09-06",
+   "not": ""
+  },
+  "n1554617843": {
+   "namn": "Morfar Ginko",
+   "E": 674389.3,
+   "N": 6579227.1,
+   "tak": 0,
+   "status": "ok",
+   "datum": "2026-09-06",
+   "not": ""
+  },
+  "n4933921721": {
+   "namn": "Mosebacketerrassen",
+   "E": 675003.6,
+   "N": 6579545.7,
+   "tak": 0,
+   "status": "ok",
+   "datum": "2026-09-06",
+   "not": ""
+  },
+  "n11101686078": {
+   "namn": "Moumo Restaurang",
+   "E": 674972.2,
+   "N": 6578826.7,
+   "tak": 0,
+   "status": "osaker",
+   "datum": "2026-09-06",
+   "not": ""
+  },
+  "n6487150087": {
+   "namn": "My Vegina",
+   "E": 674798.1,
+   "N": 6579099.1,
+   "tak": 0,
+   "status": "stangt",
+   "datum": "2026-09-06",
+   "not": ""
+  },
+  "n11123361119": {
+   "namn": "N3rds Video Game Bar",
+   "E": 675037.3,
+   "N": 6578887.3,
+   "tak": 0,
+   "status": "ej_uteservering",
+   "datum": "2026-09-06",
+   "not": ""
+  },
+  "n13372283215": {
+   "namn": "Naked Fish",
+   "E": 674348.6,
+   "N": 6578832.4,
+   "tak": 0,
+   "status": "ok",
+   "datum": "2026-09-06",
+   "not": ""
+  },
+  "n552513978": {
+   "namn": "Nem Nem",
+   "E": 674695.4,
+   "N": 6578843.8,
+   "tak": 0,
+   "status": "ok",
+   "datum": "2026-09-06",
+   "not": ""
+  },
+  "n11037928930": {
+   "namn": "Ninecha",
+   "E": 674991.6,
+   "N": 6579595.4,
+   "tak": 0,
+   "status": "ej_uteservering",
+   "datum": "2026-09-06",
+   "not": ""
+  },
+  "n490186026": {
+   "namn": "Nytorget 6",
+   "E": 675469.8,
+   "N": 6578867.1,
+   "tak": 0,
+   "status": "ok",
+   "datum": "2026-09-06",
+   "not": ""
+  },
+  "n747463323": {
+   "namn": "O'Pizzicato",
+   "E": 674455.8,
+   "N": 6579006,
+   "tak": 0,
+   "status": "ej_uteservering",
+   "datum": "2026-09-06",
+   "not": ""
+  },
+  "n1246188882": {
+   "namn": "Old Beefeater Inn",
+   "E": 674778.9,
+   "N": 6579557.8,
+   "tak": 0,
+   "status": "ok",
+   "datum": "2026-09-06",
+   "not": ""
+  },
+  "n702371901": {
+   "namn": "Oliver Twist",
+   "E": 674703.9,
+   "N": 6579524,
+   "tak": 0,
+   "status": "ok",
+   "datum": "2026-09-06",
+   "not": ""
+  },
+  "n11524751878": {
+   "namn": "Olivia",
+   "E": 674830.2,
+   "N": 6579079.3,
+   "tak": 0,
+   "status": "ok",
+   "datum": "2026-09-06",
+   "not": ""
+  },
+  "n675127148": {
+   "namn": "Omayma",
+   "E": 675437.8,
+   "N": 6578917.1,
+   "tak": 0,
+   "status": "ok",
+   "datum": "2026-09-06",
+   "not": ""
+  },
+  "n1248735261": {
+   "namn": "Omnipollos hatt",
+   "E": 674837.3,
+   "N": 6579498.7,
+   "tak": 0,
+   "status": "ok",
+   "datum": "2026-09-06",
+   "not": ""
+  },
+  "n1041777055": {
+   "namn": "One Tap Bar & Food",
+   "E": 675122.7,
+   "N": 6579612.2,
+   "tak": 1,
+   "status": "ok",
+   "datum": "2026-09-06",
+   "not": ""
+  },
+  "n1334695761": {
+   "namn": "Pachamama",
+   "E": 675552.9,
+   "N": 6579069.5,
+   "tak": 0,
+   "status": "stangt",
+   "datum": "2026-09-06",
+   "not": ""
+  },
+  "n7889781931": {
+   "namn": "Panda Dumplings",
+   "E": 674600.9,
+   "N": 6579026.4,
+   "tak": 0,
+   "status": "ej_uteservering",
+   "datum": "2026-09-06",
+   "not": ""
+  },
+  "n1628871873": {
+   "namn": "Parken Söder",
+   "E": 674535.4,
+   "N": 6579089.3,
+   "tak": 0,
+   "status": "ok",
+   "datum": "2026-09-06",
+   "not": ""
+  },
+  "n1509877905": {
+   "namn": "Pascal",
+   "E": 675247.7,
+   "N": 6578857.6,
+   "tak": 0,
+   "status": "ok",
+   "datum": "2026-09-06",
+   "not": ""
+  },
+  "n3639599599": {
+   "namn": "Pazzi",
+   "E": 675228.4,
+   "N": 6578712.4,
+   "tak": 0,
+   "status": "ok",
+   "datum": "2026-09-06",
+   "not": ""
+  },
+  "n630743814": {
+   "namn": "Pelikan",
+   "E": 675096.9,
+   "N": 6578682.1,
+   "tak": 0,
+   "status": "ok",
+   "datum": "2026-09-06",
+   "not": ""
+  },
+  "n12451448038": {
+   "namn": "Pet Sounds Bar",
+   "E": 674892.2,
+   "N": 6579674,
+   "tak": 0,
+   "status": "ej_uteservering",
+   "datum": "2026-09-06",
+   "not": ""
+  },
+  "n1541177403": {
+   "namn": "Pinocchio kök och bar",
+   "E": 675142.2,
+   "N": 6578953.1,
+   "tak": 0,
+   "status": "ej_uteservering",
+   "datum": "2026-09-06",
+   "not": ""
+  },
+  "n7837437040": {
+   "namn": "Pizza Hut",
+   "E": 674904.6,
+   "N": 6579097.8,
+   "tak": 0,
+   "status": "ok",
+   "datum": "2026-09-06",
+   "not": ""
+  },
+  "n3551224594": {
+   "namn": "Pong",
+   "E": 674973.5,
+   "N": 6578812.4,
+   "tak": 0,
+   "status": "ej_uteservering",
+   "datum": "2026-09-06",
+   "not": ""
+  },
+  "n675127156": {
+   "namn": "Primo Ciao Ciao",
+   "E": 675444.8,
+   "N": 6578992.4,
+   "tak": 0,
+   "status": "ok",
+   "datum": "2026-09-06",
+   "not": ""
+  },
+  "n1589625348": {
+   "namn": "Pärlans",
+   "E": 675419.1,
+   "N": 6579024.3,
+   "tak": 0,
+   "status": "ok",
+   "datum": "2026-09-06",
+   "not": ""
+  },
+  "n6694859385": {
+   "namn": "Racamaca",
+   "E": 674371.3,
+   "N": 6579349.2,
+   "tak": 0,
+   "status": "ok",
+   "datum": "2026-09-06",
+   "not": ""
+  },
+  "n679295221": {
+   "namn": "Ramblas",
+   "E": 674405.4,
+   "N": 6579458.4,
+   "tak": 0,
+   "status": "ok",
+   "datum": "2026-09-06",
+   "not": ""
+  },
+  "n1334695733": {
+   "namn": "Raouché",
+   "E": 675524.6,
+   "N": 6579166.3,
+   "tak": 0,
+   "status": "ok",
+   "datum": "2026-09-06",
+   "not": ""
+  },
+  "n718573056": {
+   "namn": "Restaurang Carmen",
+   "E": 675077.3,
+   "N": 6579180.3,
+   "tak": 0,
+   "status": "ej_uteservering",
+   "datum": "2026-09-06",
+   "not": ""
+  },
+  "n1589625349": {
+   "namn": "Retro",
+   "E": 675437.7,
+   "N": 6579013.1,
+   "tak": 0,
+   "status": "ok",
+   "datum": "2026-09-06",
+   "not": ""
+  },
+  "n1554617866": {
+   "namn": "Ricardos",
+   "E": 674235.9,
+   "N": 6579158.7,
+   "tak": 0,
+   "status": "ej_uteservering",
+   "datum": "2026-09-06",
+   "not": ""
+  },
+  "n3237616750": {
+   "namn": "Riche Fenix",
+   "E": 674826,
+   "N": 6579354.8,
+   "tak": 0,
+   "status": "ok",
+   "datum": "2026-09-06",
+   "not": ""
+  },
+  "n11896847469": {
+   "namn": "Ristorante Deli di Luca",
+   "E": 675524.7,
+   "N": 6579241.2,
+   "tak": 0,
+   "status": "ej_uteservering",
+   "datum": "2026-09-06",
+   "not": ""
+  },
+  "n1509877854": {
+   "namn": "Same Same but Different",
+   "E": 675248.3,
+   "N": 6578872.9,
+   "tak": 0,
+   "status": "stangt",
+   "datum": "2026-09-06",
+   "not": ""
+  },
+  "n1397247508": {
+   "namn": "Samrat of India",
+   "E": 675267.2,
+   "N": 6578811.2,
+   "tak": 0,
+   "status": "ok",
+   "datum": "2026-09-06",
+   "not": ""
+  },
+  "n1554617838": {
+   "namn": "Sankt Pauls bageri",
+   "E": 674384.7,
+   "N": 6579447.2,
+   "tak": 0,
+   "status": "ok",
+   "datum": "2026-09-06",
+   "not": ""
+  },
+  "n7117300291": {
+   "namn": "Santo da Roma",
+   "E": 674710.9,
+   "N": 6579683.1,
+   "tak": 0,
+   "status": "stangt",
+   "datum": "2026-09-06",
+   "not": ""
+  },
+  "n10755368147": {
+   "namn": "Savor Asia",
+   "E": 674894.6,
+   "N": 6579644.6,
+   "tak": 0,
+   "status": "ok",
+   "datum": "2026-09-06",
+   "not": ""
+  },
+  "n1541177436": {
+   "namn": "Sea Sushi",
+   "E": 675116.4,
+   "N": 6579077.8,
+   "tak": 0,
+   "status": "ej_uteservering",
+   "datum": "2026-09-06",
+   "not": ""
+  },
+  "n1509877851": {
+   "namn": "Shanti Gossip",
+   "E": 675393.9,
+   "N": 6578919,
+   "tak": 0,
+   "status": "ok",
+   "datum": "2026-09-06",
+   "not": ""
+  },
+  "n426920025": {
+   "namn": "Shanti Softcorner",
+   "E": 674621.6,
+   "N": 6578975.7,
+   "tak": 0,
+   "status": "ok",
+   "datum": "2026-09-06",
+   "not": ""
+  },
+  "n1332583272": {
+   "namn": "Shine Cafe",
+   "E": 674615.3,
+   "N": 6579316.8,
+   "tak": 0,
+   "status": "ej_uteservering",
+   "datum": "2026-09-06",
+   "not": ""
+  },
+  "n1348515237": {
+   "namn": "Shotluckan",
+   "E": 674943.9,
+   "N": 6578969,
+   "tak": 0,
+   "status": "ej_uteservering",
+   "datum": "2026-09-06",
+   "not": ""
+  },
+  "n3146402438": {
+   "namn": "Sia glassbar",
+   "E": 674780.2,
+   "N": 6579546.2,
+   "tak": 0,
+   "status": "stangt",
+   "datum": "2026-09-06",
+   "not": ""
+  },
+  "n6491090385": {
+   "namn": "Side Track",
+   "E": 674331.5,
+   "N": 6579337.8,
+   "tak": 0,
+   "status": "stangt",
    "datum": "2026-09-06",
    "not": ""
   }

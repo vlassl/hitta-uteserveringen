@@ -185,7 +185,9 @@ window.addEventListener('message',e=>{
 });
 function decide(status){
   if(!cur) return;
-  const p=pend||{E:cur.E,N:cur.N,tak:cur.roof?1:0};
+  let p=pend||{E:cur.E,N:cur.N,tak:cur.roof?1:0};
+  // Läge i husmasken utan tak: snappa ut till närmaste gatupixel (samma regel som appen)
+  if(!p.tak&&(status==='ok'||status==='osaker')){ const s0=W.sample(p.E,p.N); if(s0&&s0[3]){ const sn=W.snapToGround(p.E,p.N); if(sn.snapped) p={E:sn.E,N:sn.N,tak:0}; } }
   kur[cur.id]={id:cur.id,namn:cur.name,E:Math.round(p.E*10)/10,N:Math.round(p.N*10)/10,tak:p.tak?1:0,status,datum:today(),not:$('vnot').value.trim()};
   delete kur[cur.name];               // ev. v1-post med namn som nyckel
   saveKur();
