@@ -159,7 +159,8 @@ function select(v){
   const E=k&&k.E!=null?k.E:v.E, N=k&&k.N!=null?k.N:v.N, tak=k?k.tak:(v.roof?1:0);
   pend={E,N,tak};
   $('vname').textContent=v.name;
-  $('vmeta').textContent=`${v.id} · ${v.manual?'eget/kurerat läge':v.snapped?'snappat utanför fasad':'OSM-punkt'}${k?' · '+k.status+' '+(k.datum||''):''}`;
+  const s0=W.sample(E,N); const iHus=!!(s0&&s0[3])&&!tak;
+  $('vmeta').textContent=`${v.id} · ${v.manual?'eget/kurerat läge':v.snapped?'snappat utanför fasad':'OSM-punkt'}${k?' · '+k.status+' '+(k.datum||''):''}${iHus?' · ⚠ punkten ligger i husmasken – flytta ut på gatan':''}`;
   $('vnot').value=k?.not&&k.not!=='(v1)'?k.not:'';
   const ll=W.fromSweref(E,N), lo=W.fromSweref(v.osmE,v.osmN);
   mPar.setLatLng([ll.lat,ll.lng]); mOsm.setLatLng([lo.lat,lo.lng]); plan.setView([ll.lat,ll.lng],18);
@@ -179,7 +180,8 @@ window.addEventListener('message',e=>{
   if(m.id!==cur.id&&m.name!==cur.name) return;
   pend={E:m.E,N:m.N,tak:m.tak};
   const ll=W.fromSweref(m.E,m.N); mPar.setLatLng([ll.lat,ll.lng]);
-  $('vmeta').textContent=`${cur.id} · flyttat i 3D${m.tak?' (tak)':''} – tryck OK för att spara`;
+  const s1=W.sample(m.E,m.N); const iHus=!!(s1&&s1[3])&&!m.tak;
+  $('vmeta').textContent=`${cur.id} · flyttat i 3D${m.tak?' (tak)':''} – tryck OK för att spara${iHus?' · ⚠ i husmasken':''}`;
 });
 function decide(status){
   if(!cur) return;
