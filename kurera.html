@@ -170,6 +170,8 @@ function select(v){
   // 3D i appen med det kurerade/väntande läget
   const vv=Object.assign({},v,{E,N,roof:!!tak});
   W.open3dAt(E,N,v.lat,v.lng,v.name,vv);
+  // Renderaren kan ha byggts innan rutan fått höjd (canvas 0x0) – bygg om då
+  setTimeout(()=>{ const c=W.document.querySelector('#t3wrap canvas'); if(c&&(c.width===0||c.height===0)){ W.build3d(); W.updSun3(); } },250);
   render();
 }
 window.addEventListener('message',e=>{
