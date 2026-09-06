@@ -1,0 +1,7 @@
+{
+ "kommentar": "Tile-urval for bygg_om (v2.8.6-test: nodata-hal under stora tak). Kapas ej - preprocess laser artefakter.json som vanligt.",
+ "artefakter": [
+  {"namn": "Katarina kyrka kupol", "E": 675176, "N": 6579405, "r": 30},
+  {"namn": "Globen med grannar", "E": 675530, "N": 6576800, "r": 240}
+ ]
+}

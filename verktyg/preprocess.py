@@ -1,7 +1,13 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-============================ SOLDYRKAREN PREPROCESS v2.8.5 ============================
+============================ SOLDYRKAREN PREPROCESS v2.8.6 ============================
+v2.8.6: markmodellen fylls i pyramid (8x/64x nedskalning) under stora tak.
+  Tidigare fylldes dtm bara 15 m in fran narmaste markretur, och
+  hard[isnan(dtm)] = nan nollade darfor mitten av alla tak bredare an ~30 m
+  (Katarina-kupolen, Globen, gallerior). Fyllningen begransas till pixlar
+  som har laserpunkter (nagon klass) inom 2 m - vatten utan ekon och
+  kantremsor utanfor punktmolnet forblir nodata som forut.
 Bygger höjdtiles (PNG) för Soldyrkaren från:
   1. Lantmäteriets laserdata (LAZ, SWEREF99 TM / EPSG:3006, RH2000)
   2. (valfritt) SBK Trädkronehöjd - absolut höjd (GeoTIFF, 50 cm, RH2000)
@@ -166,6 +172,33 @@ def fill_nan(a, iters=15):
             nb = np.nanmean(np.stack([p[1:-1, :-2], p[1:-1, 2:],
                                       p[:-2, 1:-1], p[2:, 1:-1]]), axis=0)
         a[m] = nb[m]
+    return a
+
+def fill_nan_pyramid(a, haspts, faktorer=(8, 64), iters=15):
+    """v2.8.6: fyller stora hal i dtm (under breda tak) via nedskalade
+    kopior. Finfyllning som forut (15 m), darefter fylls resterande hal
+    ur en 8x- resp 64x-nedskalad, nanmedel-fylld och bilinjart uppskalad
+    kopia. Bara pixlar med laserpunkter i narheten (haspts) fylls, sa
+    vatten utan ekon och omraden utanfor punktmolnet forblir nodata."""
+    a = fill_nan(a, iters)
+    hal = np.isnan(a) & haspts
+    if not hal.any():
+        return a
+    H, W = a.shape
+    for f in faktorer:
+        if not hal.any():
+            break
+        Hc, Wc = -(-H // f), -(-W // f)
+        pad = np.full((Hc * f, Wc * f), np.nan)
+        pad[:H, :W] = a
+        with np.errstate(all='ignore'):
+            grov = np.nanmean(pad.reshape(Hc, f, Wc, f), axis=(1, 3))
+        grov = fill_nan(grov, iters)
+        upp = np.array(Image.fromarray(grov.astype(np.float32), mode='F')
+                       .resize((Wc * f, Hc * f), Image.BILINEAR),
+                       dtype=np.float64)[:H, :W]
+        a = np.where(hal & ~np.isnan(upp), upp, a)
+        hal = np.isnan(a) & haspts
     return a
 
 def las_artefakter(path):
@@ -485,7 +518,21 @@ def process_laz(path, outdir, use_osm, keys, bbox=None):
     np.add.at(gsum, flat[gm], z[gm]); np.add.at(gcnt, flat[gm], 1)
     dtm = np.full(W * H, np.nan)
     dtm[gcnt > 0] = gsum[gcnt > 0] / gcnt[gcnt > 0]
-    dtm = fill_nan(dtm.reshape(H, W))
+    dtm = dtm.reshape(H, W)
+    # v2.8.6: var finns laserpunkter alls (alla klasser)? Bara dar fylls
+    # stora hal i markmodellen - under tak finns takekon, i vatten inget.
+    pcnt = np.zeros(W * H); np.add.at(pcnt, flat, 1)
+    haspts = (pcnt > 0).reshape(H, W)
+    for _ in range(2):                       # 2 px dilatation
+        d = haspts.copy()
+        d[1:, :] |= haspts[:-1, :]; d[:-1, :] |= haspts[1:, :]
+        d[:, 1:] |= haspts[:, :-1]; d[:, :-1] |= haspts[:, 1:]
+        haspts = d
+    hal_fore = int((np.isnan(fill_nan(dtm.copy())) & haspts).sum())
+    dtm = fill_nan_pyramid(dtm, haspts)
+    hal_efter = int((np.isnan(dtm) & haspts).sum())
+    print(f'    markmodell: {hal_fore} px stora hal under tak fyllda '
+          f'(kvar: {hal_efter})')
 
     om = np.isin(cls, OBJECT_CLS)
     objmax = np.full(W * H, -np.inf)
