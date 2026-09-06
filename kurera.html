@@ -142,14 +142,14 @@ function render(){
   $('cnt').textContent=`${n}/${venues.length}`;
 }
 async function search(){
-  if(!W||!W.map){ alert('Appen har inte laddat klart'); return; }
+  if(!W||!W.HU||!W.HU.map){ alert('Appen har inte laddat klart – vänta några sekunder'); return; }
   const c=$('center').value.trim();
-  if(c){ const m=c.match(/(-?\d+(?:\.\d+)?)\s*,\s*(-?\d+(?:\.\d+)?)/); if(m) W.map.setView([+m[1],+m[2]],16); }
-  if(!W.DEM.ok){ alert('Höjddata laddar – vänta en stund'); return; }
+  if(c){ const m=c.match(/(-?\d+(?:\.\d+)?)\s*,\s*(-?\d+(?:\.\d+)?)/); if(m) W.HU.map.setView([+m[1],+m[2]],16); }
+  if(!W.HU.DEM.ok){ alert('Höjddata laddar – vänta en stund'); return; }
   $('list').innerHTML='<div class="hint">Hämtar …</div>';
   await W.searchVenues();
-  venues=(W.lastVenues||[]).slice().sort((a,b)=>a.name.localeCompare(b.name,'sv'));
-  const cc=W.map.getCenter(); plan.setView([cc.lat,cc.lng],17);
+  venues=(W.HU.lastVenues||[]).slice().sort((a,b)=>a.name.localeCompare(b.name,'sv'));
+  const cc=W.HU.map.getCenter(); plan.setView([cc.lat,cc.lng],17);
   render();
   const first=venues.find(v=>!statusOf(v))||venues[0]; if(first) select(first);
 }

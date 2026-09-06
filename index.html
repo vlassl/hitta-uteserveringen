@@ -1373,6 +1373,8 @@ function curStatus(id,namn){           // 'ok' | 'osaker' | 'ej_uteservering' | 
 }
 const KURERA=/[?&]kurera=1/.test(location.search);
 if(KURERA) document.documentElement.classList.add('kurera-html');
+// Kureringsverktyget (kurera.html) når appens inre via window.HU (const/let syns inte på window)
+window.HU={get map(){return map;},get DEM(){return DEM;},get lastVenues(){return lastVenues;},get grid(){return grid;}};
 function savePos(){ try{localStorage.setItem('hu_pos',JSON.stringify(manPos));}catch(_){} }
 try{ favs=new Set(JSON.parse(localStorage.getItem('hu_favs')||'[]')); }catch(_){}
 function saveFavs(){ try{localStorage.setItem('hu_favs',JSON.stringify([...favs]));}catch(_){} }
