@@ -1,0 +1,220 @@
+<!doctype html>
+<html lang="sv">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Kurera uteserveringslägen</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<style>
+:root{--bg:#f6f1e6;--card:#fffdf7;--line:#e6dcc6;--ink:#33281a;--mute:#8d7c5c;--sun:#f7b32b;--mono:ui-monospace,Menlo,Consolas,monospace}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;height:100vh;display:grid;grid-template-columns:300px 1fr;grid-template-rows:auto 1fr}
+header{grid-column:1/3;display:flex;align-items:center;gap:.6rem;padding:.4rem .7rem;background:var(--sun);font-weight:700}
+header .v{font-family:var(--mono);font-size:.7rem;font-weight:500;opacity:.7}
+header select{font:inherit;font-size:.78rem;padding:.2rem .3rem;border:1px solid #d9b455;border-radius:6px;background:var(--card)}
+header input{font-family:var(--mono);font-size:.8rem;padding:.2rem .4rem;border:1px solid #d9b455;border-radius:6px;width:11rem}
+header button,.btns button{font:inherit;font-size:.78rem;font-weight:700;padding:.3rem .6rem;border-radius:8px;border:1px solid #c9b58a;background:var(--card);cursor:pointer}
+header .sp{flex:1}
+aside{border-right:1px solid var(--line);display:flex;flex-direction:column;min-height:0}
+.filt{display:flex;gap:.3rem;padding:.4rem;border-bottom:1px solid var(--line);font-size:.72rem}
+.filt span{padding:.15rem .45rem;border-radius:999px;background:#ece4d0;cursor:pointer}
+.filt span.on{background:var(--ink);color:#fff}
+#list{overflow:auto;flex:1;font-size:.8rem}
+.row{padding:.35rem .6rem;border-bottom:1px solid #f0e8d6;cursor:pointer;display:flex;gap:.4rem;align-items:center}
+.row:hover{background:#fbf5e6}.row.sel{background:#fff1c9}
+.row .st{width:.6rem;height:.6rem;border-radius:50%;background:#d8cfb8;flex:0 0 auto}
+.row .st.ok{background:#3f8a4f}.row .st.osaker{background:#e0a020}.row .st.ej_uteservering{background:#93a0b4}.row .st.stangt{background:#c03b2b}
+.row .nm{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.row .d{font-family:var(--mono);font-size:.65rem;color:var(--mute)}
+main{display:grid;grid-template-columns:1fr 1fr;grid-template-rows:auto 1fr 1fr;min-height:0}
+.bar{grid-column:1/3;display:flex;align-items:center;gap:.6rem;padding:.4rem .7rem;border-bottom:1px solid var(--line);background:var(--card);flex-wrap:wrap}
+.bar .name{font-weight:700;font-size:1rem}
+.bar .meta{font-family:var(--mono);font-size:.7rem;color:var(--mute)}
+.bar input.not{font:inherit;font-size:.8rem;padding:.25rem .45rem;border:1px solid var(--line);border-radius:6px;width:16rem}
+.btns{display:flex;gap:.4rem;margin-left:auto}
+.btns .ok{background:#3f8a4f;color:#fff;border-color:#3f8a4f}.btns .os{background:#e0a020;color:#fff;border-color:#e0a020}
+.btns .ej{background:#93a0b4;color:#fff;border-color:#93a0b4}.btns .st{background:#c03b2b;color:#fff;border-color:#c03b2b}
+.pane{position:relative;border:1px solid var(--line);min-height:0;background:#eee}
+.pane .lbl{position:absolute;left:.4rem;top:.3rem;z-index:5;font-family:var(--mono);font-size:.62rem;background:rgba(255,253,247,.9);padding:.1rem .4rem;border-radius:5px}
+.pane iframe{width:100%;height:100%;border:0;display:block}
+#plan{width:100%;height:100%}
+.sv-btn{position:absolute;inset:0;display:flex;align-items:center;justify-content:center}
+.sv-btn a{font:inherit;font-weight:700;padding:.6rem 1rem;border-radius:10px;background:var(--card);border:1px solid var(--line);text-decoration:none;color:var(--ink)}
+.hint{font-size:.72rem;color:var(--mute);padding:.5rem .7rem}
+kbd{font-family:var(--mono);background:#ece4d0;padding:0 .3rem;border-radius:4px;font-size:.7rem}
+</style>
+</head>
+<body>
+<header>Kurera uteserveringslägen <span class="v" id="ver"></span>
+  <span class="sp"></span>
+  <select id="preset" title="Förvalda områden (700 m radie)"><option value="">område…</option>
+    <option value="59.3010, 18.0120">Midsommarkransen</option>
+    <option value="59.3060, 18.0010">Aspudden</option>
+    <option value="59.3120, 18.0245">Liljeholmen</option>
+    <option value="59.3160, 18.0335">Södermalm – Hornstull</option>
+    <option value="59.3170, 18.0620">Södermalm – Mariatorget</option>
+    <option value="59.3145, 18.0730">Södermalm – Medborgarplatsen</option>
+    <option value="59.3130, 18.0830">Södermalm – Nytorget/SoFo</option>
+    <option value="59.3195, 18.0715">Södermalm – Slussen</option>
+    <option value="59.3085, 18.0910">Södermalm – Hammarby sjöstad</option>
+    <option value="59.3430, 18.0490">Vasastan – Odenplan</option>
+    <option value="59.3400, 18.0370">Vasastan – S:t Eriksplan</option>
+    <option value="59.3480, 18.0440">Vasastan – Vanadisplan</option>
+    <option value="59.3390, 18.0570">Vasastan – Tegnérlunden</option>
+    <option value="59.3325, 18.0640">City – Hötorget</option>
+    <option value="59.3240, 18.0715">Gamla stan</option>
+    <option value="59.3320, 18.0400">Kungsholmen – Fridhemsplan</option>
+    <option value="59.3380, 18.0800">Östermalm – Stureplan</option>
+  </select>
+  <input id="center" placeholder="lat, lng (mitt)" title="Sökmitt i WGS84. Tomt = appens sista läge.">
+  <button id="btnHere">Min position</button>
+  <button id="btnSearch">Hämta ställen (700 m)</button>
+  <button id="btnExport">Exportera lagen.json</button>
+  <button id="btnImport">Importera…</button>
+</header>
+<aside>
+  <div class="filt"><span class="on" data-f="alla">alla</span><span data-f="okur">okurerade</span><span data-f="kur">kurerade</span><span id="cnt" style="margin-left:auto;background:none"></span></div>
+  <div id="list"><div class="hint">Skriv mitt eller tryck "Min position", sedan "Hämta ställen". Listan är appens egen sökning (samma snappning och solband).<br><br>Tangenter: <kbd>1</kbd> OK · <kbd>2</kbd> osäkert · <kbd>3</kbd> ej uteservering · <kbd>4</kbd> stängt · <kbd>↑↓</kbd> byt ställe</div></div>
+</aside>
+<main>
+  <div class="bar">
+    <span class="name" id="vname">–</span><span class="meta" id="vmeta"></span>
+    <input class="not" id="vnot" placeholder="anteckning (valfritt)">
+    <div class="btns">
+      <button class="ok" id="bOk" title="1">OK – läge godkänt</button>
+      <button class="os" id="bOs" title="2">Osäkert läge</button>
+      <button class="ej" id="bEj" title="3">Ej uteservering</button>
+      <button class="st" id="bSt" title="4">Ställe stängt</button>
+    </div>
+  </div>
+  <div class="pane"><span class="lbl">3D – klicka på mark/tak för att flytta parasollet</span><iframe id="app" src="index.html?kurera=1"></iframe></div>
+  <div class="pane"><span class="lbl">Plan – gul = parasoll, grå = OSM-punkt</span><div id="plan"></div></div>
+  <div class="pane"><span class="lbl">Google Maps (flygfoto)</span><iframe id="gmap" referrerpolicy="no-referrer-when-downgrade" allowfullscreen loading="lazy"></iframe></div>
+  <div class="pane"><span class="lbl">Street View</span><iframe id="gsv" referrerpolicy="no-referrer-when-downgrade" allowfullscreen loading="lazy" style="display:none"></iframe><div class="sv-btn" id="svbtn"><a target="_blank" rel="noopener" id="svlink">Öppna Street View ↗</a></div></div>
+</main>
+<script>
+/* Google Maps Embed API-nyckel (valfri). Med nyckel bäddas Street View in i rutan.
+   Skaffas i Google Cloud Console (Maps Embed API är gratis, men kontot kräver fakturering).
+   Lämna tom för knapp som öppnar Street View i ny flik. */
+const GOOGLE_KEY='';
+
+const $=id=>document.getElementById(id);
+const fr=$('app');
+let W=null;                 // appens window (samma origin)
+let venues=[], cur=null, pend=null, filt='alla';
+let kur={};                 // id -> {id,namn,E,N,tak,status,datum,not}
+try{ kur=JSON.parse(localStorage.getItem('hu_kur')||'{}'); }catch(_){}
+const saveKur=()=>{ try{localStorage.setItem('hu_kur',JSON.stringify(kur));}catch(_){} };
+const today=()=>new Date().toISOString().slice(0,10);
+
+// Befintlig lagen.json som bas (v2 per id, v1 per namn)
+fetch('lagen.json').then(r=>r.ok?r.json():null).then(d=>{
+  if(!d||!d.lagen) return;
+  for(const [k,v] of Object.entries(d.lagen)){
+    if(kur[k]) continue;
+    if(Array.isArray(v)) kur[k]={id:k,namn:k,E:v[0],N:v[1],tak:v[2]===1?1:0,status:'ok',datum:'',not:'(v1)'};
+    else kur[k]=Object.assign({id:k},v);
+  }
+  saveKur(); render();
+}).catch(()=>{});
+
+fr.addEventListener('load',()=>{ W=fr.contentWindow; setTimeout(()=>{ $('ver').textContent=W.document.getElementById('verTag')?.textContent||''; },800); });
+
+// Plan-karta
+const plan=L.map('plan',{zoomControl:false}).setView([59.32,18.07],17);
+L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'© OpenStreetMap'}).addTo(plan);
+let mPar=L.circleMarker([0,0],{radius:9,color:'#7a5a00',fillColor:'#f7b32b',fillOpacity:1,weight:2}).addTo(plan);
+let mOsm=L.circleMarker([0,0],{radius:6,color:'#556',fillColor:'#93a0b4',fillOpacity:.9,weight:1}).addTo(plan);
+
+function statusOf(v){ const k=kur[v.id]||kur[v.name]; return k?k.status:''; }
+function render(){
+  const list=$('list'); list.innerHTML='';
+  let n=0;
+  for(const v of venues){
+    const st=statusOf(v);
+    if(filt==='okur'&&st) continue; if(filt==='kur'&&!st) continue;
+    n++;
+    const d=document.createElement('div'); d.className='row'+(cur===v?' sel':'');
+    d.innerHTML=`<span class="st ${st}"></span><span class="nm">${v.name}</span><span class="d">${v.dist} m</span>`;
+    d.onclick=()=>select(v); list.appendChild(d);
+  }
+  $('cnt').textContent=`${n}/${venues.length}`;
+}
+async function search(){
+  if(!W||!W.map){ alert('Appen har inte laddat klart'); return; }
+  const c=$('center').value.trim();
+  if(c){ const m=c.match(/(-?\d+(?:\.\d+)?)\s*,\s*(-?\d+(?:\.\d+)?)/); if(m) W.map.setView([+m[1],+m[2]],16); }
+  if(!W.DEM.ok){ alert('Höjddata laddar – vänta en stund'); return; }
+  $('list').innerHTML='<div class="hint">Hämtar …</div>';
+  await W.searchVenues();
+  venues=(W.lastVenues||[]).slice().sort((a,b)=>a.name.localeCompare(b.name,'sv'));
+  const cc=W.map.getCenter(); plan.setView([cc.lat,cc.lng],17);
+  render();
+  const first=venues.find(v=>!statusOf(v))||venues[0]; if(first) select(first);
+}
+function select(v){
+  cur=v; pend=null;
+  const k=kur[v.id]||kur[v.name];
+  const E=k&&k.E!=null?k.E:v.E, N=k&&k.N!=null?k.N:v.N, tak=k?k.tak:(v.roof?1:0);
+  pend={E,N,tak};
+  $('vname').textContent=v.name;
+  $('vmeta').textContent=`${v.id} · ${v.manual?'eget/kurerat läge':v.snapped?'snappat utanför fasad':'OSM-punkt'}${k?' · '+k.status+' '+(k.datum||''):''}`;
+  $('vnot').value=k?.not&&k.not!=='(v1)'?k.not:'';
+  const ll=W.fromSweref(E,N), lo=W.fromSweref(v.osmE,v.osmN);
+  mPar.setLatLng([ll.lat,ll.lng]); mOsm.setLatLng([lo.lat,lo.lng]); plan.setView([ll.lat,ll.lng],18);
+  $('gmap').src=`https://maps.google.com/maps?q=${ll.lat.toFixed(6)},${ll.lng.toFixed(6)}&t=k&z=19&output=embed`;
+  if(GOOGLE_KEY){ $('gsv').style.display='block'; $('svbtn').style.display='none';
+    $('gsv').src=`https://www.google.com/maps/embed/v1/streetview?key=${GOOGLE_KEY}&location=${ll.lat.toFixed(6)},${ll.lng.toFixed(6)}&fov=90`; }
+  else { $('svlink').href=`https://www.google.com/maps?q=&layer=c&cbll=${ll.lat.toFixed(6)},${ll.lng.toFixed(6)}`; }
+  // 3D i appen med det kurerade/väntande läget
+  const vv=Object.assign({},v,{E,N,roof:!!tak});
+  W.open3dAt(E,N,v.lat,v.lng,v.name,vv);
+  render();
+}
+window.addEventListener('message',e=>{
+  const m=e.data; if(!m||m.type!=='hu-move'||!cur) return;
+  if(m.id!==cur.id&&m.name!==cur.name) return;
+  pend={E:m.E,N:m.N,tak:m.tak};
+  const ll=W.fromSweref(m.E,m.N); mPar.setLatLng([ll.lat,ll.lng]);
+  $('vmeta').textContent=`${cur.id} · flyttat i 3D${m.tak?' (tak)':''} – tryck OK för att spara`;
+});
+function decide(status){
+  if(!cur) return;
+  const p=pend||{E:cur.E,N:cur.N,tak:cur.roof?1:0};
+  kur[cur.id]={id:cur.id,namn:cur.name,E:Math.round(p.E*10)/10,N:Math.round(p.N*10)/10,tak:p.tak?1:0,status,datum:today(),not:$('vnot').value.trim()};
+  delete kur[cur.name];               // ev. v1-post med namn som nyckel
+  saveKur();
+  // nästa okurerade efter den aktuella
+  const i=venues.indexOf(cur);
+  const next=venues.slice(i+1).find(v=>!statusOf(v))||venues.slice(0,i).find(v=>!statusOf(v));
+  render(); if(next) select(next);
+}
+$('bOk').onclick=()=>decide('ok'); $('bOs').onclick=()=>decide('osaker');
+$('bEj').onclick=()=>decide('ej_uteservering'); $('bSt').onclick=()=>decide('stangt');
+document.addEventListener('keydown',e=>{
+  if(e.target.tagName==='INPUT') return;
+  if(e.key==='1') decide('ok'); else if(e.key==='2') decide('osaker'); else if(e.key==='3') decide('ej_uteservering'); else if(e.key==='4') decide('stangt');
+  else if(e.key==='ArrowDown'||e.key==='ArrowUp'){ const i=venues.indexOf(cur); const j=i+(e.key==='ArrowDown'?1:-1); if(venues[j]) select(venues[j]); e.preventDefault(); }
+});
+$('btnSearch').onclick=search;
+$('preset').onchange=()=>{ if($('preset').value){ $('center').value=$('preset').value; search(); } };
+$('btnHere').onclick=()=>navigator.geolocation.getCurrentPosition(p=>{ $('center').value=`${p.coords.latitude.toFixed(5)}, ${p.coords.longitude.toFixed(5)}`; search(); },()=>alert('Ingen position'));
+document.querySelectorAll('.filt span[data-f]').forEach(s=>s.onclick=()=>{ document.querySelectorAll('.filt span').forEach(x=>x.classList.remove('on')); s.classList.add('on'); filt=s.dataset.f; render(); });
+$('btnExport').onclick=()=>{
+  const out={version:2,kommentar:'Kurerade uteserveringslägen (SWEREF99 TM). status: ok | osaker | ej_uteservering | stangt. Nyckel = OSM-id.',
+             skapad:today(),lagen:{}};
+  for(const [k,v] of Object.entries(kur)) out.lagen[k]={namn:v.namn,E:v.E,N:v.N,tak:v.tak||0,status:v.status,datum:v.datum||'',not:v.not||''};
+  const txt=JSON.stringify(out,null,1);
+  const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([txt],{type:'application/json'})); a.download='lagen.json'; a.click();
+};
+$('btnImport').onclick=()=>{
+  const inp=document.createElement('input'); inp.type='file'; inp.accept='.json';
+  inp.onchange=()=>{ const f=inp.files[0]; if(!f) return; f.text().then(t=>{ const d=JSON.parse(t); const L=d.lagen||d;
+    for(const [k,v] of Object.entries(L)) kur[k]=Array.isArray(v)?{id:k,namn:k,E:v[0],N:v[1],tak:v[2]===1?1:0,status:'ok',datum:'',not:'(v1)'}:Object.assign({id:k},v);
+    saveKur(); render(); alert(Object.keys(L).length+' poster importerade'); }); };
+  inp.click();
+};
+</script>
+</body>
+</html>

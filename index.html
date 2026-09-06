@@ -200,7 +200,7 @@ select.dur{font-family:var(--mono);font-size:.85rem;padding:.35rem .5rem;border:
 .venue{background:var(--card);border:1px solid var(--line);border-radius:14px;
   padding:.6rem .7rem .55rem;margin-bottom:.6rem}
 .vtop{display:flex;align-items:baseline;gap:.45rem}
-.rank{font-family:var(--mono);font-size:.68rem;color:#e2d3ab;min-width:1rem}
+.rank{font-family:var(--mono);font-size:.85rem;font-weight:800;color:#c98a06;min-width:1.1rem;text-align:right}
 .vname{font-weight:700;font-size:.95rem}
 .v3d{margin-left:auto;font-family:var(--mono);font-size:.6rem;font-weight:500;color:#8d7c5c;
   border:1.5px solid var(--line);border-radius:7px;padding:.1rem .4rem;cursor:pointer;user-select:none}
@@ -213,16 +213,26 @@ select.dur{font-family:var(--mono);font-size:.85rem;padding:.35rem .5rem;border:
 .vmeta .ute{background:#e8f2e4;color:#3f8a4f;border-radius:5px;padding:.05rem .35rem;font-size:.66rem}
 .vmeta .uteq{background:#f3ede0;color:#a08c66;border-radius:5px;padding:.05rem .35rem;font-size:.66rem}
 .vmeta .oh{font-family:var(--mono);font-size:.66rem;font-weight:600;color:#7a6a4d}
-.bandrow{display:flex;align-items:center;gap:.55rem;padding-left:1.45rem}
-.miniband{flex:1 1 auto;min-width:0;height:24px;border-radius:6px;display:block}
+.bandrow{display:grid;grid-template-columns:minmax(0,1fr) 3.9rem;column-gap:.55rem;align-items:start;padding-left:1.45rem}
+.bands{min-width:0}
+.miniband{width:100%;height:24px;border-radius:6px;display:block}
+.wxband{width:100%;height:12px;border-radius:4px;display:block;margin-top:3px}
+.wxicons{position:relative;height:16px;margin-top:2px}
+.wxicons svg{position:absolute;top:0;width:16px;height:16px;transform:translateX(-50%)}
 .sunscore{font-family:var(--mono);font-size:.82rem;font-weight:700;color:#c98a06;
-  white-space:nowrap;flex:0 0 auto;text-align:right;line-height:1.1}
+  white-space:nowrap;text-align:right;line-height:1.1;padding-top:3px}
 .sunscore .tr{display:block;color:#4f8f3f;font-weight:700;font-size:.74rem;line-height:1.05}
 
 .bandhours{display:flex;justify-content:space-between;font-family:var(--mono);font-size:.58rem;
-  font-weight:600;color:#8d7c5c;padding-left:1.45rem;margin-top:.1rem;padding-right:3.4rem}
+  font-weight:600;color:#8d7c5c;margin-top:.1rem}
 /* ---- 3D-vy ---- */
 #t3overlay{display:none;position:fixed;inset:0;z-index:50;background:rgba(51,40,26,.55);align-items:center;justify-content:center;padding:.8rem}
+/* Kureringsläge (kurera.html bäddar in sidan med ?kurera=1): bara 3D-rutan, fyller fönstret */
+body.kurera header,body.kurera #map,body.kurera .card{display:none!important}
+body.kurera #t3overlay{display:flex!important;position:static;background:none;padding:0;height:100vh}
+body.kurera .t3box{max-width:none;height:100%;display:flex;flex-direction:column;border-radius:0;box-shadow:none}
+body.kurera #t3wrap{flex:1 1 auto;min-height:0;aspect-ratio:auto}
+body.kurera #t3close{display:none}
 .t3box{background:var(--card);border-radius:16px;width:100%;max-width:480px;overflow:hidden;box-shadow:0 10px 40px rgba(0,0,0,.35)}
 .t3head{display:flex;align-items:center;gap:.5rem;padding:.55rem .8rem;border-bottom:1px solid var(--line)}
 .t3head .nm{font-weight:700;font-size:.95rem}
@@ -295,6 +305,11 @@ select.dur{font-family:var(--mono);font-size:.85rem;padding:.35rem .5rem;border:
       <path d="M8 3h8l-.7 6.5a3.3 3.3 0 0 1-6.6 0z"/>
       <line x1="12" y1="13" x2="12" y2="20"/><line x1="8.5" y1="21" x2="15.5" y2="21"/>
     </symbol>
+    <symbol id="w-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4.2" fill="#f7b32b" stroke="none"/><g stroke="#f7b32b" stroke-width="2" stroke-linecap="round"><path d="M12 2.5v3M12 18.5v3M2.5 12h3M18.5 12h3M5.3 5.3l2.1 2.1M16.6 16.6l2.1 2.1M5.3 18.7l2.1-2.1M16.6 7.4l2.1-2.1"/></g></symbol>
+    <symbol id="w-part" viewBox="0 0 24 24"><circle cx="9" cy="9" r="3.6" fill="#f7b32b" stroke="none"/><g stroke="#f7b32b" stroke-width="1.8" stroke-linecap="round"><path d="M9 1.5v2.2M1.5 9h2.2M3.7 3.7l1.6 1.6M14.3 3.7l-1.6 1.6"/></g><path d="M8 20h10.5a3.5 3.5 0 0 0 .4-7 5 5 0 0 0-9.6-1.3A4.2 4.2 0 0 0 8 20z" fill="#cfd4dc" stroke="#8a929f" stroke-width="1.2"/></symbol>
+    <symbol id="w-cloud" viewBox="0 0 24 24"><path d="M7 19h10.5a3.8 3.8 0 0 0 .5-7.6 5.5 5.5 0 0 0-10.6-1.5A4.5 4.5 0 0 0 7 19z" fill="#aeb5c0" stroke="#6b7480" stroke-width="1.2"/></symbol>
+    <symbol id="w-rain" viewBox="0 0 24 24"><path d="M7 15h10.5a3.8 3.8 0 0 0 .5-7.6 5.5 5.5 0 0 0-10.6-1.5A4.5 4.5 0 0 0 7 15z" fill="#8f97a3" stroke="#5a6270" stroke-width="1.2"/><g stroke="#3d7fd6" stroke-width="1.8" stroke-linecap="round"><path d="M9 17.5l-1 3M13 17.5l-1 3M17 17.5l-1 3"/></g></symbol>
+    <symbol id="w-thunder" viewBox="0 0 24 24"><path d="M7 14h10.5a3.8 3.8 0 0 0 .5-7.6 5.5 5.5 0 0 0-10.6-1.5A4.5 4.5 0 0 0 7 14z" fill="#6b7480" stroke="#3f4650" stroke-width="1.2"/><path d="M13 13l-3.5 5h3l-1.5 5 4.5-6.5h-3z" fill="#f7b32b" stroke="none"/></symbol>
     <symbol id="i-ice" viewBox="0 0 24 24">
       <path d="M7.5 9.5a4.5 4.5 0 1 1 9 0"/>
       <path d="M6.5 9.5h11L12 22z"/>
@@ -327,7 +342,7 @@ select.dur{font-family:var(--mono);font-size:.85rem;padding:.35rem .5rem;border:
     <h1>Hitta uteserveringen</h1>
     <span class="sub">i solen</span>
   </div>
-  <span class="ver" id="verTag">v0.53</span>
+  <span class="ver" id="verTag">v0.56</span>
 </header>
 
 <div id="map"></div>
@@ -381,6 +396,7 @@ select.dur{font-family:var(--mono);font-size:.85rem;padding:.35rem .5rem;border:
       <span class="chip on" data-cat="ice"><svg class="ci"><use href="#i-ice"/></svg>Glass</span>
     </div>
     <div class="controls" style="margin-top:.3rem">
+      <span class="favsw show" id="wxSw" style="margin-left:0" title="Väg in SMHI:s molnprognos i soltimmar, sortering och väderband">SMHI molntäcke <span class="toggle on" id="wxTgl"></span></span>
       <span class="favsw" id="favSw">Bara favoriter <span class="toggle" id="favTgl"></span></span>
     </div>
     <div class="legend" id="legend" style="display:none">
@@ -461,7 +477,7 @@ select.dur{font-family:var(--mono);font-size:.85rem;padding:.35rem .5rem;border:
 
 <script>
 "use strict";
-/* ================ HITTA UTESERVERINGEN v0.53 ================
+/* ================ HITTA UTESERVERINGEN v0.56 ================
    Läge A (laser): ray marching mot höjdtiles (tiles/, från
    preprocess.py) + 3D-vy som bygger mesh ur samma tiles.
    Läge B (fallback): OSM via Overpass.
@@ -1205,7 +1221,7 @@ function build3d(){
   const pole=new THREE.Mesh(new THREE.CylinderGeometry(0.15,0.15,3.4,8),
     new THREE.MeshLambertMaterial({color:0x6b5a44}));
   // Står P på ett tak (takbar) sätts parasollet på takets höjd, inte marken
-  const y0=base?base[0]-z0:0;
+  const y0=(base&&t3pos.venue&&t3pos.venue.roof)?base[0]-z0:0;
   pole.position.set(0,y0+1.7,0);pole.castShadow=true;scene.add(pole);
   const para=new THREE.Mesh(new THREE.ConeGeometry(2.8,1.2,10),
     new THREE.MeshLambertMaterial({color:0xf7b32b}));
@@ -1278,15 +1294,17 @@ function moveParasol(e,el,cam){
   const newE=t3pos.E+x, newN=t3pos.N-z;   // -z = norr
   // Höjd ur rastret: hårda ytan = marken, eller taket om man klickat på ett hus (takbar)
   const sh=sample(newE,newN);
-  const y=sh?sh[0]-T3marker.z0:hit.point.y;
+  const paTak=!!(T3marker.bld&&hit.object===T3marker.bld&&sh&&sh[3]);   // klick på ett hus = parasoll på taket
+  const y=paTak?sh[0]-T3marker.z0:hit.point.y;
   T3marker.pole.position.set(x,y+1.7,z);
   T3marker.para.position.set(x,y+3.7,z);
   if(t3pos.venue){
     const v=t3pos.venue;
-    manPos[v.name]=[newE,newN]; savePos();
+    manPos[v.name]=paTak?[newE,newN,1]:[newE,newN]; savePos();
+    if(KURERA&&window.parent!==window) window.parent.postMessage({type:'hu-move',id:v.id,name:v.name,E:newE,N:newN,tak:paTak?1:0},'*');
     const h=horizonAt(newE,newN,400);
     if(h){
-      v.E=newE; v.N=newN; v.manual=true; v.snapped=false; v.roof=!!(sh&&sh[3]);
+      v.E=newE; v.N=newN; v.manual=true; v.snapped=false; v.roof=paTak;
       v.band=venueBand(v.lat,v.lng,h.hB,h.vegIv);
       renderVenues(0);
     }
@@ -1312,6 +1330,8 @@ function updSun3(){
 
 /* ================ Uteserveringslistan ================ */
 let favs=new Set(), onlyFavs=false, lastVenues=null;
+let wxOn=true;   // SMHI molntäcke: viktar soltimmar och sortering, visar väderband
+try{ wxOn=localStorage.getItem('hu_wx_on')!=='0'; }catch(_){}
 let listDateStr=new Date().toISOString().slice(0,10);
 let listStartH=null;                 // null = "Nu"
 let tmode='walk';
@@ -1337,10 +1357,22 @@ let curPos={};    // kurerade lägen från repot (lagen.json)
 try{ manPos=JSON.parse(localStorage.getItem('hu_pos')||'{}'); }catch(_){}
 fetch('lagen.json').then(r=>r.ok?r.json():null).then(d=>{
   if(d&&d.lagen){ curPos=d.lagen; }
+  if(KURERA) document.body.classList.add('kurera');
 }).catch(()=>{});
-function posFor(namn){                 // eget läge > kurerat > inget
-  return manPos[namn] || curPos[namn] || null;
+function posFor(namn,id){              // eget läge > kurerat (v2 per OSM-id, v1 per namn) > inget
+  if(manPos[namn]) return manPos[namn];
+  const c=(id&&curPos[id])||curPos[namn];
+  if(!c) return null;
+  if(Array.isArray(c)) return c;                              // v1: [E,N] eller [E,N,1]
+  if(c.E==null) return null;                                  // v2 utan läge (t.ex. bara status)
+  return c.tak?[c.E,c.N,1]:[c.E,c.N];
 }
+function curStatus(id,namn){           // 'ok' | 'osaker' | 'ej_uteservering' | 'stangt' | ''
+  const c=(id&&curPos[id])||curPos[namn];
+  return (c&&!Array.isArray(c)&&c.status)||'';
+}
+const KURERA=/[?&]kurera=1/.test(location.search);
+if(KURERA) document.documentElement.classList.add('kurera-html');
 function savePos(){ try{localStorage.setItem('hu_pos',JSON.stringify(manPos));}catch(_){} }
 try{ favs=new Set(JSON.parse(localStorage.getItem('hu_favs')||'[]')); }catch(_){}
 function saveFavs(){ try{localStorage.setItem('hu_favs',JSON.stringify([...favs]));}catch(_){} }
@@ -1563,10 +1595,18 @@ async function searchVenues(){
       if(vlat==null) continue;
       const sw=toSweref(vlat,vlng);
       let E,N,manual=false,_snapped=false;
-      const pp=posFor(t.name);
+      const oid=el.type[0]+el.id;                       // OSM-id, t.ex. n123456
+      const cst=curStatus(oid,t.name);                   // kurerad status ur lagen.json
+      if(!KURERA&&(cst==='stangt'||cst==='ej_uteservering')) continue;
+      const pp=posFor(t.name,oid);
       const roofTag=/^(roof|rooftop)$/i.test(t.location||'');
-      if(pp){ [E,N]=pp; manual=true; }
-      else if(roofTag){ E=sw.E; N=sw.N; }                 // takbar: stanna på taket
+      let roofWanted=roofTag;
+      if(pp){
+        [E,N]=pp; manual=true;
+        if(pp[2]===1) roofWanted=true;                     // uttryckligen flyttad upp på taket i 3D
+        else { const s0=sample(E,N); if(s0&&s0[3]){ const sn=snapToGround(E,N); E=sn.E; N=sn.N; } }  // annars ner på gatan
+      }
+      else if(roofTag){ E=sw.E; N=sw.N; }                 // takbar enligt OSM: stanna på taket
       else {
         const fs=snapOutsideFacade(sw.E,sw.N,polys);   // 1) OSM-fasad + 1,5 m
         if(fs){ E=fs.E; N=fs.N; _snapped=true; }
@@ -1580,8 +1620,8 @@ async function searchVenues(){
       const dx=E-cE, dy=N-cN;
       const sR=sample(E,N);
       venues.push({
-        name:t.name, lat:vlat, lng:vlng, E, N,
-        snapped:!manual&&_snapped, manual, roof:!!(sR&&sR[3]),
+        name:t.name, id:oid, osmE:sw.E, osmN:sw.N, lat:vlat, lng:vlng, E, N, status:cst,
+        snapped:!manual&&_snapped, manual, roof:roofWanted&&!!(sR&&sR[3]),
         cats:CAT_OF(t), outdoor:t.outdoor_seating||'', oh:t.opening_hours||'',
         dist:Math.round(Math.hypot(dx,dy)),
         ohp:parseOH(t.opening_hours),
@@ -1631,14 +1671,14 @@ function renderVenues(skipped){
   // Väder per kvart (06–22) för valt datum; null = ingen prognos (annat datum, SMHI nere)
   const day0=new Date(listDateStr+'T00:00:00').getTime();
   const wxQ=Array.from({length:64},(_,q2)=>wxAt(day0+(6*60+q2*15)*60e3));
-  const hasWx=wxQ.some(Boolean);
+  const hasWx=wxOn&&wxQ.some(Boolean);
   const sunOf=v=>{
     let sun=0,tree=0,eff=0;
     for(let q2=Math.round((f-6)*4);q2<Math.round((t-6)*4);q2++){
       if(q2<0||q2>=64)continue;
-      const fac=hasWx?wxFac(wxQ[q2]):1;
-      if(v.band[q2]===2){sun+=0.25;eff+=0.25*fac;}
-      else if(v.band[q2]===1){tree+=0.25;eff+=0.125*fac;}
+      const fac=hasWx?wxFac(wxQ[q2]):1;          // molnviktat när SMHI-switchen är på
+      if(v.band[q2]===2){sun+=0.25*fac;eff+=0.25*fac;}
+      else if(v.band[q2]===1){tree+=0.25*fac;eff+=0.125*fac;}
     }
     return {sun,tree,eff};
   };
@@ -1662,8 +1702,7 @@ function renderVenues(skipped){
       const tcc=qs.reduce((a,e)=>a+e.tcc,0)/qs.length;
       const rain=qs.filter(e=>e.pcat>0).length*0.25;
       const temp=qs[Math.floor(qs.length/2)].temp;
-      const moln=tcc<1.5?'klart':tcc<3.5?'mest klart':tcc<5.5?'halvklart':tcc<7?'mulet':'helmulet';
-      wxTxt=` · SMHI: ${moln} (${tcc.toFixed(0)}/8)${temp!=null?`, ${Math.round(temp)} °C`:''}${rain?`, nederbörd ${fmtTim(rain)}`:''}`;
+      wxTxt=` · SMHI: moln ${Math.round(tcc/8*100)} %${temp!=null?`, ${Math.round(temp)} °C`:''}${rain?`, nederbörd ${fmtTim(rain)}`:''}`;
     }
   }
   renderFavList();
@@ -1706,9 +1745,9 @@ function renderVenues(skipped){
     mk.on('click',()=>highlightVenue(i,marks));
   });
   window._huMarks=marks; window._huVenues=vs;
-  info.textContent=`Sol ${fmtHH(f)}–${fmtHH(t)} den ${(+listDateStr.slice(8,10))}/${(+listDateStr.slice(5,7))} · ${vs.length} ställen`
+  info.textContent=`Sol ${fmtHH(f)}–${fmtHH(t)} den ${(+listDateStr.slice(8,10))}/${(+listDateStr.slice(5,7))}`
     +(skipped?` (${skipped} utanför höjddatan)`:'')
-    +wxTxt+(hasWx?' · rankat efter sol × molnighet':' · mest sol, sen kortast restid')+' · kända stängda dolda';
+    +wxTxt+(hasWx?' · soltimmar och ordning molnviktade':' · mest sol, sen kortast restid');
   listEl.innerHTML='';
   const cols={0:'#93a0b4',1:'#7db36a',2:'#f7b32b',3:'#2c3a5c'};
   vs.forEach((v,i)=>{
@@ -1737,10 +1776,11 @@ function renderVenues(skipped){
         ${v.manual?`<span class="ute" title="${manPos[v.name]?'Du har placerat parasollet här i 3D-vyn':'Läge kontrollerat och kurerat'}">✔ läge</span>`:
           v.snapped?'<span class="uteq" title="Punkten låg inne i huset; flyttad till 1,5 m utanför fasadliv. Öppna 3D och klicka på marken för att finjustera.">≈ läge</span>':''}
         ${v.roof?'<span class="ute" title="Parasollet står på taket – solen räknas från takhöjd">tak</span>':''}
+        ${v.status==='osaker'?'<span class="uteq" title="Läget är kontrollerat men osäkert">läge osäkert</span>':''}
       </div>
-      <div class="bandrow"><canvas class="miniband"></canvas>
-        <span class="sunscore">${fmtTim(sun)}${tree>0?`<b class="tr">+${fmtTim(tree)}</b>`:''}</span></div>
-      <div class="bandhours"><span>06</span><span>10</span><span>14</span><span>18</span><span>22</span></div>`;
+      <div class="bandrow"><div class="bands"><canvas class="miniband"></canvas>${hasWx?'<canvas class="wxband"></canvas><div class="wxicons"></div>':''}
+        <div class="bandhours"><span>06</span><span>10</span><span>14</span><span>18</span><span>22</span></div></div>
+        <span class="sunscore">${fmtTim(sun)}${tree>0?`<b class="tr">+${fmtTim(tree)}</b>`:''}</span></div>`;
     listEl.appendChild(el);
     const cv=el.querySelector('canvas');
     const w=cv.clientWidth||300;
@@ -1749,12 +1789,24 @@ function renderVenues(skipped){
     const pw=w/64, Hb=24;
     // Full färgstyrka i hela bandet (ingen nedtoning utanför perioden)
     for(let q2=0;q2<64;q2++){cx.fillStyle=cols[v.band[q2]];cx.fillRect(q2*pw,0,pw+.5,Hb);}
-    // Molnslöja ur SMHI: grå ton proportionell mot molnigheten, blå kant vid nederbörd
-    if(hasWx) for(let q2=0;q2<64;q2++){
-      const e=wxQ[q2]; if(!e) continue;
-      const a=0.6*Math.min(8,e.tcc)/8;
-      if(a>0.05){cx.fillStyle=`rgba(96,104,118,${a.toFixed(2)})`;cx.fillRect(q2*pw,0,pw+.5,Hb);}
-      if(e.pcat>0){cx.fillStyle='#3d7fd6';cx.fillRect(q2*pw,Hb-3,pw+.5,3);}
+    // Väderband ur SMHI: gråskala (ljus = klart, mörk = mulet), blått = nederbörd; ikoner varannan timme
+    if(hasWx){
+      const wc=el.querySelector('.wxband'); wc.width=w*devicePixelRatio; wc.height=12*devicePixelRatio;
+      const wx=wc.getContext('2d'); wx.scale(devicePixelRatio,devicePixelRatio);
+      for(let q2=0;q2<64;q2++){
+        const e=wxQ[q2];
+        if(!e){wx.fillStyle='#f1ede4';}                     // ingen prognos (passerad tid)
+        else if(e.pcat>0){wx.fillStyle='#8fb4e6';}
+        else {const g=Math.round(235-Math.min(8,e.tcc)/8*130);wx.fillStyle=`rgb(${g},${g+2},${g+6})`;}
+        wx.fillRect(q2*pw,0,pw+.5,12);
+      }
+      const ic=el.querySelector('.wxicons'); let ih='';
+      for(let h=6;h<=22;h+=2){
+        const e=wxQ[Math.min(63,(h-6)*4)]; if(!e) continue;
+        const k=(e.sym===11||e.sym===21)?'w-thunder':e.pcat>0?'w-rain':e.tcc>=6?'w-cloud':e.tcc>=2?'w-part':'w-sun';
+        ih+=`<svg style="left:${(h-6)/16*100}%"><use href="#${k}"/></svg>`;
+      }
+      ic.innerHTML=ih;
     }
     // Trim-ram runt vald period, med pilspetsar inåt (Apple-klippstil)
     const xa=(f-6)*4*pw, xb=(t-6)*4*pw, LW=3;
@@ -1770,7 +1822,7 @@ function renderVenues(skipped){
     cx.closePath(); cx.fill();
     // Trädskuggning: månadsvis transmission visas i tooltip
     cv.title=`Silad sol: krona skuggar ~${Math.round((1-TREE_TRANS[month])*100)}% denna månad`
-      +(hasWx?' · grå slöja = molnighet enligt SMHI, blå kant = nederbörd':'');
+      +(hasWx?' · bandet under: molnighet enligt SMHI (ljust = klart), blått = nederbörd':'');
     el.querySelector('.v3d').addEventListener('click',()=>
       open3dAt(v.E,v.N,v.lat,v.lng,v.name,v));
     el.querySelector('.vheart').addEventListener('click',e=>{
@@ -2012,6 +2064,13 @@ map.on('click',ev=>{P=ev.latlng;startAnalysis(true);});
   });
   document.querySelectorAll('#listCard .chip').forEach(ch=>
     ch.addEventListener('click',()=>{ch.classList.toggle('on');renderVenues();}));
+  document.getElementById('wxTgl').classList.toggle('on',wxOn);
+  document.getElementById('wxTgl').addEventListener('click',()=>{
+    wxOn=!wxOn;
+    document.getElementById('wxTgl').classList.toggle('on',wxOn);
+    try{localStorage.setItem('hu_wx_on',wxOn?'1':'0');}catch(_){}
+    renderVenues();
+  });
   document.getElementById('favTgl').addEventListener('click',()=>{
     onlyFavs=!onlyFavs;
     document.getElementById('favTgl').classList.toggle('on',onlyFavs);
