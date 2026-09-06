@@ -348,10 +348,7 @@ body.kurera #t3close,body.kurera #hint,body.kurera .t3head{display:none!importan
 <div id="map"></div>
 
 <div id="panel">
-  <div class="hint" id="hint">
-    Klicka på kartan där uteserveringen ligger. Skuggan från hus, terräng och träd
-    beräknas för hela dagen.
-  </div>
+  <div class="hint" id="hint" style="display:none"></div>
 
   <div class="card" id="listCard">
     <h2><span id="modeTitle" style="cursor:pointer" title="Tryck för att växla mellan uteserveringar och parkbänkar">Soliga uteserveringar nära kartans mitt</span><span class="setbtn" id="setBtn" title="Inställningar"><svg class="ci lg"><use href="#i-gear"/></svg></span></h2>
@@ -1770,9 +1767,9 @@ function renderVenues(skipped){
     mk.on('click',()=>highlightVenue(i,marks));
   });
   window._huMarks=marks; window._huVenues=vs;
-  info.textContent=`Sol ${fmtHH(f)}–${fmtHH(t)} den ${(+listDateStr.slice(8,10))}/${(+listDateStr.slice(5,7))}`
+  info.textContent=`Ej skugga ${fmtHH(f)}–${fmtHH(t)} den ${(+listDateStr.slice(8,10))}/${(+listDateStr.slice(5,7))}`
     +(skipped?` (${skipped} utanför höjddatan)`:'')
-    +wxTxt+(hasWx?' · soltimmar och ordning molnviktade':' · mest sol, sen kortast restid');
+    +wxTxt;
   listEl.innerHTML='';
   const cols={0:'#93a0b4',1:'#7db36a',2:'#f7b32b',3:'#2c3a5c'};
   vs.forEach((v,i)=>{
