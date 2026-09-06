@@ -295,6 +295,11 @@ select.dur{font-family:var(--mono);font-size:.85rem;padding:.35rem .5rem;border:
       <path d="M8 3h8l-.7 6.5a3.3 3.3 0 0 1-6.6 0z"/>
       <line x1="12" y1="13" x2="12" y2="20"/><line x1="8.5" y1="21" x2="15.5" y2="21"/>
     </symbol>
+    <symbol id="i-ice" viewBox="0 0 24 24">
+      <path d="M7.5 9.5a4.5 4.5 0 1 1 9 0"/>
+      <path d="M6.5 9.5h11L12 22z"/>
+      <line x1="9.2" y1="13" x2="14.8" y2="13"/><line x1="10.6" y1="16.5" x2="13.4" y2="16.5"/>
+    </symbol>
     <symbol id="i-drink" viewBox="0 0 24 24">
       <path d="M4 4h16l-8 9z"/>
       <line x1="12" y1="13" x2="12" y2="20"/><line x1="8.5" y1="21" x2="15.5" y2="21"/>
@@ -372,8 +377,8 @@ select.dur{font-family:var(--mono);font-size:.85rem;padding:.35rem .5rem;border:
       <span class="chip on" data-cat="coffee"><svg class="ci"><use href="#i-coffee"/></svg>Kaffe</span>
       <span class="chip on" data-cat="beer"><svg class="ci"><use href="#i-beer"/></svg>Öl</span>
       <span class="chip on" data-cat="wine"><svg class="ci"><use href="#i-wine"/></svg>Vin</span>
-      <span class="chip on" data-cat="drinks"><svg class="ci"><use href="#i-drink"/></svg>Drink</span>
       <span class="chip on" data-cat="food"><svg class="ci"><use href="#i-food"/></svg>Mat</span>
+      <span class="chip on" data-cat="ice"><svg class="ci"><use href="#i-ice"/></svg>Glass</span>
     </div>
     <div class="controls" style="margin-top:.3rem">
       <span class="favsw" id="favSw">Bara favoriter <span class="toggle" id="favTgl"></span></span>
@@ -1412,6 +1417,9 @@ const CAT_OF=t=>{
   if(a==='bar'||a==='restaurant') c.wine=1;
   if(a==='bar') c.drinks=1;
   if(a==='restaurant'||t.cuisine) c.food=1;
+  // Glass: amenity/shop=ice_cream, eller cuisine som nämner glass
+  if(a==='ice_cream'||t.shop==='ice_cream'){ c.ice=1; delete c.food; }   // glassbar/-kiosk
+  else if(/ice_cream|gelato/i.test(t.cuisine||'')) c.ice=1;                // café/restaurang med glass
   return c;
 };
 function nowQ(){ const d=new Date(); return Math.min(21.5,Math.max(6,d.getHours()+Math.ceil(d.getMinutes()/15)*0.25)); }
@@ -1465,7 +1473,7 @@ function snapToGround(E,N,maxR=35){
 }
 
 async function fetchVenues(lat,lng,r){
-  const q=`[out:json][timeout:30];nwr["amenity"~"^(cafe|bar|pub|restaurant|biergarten)$"]["name"](around:${r},${lat},${lng});out center tags;way["building"](around:${r+80},${lat},${lng});out geom;`;
+  const q=`[out:json][timeout:30];nwr["amenity"~"^(cafe|bar|pub|restaurant|biergarten|ice_cream)$"]["name"](around:${r},${lat},${lng});nwr["shop"="ice_cream"]["name"](around:${r},${lat},${lng});out center tags;way["building"](around:${r+80},${lat},${lng});out geom;`;
   return (await overpass(q)).elements;
 }
 
@@ -1668,7 +1676,7 @@ function renderVenues(skipped){
         <a href="${gurl}" target="_blank" rel="noopener"><svg class="ci"><use href="#${M.icon}"/></svg> ${mins} min</a>
         ${v.outdoor==='yes'?'<span class="ute">uteservering</span>':
           v.outdoor==='no'?'':'<span class="uteq">uteservering?</span>'}
-        ${Object.keys(v.cats).map(cc=>({coffee:'i-coffee',beer:'i-beer',wine:'i-wine',drinks:'i-drink',food:'i-food'})[cc])
+        ${Object.keys(v.cats).map(cc=>({coffee:'i-coffee',beer:'i-beer',wine:'i-wine',drinks:'i-drink',food:'i-food',ice:'i-ice'})[cc])
           .filter(Boolean).map(ic=>`<svg class="ci"><use href="#${ic}"/></svg>`).join(' ')}
         ${v.ohp.ok?`<span class="ute">öppet</span><span class="oh">${ohIdag(v.ohp,wd)}</span>`:
           v.oh?`<span class="uteq" title="${v.oh}">öppettid?</span><span class="oh">${v.oh.slice(0,32)}</span>`:''}
