@@ -1,6 +1,6 @@
 # Hitta uteserveringen
 
-Victor är byggnadsingenjör på Tyréns och bygger **Hitta uteserveringen**, en webbapp som svarar på "var kan jag sitta i solen just nu?" för Stockholms uteserveringar. Live: https://vlassl.github.io/hitta-uteserveringen/ (GitHub Pages från `main`).
+Victor bygger **Hitta uteserveringen**, en webbapp som svarar på "var kan jag sitta i solen just nu?" för Stockholms uteserveringar. Live: https://vlassl.github.io/hitta-uteserveringen/ (GitHub Pages från `main`).
 
 Appen bygger på Lantmäteriets laserdata i stället för extruderade byggnadsfotavtryck: verkliga takformer och träd med både krontopp och kronbas, så att lågt stående sol kan passera under kronorna. Det är projektets kärna.
 

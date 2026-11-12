@@ -6,7 +6,7 @@ Håll det kort — det läses vid varje prompt. Detaljerna hör hemma i
 
 ---
 
-Victor är byggnadsingenjör på Tyréns och bygger **Hitta uteserveringen**,
+Victor bygger **Hitta uteserveringen**,
 en webbapp som svarar på frågan "var kan jag sitta i solen just nu?" för
 Stockholms uteserveringar. Live på vlassl.github.io/hitta-uteserveringen.
 
