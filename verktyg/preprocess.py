@@ -1,7 +1,11 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-============================ SOLDYRKAREN PREPROCESS v2.9.1 ============================
+============================ SOLDYRKAREN PREPROCESS v2.9.2 ============================
+v2.9.2: artefaktkapningen tar marken ur dtm. bh ar kapad vid 127 m, sa
+  hard - bh gav fel mark for spikar hogre an 127 m over mark (flygplan
+  over Riddarfjarden pa ~1 100 m sanktes bara till ~970 m). Artefakter
+  under 127 m over mark kapas exakt som forut.
 v2.9.1: stadning intill dacket. Klass 1-pixlar inom 3 m fran ett dack som
   ligger >= 6 m over mark ar broutrustning (racken, lyktor, master, pelare
   sedda fran sidan) och stod kvar som grona pelare fran vattnet: de i
@@ -235,7 +239,7 @@ def las_artefakter(path):
         print('VARNING: kunde inte läsa artefaktlistan:', e)
         return []
 
-def kapa_artefakter(hard, bh, bflag, veg, base, e0, n_top, W, H, lista):
+def kapa_artefakter(hard, bh, bflag, veg, base, e0, n_top, W, H, lista, dtm=None):
     """Kapar hårda ytan inom angivna radier ner till omgivningens takmedian.
 
     Ändringar mot v2.7:
@@ -281,7 +285,9 @@ def kapa_artefakter(hard, bh, bflag, veg, base, e0, n_top, W, H, lista):
 
         sub_h = hard[r0:r1, c0:c1]
         sub_b = bh[r0:r1, c0:c1]
-        mark = sub_h - sub_b               # marknivå i rutan
+        # marknivå i rutan. v2.9.2: ur dtm - bh är kapad vid 127 m, så
+        # hard - bh blir fel för spikar högre än så (flygplan)
+        mark = dtm[r0:r1, c0:c1] if dtm is not None else sub_h - sub_b
         # Golvet for vad som raknas som artefakt. minh ur listan ar att
         # foredra: den satts efter vad man faktiskt sett i tilen och kan
         # laggas hogt over kvarterets verkliga tak, sa inget akta kapas.
@@ -664,7 +670,7 @@ def process_laz(path, outdir, use_osm, keys, bbox=None):
 
     if ARTEFAKTER:
         hard, bh, veg, base = kapa_artefakter(
-            hard, bh, bflag, veg, base, e0, n_top, W, H, ARTEFAKTER)
+            hard, bh, bflag, veg, base, e0, n_top, W, H, ARTEFAKTER, dtm)
 
     hard[np.isnan(dtm)] = np.nan  # utanför laserdata = nodata
     flagg = np.where(bflag, 255, np.where(brflag, 64, 0)).astype(np.uint8)

@@ -1296,6 +1296,22 @@
    "r": 7,
    "minh": 60,
    "notering": "4 px pa 86-89,5 m utanfor gamla cirkeln. r=7 nar inte norra kvarterets akta 87 m-hus (N>=6578075), och minh 60 gar fritt over sodra kvarterets 45,5 m."
+  },
+  {
+   "namn": "Flygplan over Riddarfjarden, vast",
+   "E": 673710,
+   "N": 6579835,
+   "r": 110,
+   "minh": 80,
+   "notering": "Flygplan i laserdatan, ~1 070-1 120 m RH2000. Sparet E 673612-673995, N 6579812-6579857: 12 px i byggnadskanalen (hus 127 m = kapat) och 67 px i vegetationskanalen (krona 127,5 m = kapat). Akta tak inom cirklarna max 40,5 m, krona max 26,5 m, sa minh 80 tar bara planet. Kraver preprocess >= v2.9.2 (mark ur dtm). Granskad 2026-11-12."
+  },
+  {
+   "namn": "Flygplan over Riddarfjarden, ost",
+   "E": 673910,
+   "N": 6579835,
+   "r": 110,
+   "minh": 80,
+   "notering": "Flygplan i laserdatan, ~1 070-1 120 m RH2000. Sparet E 673612-673995, N 6579812-6579857: 12 px i byggnadskanalen (hus 127 m = kapat) och 67 px i vegetationskanalen (krona 127,5 m = kapat). Akta tak inom cirklarna max 40,5 m, krona max 26,5 m, sa minh 80 tar bara planet. Kraver preprocess >= v2.9.2 (mark ur dtm). Granskad 2026-11-12."
   }
  ]
 }
