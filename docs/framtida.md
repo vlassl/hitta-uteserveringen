@@ -23,7 +23,3 @@ Det som är planerat men inte byggt i Hitta uteserveringen, uppbyggt ur `ARBETSP
 
 - **Takrendering B/C, fasader och fönster, reflekterad sol, intensitetstexturer, SBK:s trädkronraster** (Victor 2026-09-06): parkerat.
 - **Generellt "högt och glest"-filter** (Victor 2026-09-06): parkerat, eftersom det kapar äkta tak.
-
-## Verktyg
-
-- **Tre skript bara i arbetsmappen** (2026-11-12): `bygga_oversikt.py`, `kapa_artefakter.py` och `orto_kolla.py` finns i `C:\soldata\arbetsmapp` men inte i `verktyg/`. *Väntar på Victor*: ska de in i git?

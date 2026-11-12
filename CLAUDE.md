@@ -26,7 +26,11 @@ hdb          C:\soldata\hdb      (markhöjdmodell, inte i git)
 
 `artefakter.json` läses från katalogen man står i, så skripten körs från arbetsmappen. Ändrade skript kopieras till `verktyg/` innan commit. Claude gör kopieringen själv och kontrollerar med `diff` att `verktyg/` och arbetsmappen stämmer.
 
-Rådata (`laz`, `orto`, `hdb`) ligger utanför repot. På en ny dator hämtas de på nytt med `hamta_laser.py` / `hamta_orto.py` (Lantmäteriets öppna data).
+### Ny dator
+
+Alla färdiga tiles ligger i git, så efter `git clone` fungerar appen direkt. För appen (`index.html`), kureringen (`kurera.html`, `lagen.json`) och för att mäta och granska i tilesen behövs ingen rådata och ingen processning.
+
+Rådata (`laz`, `orto`, `hdb`, ~28 GB, Lantmäteriets öppna data) behövs bara för att bygga nya tiles: ändringar i `preprocess.py`, omkörningar med `bygg_om` och nya stadsdelar. Den ligger på jobbdatorn i `C:\soldata\`. Behövs den på en annan dator: flytta den med USB-disk, eller hämta från Geotorget med `hamta_laser.py` / `hamta_orto.py`. Geotorget-lösenordet skriver Victor själv i terminalen, aldrig i en fil eller i chatten. Arbetsmappen skapas då som en kopia av `verktyg\`.
 
 ## Så vill Victor jobba
 
