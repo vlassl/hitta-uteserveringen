@@ -1,7 +1,24 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-============================ SOLDYRKAREN PREPROCESS v2.9.2 ============================
+============================ SOLDYRKAREN PREPROCESS v2.10.0 ============================
+v2.10.0: kanterna pa en korning blir som i en bred korning.
+  1. Overpass-fragan byggs av alla fyra horn. SWEREF-natet ar vridet
+     ~2,6 grader mot lat/lon, och med bara SV- och NO-hornet foll en kil
+     langs sodra och norra kanten utanfor (upp till ~60 m pa ett block):
+     hus dar blev trad. Cachen heter polys2_ (de gamla ar ofullstandiga).
+  2. Punkter lases med --marginal (256 m) runt bbox och varje block, men
+     bara tiles som skar bbox skrivs. Forut skrevs en marginalremsa med
+     utfylld mark in i grannarna (np.maximum, upp till 3,4 m), och bboxens
+     egna kanter raknades utan sammanhang. 128 och 256 m ger samma
+     resultat; 64 m racker inte for artefaktkapningens referensring (2r).
+  3. Med bbox lases alla laserfiler samlat, sa skarvar mellan filerna
+     (forut upp till 0,2 m i ett band pa +-25 m) forsvinner och Overpass
+     fragas en gang per block i stallet for en gang per fil.
+  En smal korning ger darfor samma tiles som en bred (verifierat: 0 px
+  skillnad i alla kanaler). Ombyggnad med farsk OSM-data andrar anda
+  flaggor dar OSM andrats eller dar den gamla fragan tappade hus.
+v2.9.2: artefaktkapningen tar marken ur dtm. bh ar kapad vid 127 m, sa
 v2.9.2: artefaktkapningen tar marken ur dtm. bh ar kapad vid 127 m, sa
   hard - bh gav fel mark for spikar hogre an 127 m over mark (flygplan
   over Riddarfjarden pa ~1 100 m sanktes bara till ~970 m). Artefakter
@@ -117,8 +134,11 @@ class OverpassNere(RuntimeError):
 
 def fetch_buildings(e0, n0, e1, n1, pad=30):
     """Hämtar byggnadspolygoner (listor av (E,N)) inom SWEREF-bbox."""
-    lat0, lon0 = en_to_latlon(e0-pad, n0-pad)
-    lat1, lon1 = en_to_latlon(e1+pad, n1+pad)
+    # v2.10.0: alla fyra horn - SWEREF-natet ar vridet ~2,6 grader mot
+    # lat/lon, sa SV- och NO-hornet ensamma tappar kilar langs kanterna.
+    horn = [en_to_latlon(E, N) for E in (e0-pad, e1+pad) for N in (n0-pad, n1+pad)]
+    lat0 = min(h[0] for h in horn); lat1 = max(h[0] for h in horn)
+    lon0 = min(h[1] for h in horn); lon1 = max(h[1] for h in horn)
     q = (f'[out:json][timeout:150];('
          f'way["building"]({lat0},{lon0},{lat1},{lon1});'
          f'relation["building"]["type"="multipolygon"]({lat0},{lon0},{lat1},{lon1});'
@@ -126,7 +146,7 @@ def fetch_buildings(e0, n0, e1, n1, pad=30):
     # Cache: samma block hämtas aldrig två gånger (omkörningar blir gratis)
     os.makedirs('osm_cache', exist_ok=True)
     cpath = os.path.join('osm_cache',
-        f'polys_{int(e0)}_{int(n0)}_{int(e1)}_{int(n1)}.json')
+        f'polys2_{int(e0)}_{int(n0)}_{int(e1)}_{int(n1)}.json')
     if os.path.exists(cpath):
         print('      (byggnader ur cache)')
         return json.load(open(cpath, encoding='utf-8'))
@@ -470,6 +490,7 @@ def copc_query_robust(path, bbox):
             np.asarray(pts.intensity)[m].astype(np.float64))
 
 ARTEFAKTER = []
+MARGINAL = 256.0     # --marginal: punkter lases sa har langt utanfor bbox (m)
 INTENSITET = False   # --intensitet slår på svartvit laserintensitet som textur
 SNABB = True    # --helskanning tvingar chunkskanning (facit-metoden).
                 # Voxelbuggen i LM:s filer är löst (dubbel konvention,
@@ -520,10 +541,22 @@ def chunk_scan(path, bbox):
             np.concatenate(zs), np.concatenate(cs), ii)
 
 def process_laz(path, outdir, use_osm, keys, bbox=None):
-    print(f'  läser {os.path.basename(path)} ...', flush=True)
-    pts = load_points(path, bbox)
-    if pts is None or len(pts[0]) == 0:
+    # v2.10.0: path kan vara en lista (alla filer samlat). Med bbox lases
+    # punkterna MARGINAL m utanfor, men bara tiles som skar bbox skrivs.
+    paths = path if isinstance(path, (list, tuple)) else [path]
+    lbox = None
+    if bbox:
+        lbox = [bbox[0] - MARGINAL, bbox[1] - MARGINAL,
+                bbox[2] + MARGINAL, bbox[3] + MARGINAL]
+    delar = []
+    for p in paths:
+        print(f'  läser {os.path.basename(p)} ...', flush=True)
+        q = load_points(p, lbox)
+        if q is not None and len(q[0]):
+            delar.append(q)
+    if not delar:
         print('    (utanför bbox, hoppar över)'); return
+    pts = tuple(np.concatenate([d[i] for d in delar]) for i in range(5))
     x, y, z, cls, inten = pts
     print(f'    {len(x):,} punkter i utsnittet'.replace(',',' '))
     if len(x) < 50000:
@@ -582,8 +615,9 @@ def process_laz(path, outdir, use_osm, keys, bbox=None):
     if use_osm:
         print('    hämtar byggnadsfotavtryck (Overpass) ...', flush=True)
         try:
-            bmask = rasterize_mask(fetch_buildings(e0, n0, e0 + W, n_top),
-                                   e0, n_top, W, H)
+            # v2.10.0: bara lasomradet (bbox + marginal) - utanfor finns inga punkter
+            ob = lbox if lbox else (e0, n0, e0 + W, n_top)
+            bmask = rasterize_mask(fetch_buildings(*ob), e0, n_top, W, H)
         except OverpassNere:
             print('    BLOCKET HOPPAS ÖVER (Overpass nere) - inga tiles skrivs'
                   ' här, kör om samma kommando senare så fylls det i.')
@@ -691,6 +725,9 @@ def process_laz(path, outdir, use_osm, keys, bbox=None):
 
     for tn in range(n0, n_top, TILE):
         for te in range(e0, e0 + W, TILE):
+            if bbox and not (te + TILE > bbox[0] and te < bbox[2] and
+                             tn + TILE > bbox[1] and tn < bbox[3]):
+                continue        # v2.10.0: marginalens tiles skrivs inte
             r0 = n_top - (tn + TILE); c0 = te - e0
             th = hard[r0:r0+TILE, c0:c0+TILE]
             tv = veg[r0:r0+TILE, c0:c0+TILE]
@@ -852,10 +889,13 @@ def main():
                     help='hoppa över byggnadsmask från OSM (allt högt blir vegetation!)')
     ap.add_argument('--brotjocklek', type=float, default=3.0,
                     help='antagen däcktjocklek för broar, m (standard 3,0)')
+    ap.add_argument('--marginal', type=float, default=256.0,
+                    help='punkter lases sa langt utanfor bbox/block, m (standard 256)')
     a = ap.parse_args()
 
-    global SNABB, INTENSITET, ARTEFAKTER, BRO_T
+    global SNABB, INTENSITET, ARTEFAKTER, BRO_T, MARGINAL
     BRO_T = a.brotjocklek
+    MARGINAL = a.marginal
     SNABB = not a.helskanning
     INTENSITET = a.intensitet
     ARTEFAKTER = las_artefakter(a.artefakter)
@@ -884,9 +924,9 @@ def main():
         for bi, sub in enumerate(block_list):
             print(f'=== Block {bi+1}/{len(block_list)}: '
                   f'E {sub[0]}-{sub[2]}, N {sub[1]}-{sub[3]} ===')
-            for fp in files:
-                if process_laz(fp, a.out, not a.no_osm, keys, sub) == 'OSM_NERE':
-                    hoppade.append(bi + 1)
+            # v2.10.0: alla filer samlat - en Overpass-fraga per block
+            if process_laz(files, a.out, not a.no_osm, keys, sub) == 'OSM_NERE':
+                hoppade.append(bi + 1)
         if a.sbk:
             apply_sbk(a.sbk, a.out, keys)
         if a.orto:
@@ -905,7 +945,9 @@ def main():
     keys = set()
     laddat_index(a.out, keys)   # annars glöms befintliga tiles vid små bbox
     print(f'Steg 1: {len(files)} laserfiler ...')
-    for f in files:
+    # v2.10.0: med bbox lases alla filer samlat (inga skarvar mellan filerna).
+    # Utan bbox per fil som forut - hela filer samtidigt ryms inte i minnet.
+    for f in ([files] if a.bbox else files):
         process_laz(f, a.out, not a.no_osm, keys, a.bbox)
 
     if a.sbk:
