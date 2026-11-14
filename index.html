@@ -84,6 +84,11 @@ input[type=range]{width:100%;margin-top:.5rem;accent-color:var(--sun-deep)}
 .locbtn.busy{opacity:.5}
 .pinbtn.on{background:#ffe3a3;border-color:#c98a06}
 .pinmark{filter:drop-shadow(0 2px 2px rgba(0,0,0,.35))}
+/* Korshår i kartans mitt = punkten Sök utgår från. Dolt när kartan står på min plats. */
+.kors{position:absolute;left:50%;top:50%;width:26px;height:26px;margin:-13px 0 0 -13px;
+  z-index:500;pointer-events:none;color:#2a6fbb}
+.kors svg{display:block;overflow:visible}
+.kors.dold{display:none}
 #map.pinmode{cursor:crosshair}
 .ctlrow{display:flex;flex-wrap:nowrap;align-items:flex-end;gap:.4rem}
 .ctlrow .ctl{min-width:0;flex:1 1 auto}
@@ -345,7 +350,7 @@ body.kurera #t3close,body.kurera #hint,body.kurera .t3head{display:none!importan
     <h1>Hitta uteserveringen</h1>
     <span class="sub">i solen</span>
   </div>
-  <span class="ver" id="verTag">v0.59</span>
+  <span class="ver" id="verTag">v0.60</span>
 </header>
 
 <div id="map"></div>
@@ -424,7 +429,7 @@ body.kurera #t3close,body.kurera #hint,body.kurera .t3head{display:none!importan
       <div id="bandlabels"></div>
     </div>
     <input type="range" id="timeSlider" min="0" max="1439" value="720" step="5">
-    <div class="legend" id="legend" style="display:none">
+    <div class="legend" id="dayLegend" style="display:none">
       <span><i style="background:var(--sun)"></i> Full sol</span>
       <span><i style="background:var(--tree)"></i> Silad sol (träd)</span>
       <span><i style="background:var(--shadow)"></i> Skugga (hus/terräng)</span>
@@ -477,7 +482,7 @@ body.kurera #t3close,body.kurera #hint,body.kurera .t3head{display:none!importan
 
 <script>
 "use strict";
-/* ================ HITTA UTESERVERINGEN v0.59 ================
+/* ================ HITTA UTESERVERINGEN v0.60 ================
    Läge A (laser): ray marching mot höjdtiles (tiles/, från
    preprocess.py) + 3D-vy som bygger mesh ur samma tiles.
    Läge B (fallback): OSM via Overpass.
@@ -921,9 +926,33 @@ function drawGeometry(){
 }
 
 /* ---------- Flöde ---------- */
+// Antingen sökresultat eller solur: Sök tar bort soluret och dess kort,
+// solurknappen tar bort sökresultaten. Räknarna stoppar en pågående
+// analys/sökning som hunnit bli inaktuell innan den visar något.
+let anaGen=0, searchGen=0;
+function clearSundial(){
+  anaGen++;
+  P=null; dayData=null; lastEN=null;
+  if(marker){map.removeLayer(marker);marker=null;}
+  if(sunRay){map.removeLayer(sunRay);sunRay=null;}
+  pinMode=false;
+  const pb=document.querySelector('.pinbtn'); if(pb) pb.classList.remove('on');
+  document.getElementById('map').classList.remove('pinmode');
+  for(const id of ['hint','status','dayCard','intCard','yearCard','setCard','dayLegend'])
+    document.getElementById(id).style.display='none';
+}
+function clearSearch(){
+  searchGen++;
+  lastVenues=null;
+  document.getElementById('venueList').innerHTML='';
+  document.getElementById('listInfo').textContent='';
+  document.getElementById('legend').style.display='none';
+  venueLayer.clearLayers();
+}
 async function startAnalysis(refetch){
   const hint=document.getElementById('hint');
   if(!P) return;
+  const gen=++anaGen;
   if(marker)map.removeLayer(marker);
   marker=L.marker([P.lat,P.lng],{icon:L.divIcon({className:'pinmark',html:'<svg viewBox="0 0 24 24" width="38" height="38"><path d="M9 23h6M12 23v-3" stroke="#8a6d1f" stroke-width="1.8" stroke-linecap="round"/><circle cx="12" cy="11" r="8.4" fill="#f7b32b" stroke="#8a6d1f" stroke-width="1.3"/><ellipse cx="12" cy="11" rx="8.4" ry="3.2" fill="none" stroke="#fff" stroke-width="1.8" transform="rotate(-30 12 11)"/><path d="M4.5 18.5 L18.5 4.5" stroke="#33281a" stroke-width="1.7" stroke-linecap="round"/><path d="M20.6 2.4l-5.2 1 4.2 4.2z" fill="#33281a"/></svg>',iconSize:[38,38],iconAnchor:[19,37]}),interactive:false}).addTo(map);
   const R=+document.getElementById('radiusInput').value||600;
@@ -934,9 +963,11 @@ async function startAnalysis(refetch){
       hint.innerHTML='<span class="spin"></span>Laddar höjdtiles …';
       const {E,N}=toSweref(P.lat,P.lng);
       const nt=await ensureTiles(E,N,R);
+      if(gen!==anaGen) return;
       if(!nt) throw new Error('Här finns ingen höjddata ännu – panorera mot ett täckt område (gula rutan i kartans hörn visar täckningen). Fler områden kommer!');
       hint.innerHTML='<span class="spin"></span>Ray marching, 360 riktningar …';
       await new Promise(r=>setTimeout(r,20));
+      if(gen!==anaGen) return;
       buildHorizonDem(E,N,R);
       lastEN={E,N};
       document.getElementById('btn3d').style.display='';
@@ -945,7 +976,9 @@ async function startAnalysis(refetch){
       if(refetch){
         hint.style.display='block';
         hint.innerHTML='<span class="spin"></span>Hämtar byggnader och träd från OpenStreetMap …';
-        ingest(await fetchOsm(P.lat,P.lng,R),+document.getElementById('defHInput').value||20);
+        const osm=await fetchOsm(P.lat,P.lng,R);
+        if(gen!==anaGen) return;
+        ingest(osm,+document.getElementById('defHInput').value||20);
         drawGeometry();
       } else {
         const defH=+document.getElementById('defHInput').value||20;
@@ -953,6 +986,7 @@ async function startAnalysis(refetch){
       }
       hint.innerHTML='<span class="spin"></span>Bygger horisontprofil …';
       await new Promise(r=>setTimeout(r,20));
+      if(gen!==anaGen) return;
       buildHorizonOsm();
       const nT=buildings.filter(b=>b.tagged).length;
       info=`källa: OSM · ${buildings.length} byggnader (${nT} med höjddata) · ${trees.length} träd · platt mark antas`;
@@ -962,10 +996,11 @@ async function startAnalysis(refetch){
     hint.style.display='none';
     for(const id of ['dayCard','intCard','yearCard','setCard'])
       document.getElementById(id).style.display='block';
-    document.getElementById('legend').style.display='flex';
+    document.getElementById('dayLegend').style.display='flex';
     document.getElementById('datainfo').innerHTML=
       info+` · punkt ${P.lat.toFixed(5)}, ${P.lng.toFixed(5)} · ögonhöjd ${EYE} m · © OpenStreetMap, Lantmäteriet, Stockholms stad`;
   }catch(err){
+    if(gen!==anaGen) return;
     hint.style.display='block';
     hint.innerHTML=`<span class="err">Fel: ${err.message}.</span>`;
   }
@@ -1586,11 +1621,14 @@ function venueBand(lat,lng,hB,vegIv){
 async function searchVenues(){
   const info=document.getElementById('listInfo');
   if(mode!=='laser'){ info.textContent='Listan kräver laserraster-läge (tiles saknas).'; return; }
+  clearSundial();
+  const gen=++searchGen;
   const c=map.getCenter();
   info.innerHTML='<span class="spin"></span>Hämtar ställen från OpenStreetMap …';
   try{
     let [els]=await Promise.all([fetchVenues(c.lat,c.lng,700), loadWeather(c.lat,c.lng)]);
-    if(listMode==='bank'){                        // parker kan ha hundratals bänkar - ta de 120 närmaste
+    if(gen!==searchGen) return;     // soluret valt under sökningen
+    if(listMode==='bank'){                       // parker kan ha hundratals bänkar - ta de 120 närmaste
       const c0=toSweref(c.lat,c.lng);
       els=els.map(e=>{const p=toSweref(e.lat,e.lon);return [Math.hypot(p.E-c0.E,p.N-c0.N),e];})
              .sort((a,b)=>a[0]-b[0]).slice(0,120).map(x=>x[1]);
@@ -1610,10 +1648,12 @@ async function searchVenues(){
       }
     }
     await ensureTiles(cE,cN,1150);
+    if(gen!==searchGen) return;
     const venues=[];
     let skipped=0;
     info.innerHTML='<span class="spin"></span>Räknar solband för '+els.length+' ställen …';
     await new Promise(r=>setTimeout(r,20));
+    if(gen!==searchGen) return;
     for(const el of els){
       const t=el.tags||{};
       if(t.building) continue;                    // konturer, inte ställen
@@ -1661,6 +1701,7 @@ async function searchVenues(){
     lastVenues.skipped=skipped;
     renderVenues(skipped);
   }catch(err){
+    if(gen!==searchGen) return;
     info.innerHTML='<span class="err">Fel: '+err.message+'</span>';
   }
 }
@@ -1947,7 +1988,7 @@ const LocBtn=L.Control.extend({
   options:{position:'topleft'},
   onAdd:function(){
     const b=L.DomUtil.create('div','locbtn');
-    b.innerHTML='<svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="7"/><circle cx="12" cy="12" r="2.4" fill="currentColor" stroke="none"/><line x1="12" y1="1.5" x2="12" y2="4.5"/><line x1="12" y1="19.5" x2="12" y2="22.5"/><line x1="1.5" y1="12" x2="4.5" y2="12"/><line x1="19.5" y1="12" x2="22.5" y2="12"/></svg>';
+    b.innerHTML='<svg viewBox="0 0 24 24" width="22" height="22"><ellipse cx="12" cy="22.3" rx="4.6" ry="1.3" fill="currentColor" opacity=".3"/><path d="M12 21.2s-6.6-6.4-6.6-11.6a6.6 6.6 0 0 1 13.2 0c0 5.2-6.6 11.6-6.6 11.6z" fill="currentColor"/><circle cx="12" cy="9.6" r="2.6" fill="#fff"/></svg>';
     b.title='Centrera på min plats';
     L.DomEvent.disableClickPropagation(b);
     b.addEventListener('click',()=>{
@@ -1960,18 +2001,37 @@ const LocBtn=L.Control.extend({
         if(posDot) map.removeLayer(posDot);
         posDot=L.circleMarker(ll,{radius:7,color:'#fff',weight:2.5,
           fillColor:'#2a6fbb',fillOpacity:1}).addTo(map).bindTooltip('Du är här');
+        updKors();
       },()=>b.classList.remove('busy'),{enableHighAccuracy:true,timeout:8000});
     });
     return b;
   }
 });
 map.addControl(new LocBtn());
+// Korshår i kartans mitt (samma tecken som förr satt på platsknappen, med vit kant).
+// Dolt när kartans mitt står på min plats; syns igen så fort man panorerar därifrån.
+const kors=L.DomUtil.create('div','kors',map.getContainer());
+kors.innerHTML='<svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke-linecap="round">'
+  +'<g stroke="#fff" stroke-width="4.5"><circle cx="12" cy="12" r="7"/><line x1="12" y1="1.5" x2="12" y2="4.5"/><line x1="12" y1="19.5" x2="12" y2="22.5"/><line x1="1.5" y1="12" x2="4.5" y2="12"/><line x1="19.5" y1="12" x2="22.5" y2="12"/></g>'
+  +'<circle cx="12" cy="12" r="3.6" fill="#fff"/>'
+  +'<g stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="7"/><line x1="12" y1="1.5" x2="12" y2="4.5"/><line x1="12" y1="19.5" x2="12" y2="22.5"/><line x1="1.5" y1="12" x2="4.5" y2="12"/><line x1="19.5" y1="12" x2="22.5" y2="12"/></g>'
+  +'<circle cx="12" cy="12" r="2.4" fill="currentColor"/></svg>';
+function updKors(){
+  let dold=false;
+  if(posDot){
+    const a=map.latLngToContainerPoint(posDot.getLatLng()), m=map.getSize().divideBy(2);
+    dold=Math.hypot(a.x-m.x,a.y-m.y)<3;
+  }
+  kors.classList.toggle('dold',dold);
+}
+map.on('move zoomend resize',updKors);
 if(navigator.geolocation){
   navigator.geolocation.getCurrentPosition(p=>{
     const ll=[p.coords.latitude,p.coords.longitude];
     map.setView(ll,16);
     posDot=L.circleMarker(ll,{radius:7,color:'#fff',weight:2.5,
       fillColor:'#2a6fbb',fillOpacity:1}).addTo(map).bindTooltip('Du är här');
+    updKors();
   },()=>{},{enableHighAccuracy:true,timeout:8000});
 }
 L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',
@@ -1990,6 +2050,7 @@ const PinBtn=L.Control.extend({
     L.DomEvent.disableClickPropagation(b);
     b.addEventListener('click',()=>{
       pinMode=!pinMode;
+      if(pinMode) clearSearch();      // antingen sökresultat eller solur
       b.classList.toggle('on',pinMode);
       document.getElementById('map').classList.toggle('pinmode',pinMode);
     });
@@ -2039,7 +2100,7 @@ map.on('click',ev=>{
   document.getElementById('listDur').value=2;
   const mt=document.getElementById('maxTravel');
   for(let m2=1;m2<=60;m2++) mt.add(new Option('≤ '+m2+' min',m2));
-  mt.value=5;
+  mt.value=3;
   document.getElementById('listDate').value=listDateStr;
   document.getElementById('listFrom').add(new Option('Nu (automatiskt)',''));
   for(let h2=6;h2<=21.5;h2+=0.5)
