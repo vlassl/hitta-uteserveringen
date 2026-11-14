@@ -345,7 +345,7 @@ body.kurera #t3close,body.kurera #hint,body.kurera .t3head{display:none!importan
     <h1>Hitta uteserveringen</h1>
     <span class="sub">i solen</span>
   </div>
-  <span class="ver" id="verTag">v0.58</span>
+  <span class="ver" id="verTag">v0.59</span>
 </header>
 
 <div id="map"></div>
@@ -354,7 +354,7 @@ body.kurera #t3close,body.kurera #hint,body.kurera .t3head{display:none!importan
   <div class="hint" id="hint" style="display:none"></div>
 
   <div class="card" id="listCard">
-    <h2><span id="modeTitle" style="cursor:pointer" title="Tryck för att växla mellan uteserveringar och parkbänkar">Soliga uteserveringar nära kartans mitt</span><span class="setbtn" id="setBtn" title="Inställningar"><svg class="ci lg"><use href="#i-gear"/></svg></span></h2>
+    <h2><span id="modeTitle" style="cursor:pointer" title="Tryck för att växla mellan uteserveringar och parkbänkar">Soliga uteserveringar</span><span class="setbtn" id="setBtn" title="Inställningar"><svg class="ci lg"><use href="#i-gear"/></svg></span></h2>
     <div class="controls ctlrow">
       <span class="ctl"><span class="lbl">När?</span>
         <span class="bigchip" id="whenChip"><span id="whenLabel">Nu</span><span class="car">▼</span></span></span>
@@ -477,7 +477,7 @@ body.kurera #t3close,body.kurera #hint,body.kurera .t3head{display:none!importan
 
 <script>
 "use strict";
-/* ================ HITTA UTESERVERINGEN v0.58 ================
+/* ================ HITTA UTESERVERINGEN v0.59 ================
    Läge A (laser): ray marching mot höjdtiles (tiles/, från
    preprocess.py) + 3D-vy som bygger mesh ur samma tiles.
    Läge B (fallback): OSM via Overpass.
@@ -2119,7 +2119,7 @@ map.on('click',ev=>{
     ch.addEventListener('click',()=>{ch.classList.toggle('on');renderVenues();}));
   document.getElementById('modeTitle').addEventListener('click',()=>{
     listMode=listMode==='ute'?'bank':'ute';
-    document.getElementById('modeTitle').textContent=listMode==='bank'?'Soliga parkbänkar nära kartans mitt':'Soliga uteserveringar nära kartans mitt';
+    document.getElementById('modeTitle').textContent=listMode==='bank'?'Soliga bänkar':'Soliga uteserveringar';
     document.getElementById('catRow').style.display=listMode==='bank'?'none':'';
     lastVenues=null; document.getElementById('venueList').innerHTML=''; venueLayer.clearLayers();
     document.getElementById('listInfo').textContent=listMode==='bank'?'Tryck Sök för att hämta parkbänkar (OpenStreetMap) runt kartans mitt.':'';
