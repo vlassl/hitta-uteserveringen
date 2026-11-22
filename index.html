@@ -350,7 +350,7 @@ body.kurera #t3close,body.kurera #hint,body.kurera .t3head{display:none!importan
     <h1>Hitta uteserveringen</h1>
     <span class="sub">i solen</span>
   </div>
-  <span class="ver" id="verTag">v0.60</span>
+  <span class="ver" id="verTag">v0.61</span>
 </header>
 
 <div id="map"></div>
@@ -482,7 +482,7 @@ body.kurera #t3close,body.kurera #hint,body.kurera .t3head{display:none!importan
 
 <script>
 "use strict";
-/* ================ HITTA UTESERVERINGEN v0.60 ================
+/* ================ HITTA UTESERVERINGEN v0.61 ================
    Läge A (laser): ray marching mot höjdtiles (tiles/, från
    preprocess.py) + 3D-vy som bygger mesh ur samma tiles.
    Läge B (fallback): OSM via Overpass.
@@ -712,19 +712,31 @@ const OVERPASS_URLS=[
   'https://overpass.kumi.systems/api/interpreter',
   'https://overpass.private.coffee/api/interpreter'
 ];
+const OVERPASS_TIMEOUT=25e3;   // per spegel: en spegel som hänger får inte blockera nästa
 async function overpass(q){
-  let lastErr=null;
+  const fel=[];
   for(const url of OVERPASS_URLS){
+    const host=new URL(url).host;
+    const ctl=new AbortController();
+    const tmr=setTimeout(()=>ctl.abort(),OVERPASS_TIMEOUT);
+    let resp;
     try{
-      const resp=await fetch(url,{method:'POST',
+      resp=await fetch(url,{method:'POST',signal:ctl.signal,
         body:'data='+encodeURIComponent(q),
         headers:{'Content-Type':'application/x-www-form-urlencoded'}});
-      if(resp.ok) return resp.json();
-      lastErr=new Error('Overpass svarade '+resp.status);
-      if(resp.status<500&&resp.status!==429) throw lastErr; // 4xx: ingen idé att byta spegel
-    }catch(e){ lastErr=e; }
+      if(resp.ok){ const d=await resp.json(); clearTimeout(tmr); return d; }
+    }catch(e){
+      clearTimeout(tmr);
+      fel.push(host+': '+(e.name==='AbortError'?'inget svar på '+OVERPASS_TIMEOUT/1e3+' s':e.message));
+      continue;
+    }
+    clearTimeout(tmr);
+    fel.push(host+': '+resp.status);
+    if(resp.status<500&&resp.status!==429)            // 4xx: frågan är fel, ingen idé att byta spegel
+      throw new Error('OpenStreetMaps sökserver (Overpass) avvisade frågan ('+resp.status+')');
   }
-  throw lastErr||new Error('Overpass onåbar');
+  console.log('Overpass: '+fel.join(' · '));
+  throw new Error('OpenStreetMaps sökserver (Overpass) är överbelastad eller nås inte just nu – försök igen om några minuter');
 }
 
 /* ---------- OSM-fallback ---------- */
