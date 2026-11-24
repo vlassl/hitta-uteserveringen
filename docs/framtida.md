@@ -18,6 +18,7 @@ Det som är planerat men inte byggt i Hitta uteserveringen, uppbyggt ur `ARBETSP
 - **Föreslå korrekt läge** (Victor 2026-09-06): användaren föreslår rätt läge för en uteservering. Inte påbörjat.
 - **Fler stadsdelar** (Victor 2026-09-06): fler tiles utöver dagens ~150 km². Kräver mer laser och orto (`hamta_laser.py`, `hamta_orto.py`).
 - **Google Places** (Victor 2026-09-06): parkerat.
+- **Sökningen utan Overpass vid varje sökning** (Victor 2026-11-24): i dag frågar varje Sök Overpass, och när alla tre speglarna är överbelastade går det inte att söka. Det hände 2026-11-21: overpass-api.de svarade 502 och de andra två speglarna svarade inte. v0.61 gav en tidsgräns per spegel och ett begripligt felmeddelande. Två vägar finns: spara svaren per område i telefonen (localStorage), eller bygg en färdig lista över ställen och byggnadskonturer in i repot, som tilesen, och fråga Overpass bara som reserv. *Öppna frågor*: vilken väg som ska väljas och hur ofta en färdig lista ska byggas om.
 
 ## Parkerat med flit
 
